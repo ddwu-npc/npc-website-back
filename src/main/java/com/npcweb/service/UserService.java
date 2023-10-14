@@ -17,8 +17,12 @@ public class UserService {
 	public void insert(User user) {
 		userRepo.save(user);
 	}	
-	public User getUser(String userId) {
+	public User getUserByUserId(String userId) {
 		return userRepo.findByUserId(userId);
+	}
+	
+	public User getUserByUserNo(long userNo) {
+		return userRepo.findByUserNo(userNo);
 	}
 	
 	public User getUserByUserPw(String userId, String userPw) {
