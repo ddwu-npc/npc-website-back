@@ -23,11 +23,13 @@ public class UserController {
 		this.userService = userService;
 	}
 	
+	// 회원 가입
 	@PostMapping
-    public void add(@RequestBody User user) {
+    public void signup(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
 		userService.insert(user);
     }
+	
 	@GetMapping("/{userId}")
 	public User getUser(@PathVariable String userId) {
 		return userService.getUser(userId);

@@ -21,32 +21,62 @@ public class JpaPostDAO implements PostDAO {
 
 	@Override
 	public void insertPost(Post post) throws DataAccessException {
-		em.persist(post);
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public Post readPost(long post_id) throws DataAccessException {
-		return em.find(Post.class, post_id);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void updatePost(Post post) throws DataAccessException {
-		em.merge(post);
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void deletePost(Post post) throws DataAccessException {
-		em.remove(post);		
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public List<Post> getAllPost(long board_id) throws DataAccessException {
-		TypedQuery<Post> query = em.createQuery(
-				"select p from POST p where p.board_id = ?1", Post.class
-			);
-		query.setParameter(1, board_id);
-		List<Post> posts = query.getResultList();
-		
-		return posts;
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+//	@Override
+//	public void insertPost(Post post) throws DataAccessException {
+//		em.persist(post);
+//	}
+//
+//	@Override
+//	public Post readPost(long post_id) throws DataAccessException {
+//		return em.find(Post.class, post_id);
+//	}
+//
+//	@Override
+//	public void updatePost(Post post) throws DataAccessException {
+//		em.merge(post);
+//	}
+//
+//	@Override
+//	public void deletePost(Post post) throws DataAccessException {
+//		em.remove(post);		
+//	}
+//
+//	@Override
+//	public List<Post> getAllPost(long board_id) throws DataAccessException {
+//		TypedQuery<Post> query = em.createQuery(
+//				"select p from POST p where p.board_id = ?1", Post.class
+//			);
+//		query.setParameter(1, board_id);
+//		List<Post> posts = query.getResultList();
+//		
+//		return posts;
+//	}
 }

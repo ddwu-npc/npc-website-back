@@ -18,7 +18,7 @@ public class UserService {
 		userRepo.save(user);
 	}	
 	public User getUser(String userId) {
-		return userDao.getUser(userId);
+		return userRepo.findByUserId(userId);
 	}
 	
 	public User getUserByUserPw(String userId, String userPw) {

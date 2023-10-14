@@ -19,9 +19,9 @@ public class UserDAO {
 
 	public User getUser(String userId) throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
-				"select u from USER u where u.userId=:userId",
+				"select u from USER u where u.user_id=:user_id",
 				User.class);
-		query.setParameter("userId", userId);
+		query.setParameter("user_id", userId);
 		
 		User user = null;
 		
@@ -36,10 +36,13 @@ public class UserDAO {
 	// 로그인
 	public User getUserByUserPw(String userId, String userPw) throws DataAccessException {
 		TypedQuery<User> query = em.createQuery(
-				"select u from USER u where u.userId=:userId and u.userPw=:userPw",
+				"select u from User u where u.userId=:userId and u.userPw=:userPw",
 				User.class);
 		query.setParameter("userId", userId);
 		query.setParameter("userPw", userPw);
+		
+		System.out.println("id : " + userId);
+		System.out.println("pw : " + userPw);
 		
 		User user = null;
 		

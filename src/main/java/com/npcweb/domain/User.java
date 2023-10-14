@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,36 +13,51 @@ import javax.persistence.Table;
 @Table(name="USER")
 public class User {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	long userNo;
-	long pid, deptNo;
 	
 	@Column(name="user_id")
 	String userId;
 	@Column(name="user_pw")
 	String userPw; 
 	String nickname, email;
-	Date recentDate, birthday;
-	int rank, npcPoint;
+	@Column(name="recent_date")
+	Date recentDate;
+	Date birthday;
+	int rank;
+	@Column(name="npc_point")
+	int npcPoint;
 	
+	public User() {
+		
+	}
+	
+	public User(String userId, String nickname, String userPw, String email) {
+		this.userId = userId;
+		this.nickname = nickname;
+		this.userPw = userPw;
+		this.email = email;
+	}
+	
+	public User(long userNo, String userId, String userPw, String nickname, String email, Date recentDate,
+			Date birthday, int rank, int npcPoint) {
+		super();
+		this.userNo = userNo;
+		this.userId = userId;
+		this.userPw = userPw;
+		this.nickname = nickname;
+		this.email = email;
+		this.recentDate = recentDate;
+		this.birthday = birthday;
+		this.rank = rank;
+		this.npcPoint = npcPoint;
+	}
+
 	public long getUserNo() {
 		return userNo;
 	}
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
-	}
-	
-	public long getPid() {
-		return pid;
-	}
-	public void setPid(long pid) {
-		this.pid = pid;
-	}
-	
-	public long getDeptNo() {
-		return deptNo;
-	}
-	public void setDeptNo(long deptNo) {
-		this.deptNo = deptNo;
 	}
 	
 	public String getUserId() {
