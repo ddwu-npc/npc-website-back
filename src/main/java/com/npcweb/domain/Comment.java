@@ -1,0 +1,58 @@
+package com.npcweb.domain;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="COMMENT")
+public class Comment {
+	@Id
+	@Column(name="comment_id")
+	long commentId;
+	
+	@Column(name="post_id")
+	long postId;
+	
+	String content;
+	
+	@Column(name="create_date")
+	Date createDate;
+
+	public long getCommentId() {
+		return commentId;
+	}
+
+	public void setCommentId(long commentId) {
+		this.commentId = commentId;
+	}
+
+	public long getPostId() {
+		return postId;
+	}
+
+	public void setPostId(long postId) {
+		this.postId = postId;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	
+	
+}
