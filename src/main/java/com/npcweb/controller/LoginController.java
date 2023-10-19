@@ -26,10 +26,10 @@ public class LoginController {
 	}
 
 	@GetMapping
-	public Long getLoginedUserId(HttpServletRequest request) {
+	public Long getLoginSession(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		if(session.getAttribute("userId") != null)
-			return (long) session.getAttribute("userId");
+		if(session.getAttribute("userno") != null)
+			return (long) session.getAttribute("userno");
 		return null;
 	}
 	
@@ -40,13 +40,19 @@ public class LoginController {
 		
 		User user = userService.getUserByUserPw(userId, userPw);
 		
-		String nickname = user.getNickname();
-		HttpSession session = request.getSession();
-		session.setAttribute("nickname", nickname);
+		if (user != null) {
+			String nickname = user.getNickname();
+			HttpSession session = request.getSession();
+			session.setAttribute("nickname", nickname);
+			session.setAttribute("userId", userId);
+			session.setAttribute("userno", user.getUserNo());
+			
+			System.out.println(session.getAttribute("userno"));
+			System.out.println("Login Success");
+			return userId;
+		}
 		
-		System.out.println("Login Success");
-		
-		return userId;
+		return null;
     }
 
 	@PostMapping("/logout")

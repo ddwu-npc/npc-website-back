@@ -29,6 +29,7 @@ public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired	PostService postService;
 	
+	/*
 	//게시글 목록보기
 	@RequestMapping("/board/{board_id}")
 	public String postListForm(@PathVariable long board_id, Model model) {
@@ -37,6 +38,7 @@ public class PostController {
 		
 		return "/board/"+board_id;
 	}
+	
 	//create
 	@PostMapping("/post/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
@@ -91,8 +93,10 @@ public class PostController {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
 	}
+	*/
 }
 
+/*
 class PostRes {
 	private long postId, userNo, boardId;
 	private String title, rangePost, content;
@@ -203,3 +207,4 @@ class PostReq {
 		this.important = important;
 	}
 }
+*/

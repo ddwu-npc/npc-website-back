@@ -1,4 +1,4 @@
-package com.npcweb.dao;
+package com.npcweb.dao.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -13,7 +13,7 @@ import com.npcweb.domain.User;
 
 @Repository
 @org.springframework.transaction.annotation.Transactional
-public class UserDAO {
+public class JpaUserDAO {
 	@PersistenceContext
     private EntityManager em;
 
