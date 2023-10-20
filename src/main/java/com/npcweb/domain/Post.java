@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Table(name="POST")
 public class Post implements Serializable {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy =  GenerationType.IDENTITY)
 	@Column(name="post_id")
 	long postId;
 	
