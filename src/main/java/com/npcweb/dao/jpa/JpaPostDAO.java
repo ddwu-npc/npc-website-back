@@ -1,5 +1,6 @@
 package com.npcweb.dao.jpa;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -18,17 +19,25 @@ import com.npcweb.domain.Post;
 public class JpaPostDAO implements PostDAO {
 	@PersistenceContext
 	private EntityManager em;
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Post> getAllPost(long board_id) throws DataAccessException {
+		String jpql = "SELECT p FROM Post p WHERE p.boardId = :boardId";
+        TypedQuery<Post> query = em.createQuery(jpql, Post.class);
+        query.setParameter("boardId", board_id);
+        return query.getResultList();
+	}
 
 	@Override
 	public void insertPost(Post post) throws DataAccessException {
-		// TODO Auto-generated method stub
-		
+		em.persist(post);
+		System.out.println("게시글 생성 성공");
 	}
 
 	@Override
 	public Post readPost(long post_id) throws DataAccessException {
-		// TODO Auto-generated method stub
-		return null;
+		return em.find(Post.class, post_id);
 	}
 
 	@Override
@@ -43,21 +52,6 @@ public class JpaPostDAO implements PostDAO {
 		
 	}
 
-	@Override
-	public List<Post> getAllPost(long board_id) throws DataAccessException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-//	@Override
-//	public void insertPost(Post post) throws DataAccessException {
-//		em.persist(post);
-//	}
-//
-//	@Override
-//	public Post readPost(long post_id) throws DataAccessException {
-//		return em.find(Post.class, post_id);
-//	}
 //
 //	@Override
 //	public void updatePost(Post post) throws DataAccessException {

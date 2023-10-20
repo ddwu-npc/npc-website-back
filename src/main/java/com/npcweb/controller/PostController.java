@@ -1,5 +1,6 @@
 package com.npcweb.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,53 +26,63 @@ import com.npcweb.service.PostService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
+@RequestMapping("/board")
 public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired	PostService postService;
-	
-	/*
+
+
 	//게시글 목록보기
-	@RequestMapping("/board/{board_id}")
-	public String postListForm(@PathVariable long board_id, Model model) {
-		List<Post> list = postService.getAllPostList(board_id);
-		model.addAttribute("list",list);
-		
-		return "/board/"+board_id;
+	@RequestMapping("/{board_id}")
+	public List<Post> postList(@PathVariable long board_id, Model model) {
+		List<Post> pList = postService.getAllPostList(board_id);
+		return pList;
 	}
-	
-	//create
-	@PostMapping("/post/{board_id}")
-	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
-		HttpSession session = (HttpSession) request.getSession();
-		long userNo = (long) session.getAttribute("user_id");
-		
-		Post post = new Post();
-		post.setBoardId(board_id);
-		post.setContent(req.getContent());
-		//post.setCreateDate();
-		post.setImportant(req.getImportant());
-		post.setRangePost(req.getRangePost());
-		post.setTitle(req.getTitle());
-		post.setUserNo(userNo);
-		
-		postService.insertPost(post);
-	}
+
 	//read
-	@GetMapping("/post/{post_id}")
-	public ResponseEntity<Map<String, Object>> readPost(@PathVariable long post_id, Map<String, Object> model) {
+	@GetMapping("{board_id}/post/{post_id}")
+	public ResponseEntity<Map<String, Object>> readPost(@PathVariable long board_id, @PathVariable long post_id, Map<String, Object> model) {
 		Post post = postService.readPost(post_id);
 		PostRes res = new PostRes();
 		res.setPostId(post.getPostId());
 		res.setBoardId(post.getBoardId());
 		res.setContent(post.getContent());
+		res.setCreateDate(new Date());
 		res.setImportant(post.getImportant());
 		res.setRangePost(post.getRangePost());
 		res.setTitle(post.getTitle());
 		res.setUserNo(post.getUserNo());
-		
+
 		model.put("post", res);
-		
+
 		return ResponseEntity.ok(model);
+	}
+
+	//delete
+	@DeleteMapping("/{board_id}/post/{post_id}")
+	public void deletePost(@PathVariable long post_id) {
+		Post post = postService.readPost(post_id);
+		postService.deletePost(post);
+	}
+
+
+	/*
+	//create
+	@PostMapping("/{board_id}/post")
+	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
+		HttpSession session = (HttpSession) request.getSession();
+		long userNo = (long) session.getAttribute("user_id");
+
+		Post post = new Post();
+		post.setBoardId(board_id);
+		post.setContent(req.getContent());
+		post.setCreateDate(new Date());
+		post.setImportant(req.getImportant());
+		post.setRangePost(req.getRangePost());
+		post.setTitle(req.getTitle());
+		post.setUserNo(userNo);
+
+		postService.insertPost(post);
 	}
 	//update
 	@PutMapping("/post/{post_id}")
@@ -84,26 +95,22 @@ public class PostController {
 		post.setRangePost(req.getRangePost());
 		post.setTitle(req.getTitle());
 		post.setUserNo(req.getUserNo());
-		
+
 		postService.updatePost(post);
 	}
-	//delete
-	@DeleteMapping("/post/{post_id}")
-	public void deletePost(@PathVariable long post_id) {
-		Post post = postService.readPost(post_id);
-		postService.deletePost(post);
-	}
-	*/
+
+	 */
 }
 
-/*
+
 class PostRes {
 	private long postId, userNo, boardId;
 	private String title, rangePost, content;
 	private int important;
-	
+	private Date createDate;
+
 	public PostRes(){}
-	
+
 	//getter
 	public long getPostId() {
 		return postId;
@@ -129,10 +136,14 @@ class PostRes {
 		return content;
 	}
 
+	public Date getCreateDate() {
+		return createDate;
+	}
+
 	public int getImportant() {
 		return important;
 	}
-	
+
 	//setter
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
@@ -158,6 +169,10 @@ class PostRes {
 		this.important = important;
 	}
 
+	public void setCreateDate(Date date) {
+		createDate = date;
+	}
+
 	public void setPostId(long postId) {
 		this.postId = postId;
 	}
@@ -167,9 +182,18 @@ class PostReq {
 	private String title, content, rangePost;
 	private long userNo, boardId;
 	private int important;
-	
+	private Date createDate;
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 	public PostReq() {}
-	
+
 	public String getTitle() {
 		return title;
 	}
@@ -207,4 +231,3 @@ class PostReq {
 		this.important = important;
 	}
 }
-*/
