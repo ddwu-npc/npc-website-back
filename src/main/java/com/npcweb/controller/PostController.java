@@ -41,8 +41,15 @@ public class PostController {
 	
 	//read
 	@GetMapping("/post/{post_id}")
-	public ResponseEntity<Map<String, Object>> readPost(@PathVariable long post_id, Map<String, Object> model) {
+	public ResponseEntity<Post> readPost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
+		if(post != null) {
+			return ResponseEntity.ok(post);
+		}else {
+			return ResponseEntity.notFound().build();
+		}
+		
+		/*
 		PostRes res = new PostRes();
 		res.setPostId(post.getPostId());
 		res.setBoardId(post.getBoardId());
@@ -55,15 +62,16 @@ public class PostController {
 		model.put("post", res);
 
 		return ResponseEntity.ok(model);
+		*/
 	}
 	
 	//create
 	@PostMapping("/post/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
 		HttpSession session = (HttpSession) request.getSession();
-		long userNo = (long) session.getAttribute("user_id");
+		long userNo = (long) session.getAttribute("userno");
 		
-		System.out.println("create post");
+		System.out.println("create post "+req.toString());
 
 		Post post = new Post();
 		post.setBoardId(board_id);
@@ -76,6 +84,7 @@ public class PostController {
 
 		postService.insertPost(post);
 	}
+	/*
 	//update
 	@PutMapping("/post/{post_id}")
 	public void updatePost(@RequestBody PostReq req, @PathVariable long postId) {
@@ -98,7 +107,7 @@ public class PostController {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
 	}
-
+	*/
 }
 
 
@@ -179,49 +188,48 @@ class PostRes {
 
 class PostReq {
 	private String title, content, rangePost;
-	private long userNo, boardId, postId;
-	private int important;
+	private long userNo, boardId;
+	private int important, readCount;
+	private Date create_date;
 	
 	public PostReq() {}
-
-	public long getPostId() {
-		return postId;
-	}
 
 	public String getTitle() {
 		return title;
 	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
+	
 	public String getContent() {
 		return content;
 	}
-	public void setContent(String content) {
-		this.content = content;
-	}
+	
 	public String getRangePost() {
 		return rangePost;
 	}
-	public void setRangePost(String rangePost) {
-		this.rangePost = rangePost;
-	}
+	
 	public long getUserNo() {
 		return userNo;
 	}
-	public void setUserNo(long userNo) {
-		this.userNo = userNo;
-	}
+	
 	public long getBoardId() {
 		return boardId;
 	}
-	public void setBoardId(long boardId) {
-		this.boardId = boardId;
-	}
+	
 	public int getImportant() {
 		return important;
 	}
-	public void setImportant(int important) {
-		this.important = important;
+	
+	public Date getCreate_date() {
+		return create_date;
+	}
+
+	public int getReadCount() {
+		return readCount;
+	}
+	
+	@Override
+	public String toString() {
+		return "PostReq [title=" + title + ", content=" + content + ", rangePost=" + rangePost + ", userNo=" + userNo
+				+ ", boardId=" + boardId + ", important=" + important + ", readCount=" + readCount + ", create_date="
+				+ create_date + "]";
 	}
 }

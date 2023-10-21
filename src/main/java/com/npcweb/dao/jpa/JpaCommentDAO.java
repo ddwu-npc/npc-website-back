@@ -31,10 +31,10 @@ public class JpaCommentDAO implements CommentDAO {
 
 	@Override
 	public List<Comment> getAllComment(long post_id) throws DataAccessException {
-		String jpql = "SELECT c FROM Commet c WHERE c.postId = :postId";
-        TypedQuery<Comment> query = em.createQuery(jpql, Comment.class);
-        query.setParameter("postId", post_id);
-        return query.getResultList();
+		String jpql = "SELECT c FROM Comment c WHERE c.postId = :postId";
+	    TypedQuery<Comment> query = em.createQuery(jpql, Comment.class);
+	    query.setParameter("postId", post_id);
+	    return query.getResultList();
 	}
 
 	@Override

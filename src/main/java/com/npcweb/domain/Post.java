@@ -38,7 +38,7 @@ public class Post implements Serializable {
 	@Column(name="read_count")
 	int readCount;
 	
-	@Column(name="range_post")
+	@Column(name="rangePost")
 	String rangePost;
 
 	public long getPostId() {
