@@ -28,7 +28,7 @@ public class Post implements Serializable {
 	Date createDate;
 	
 	@Column(name="update_date")
-	Date updateteDate;
+	Date updateDate;
 	
 	@Column(name="delete_date")
 	Date deleteDate;
@@ -89,12 +89,12 @@ public class Post implements Serializable {
 		this.createDate = createDate;
 	}
 
-	public Date getUpdateteDate() {
-		return updateteDate;
+	public Date getUpdateDate() {
+		return updateDate;
 	}
 
-	public void setUpdateteDate(Date updateteDate) {
-		this.updateteDate = updateteDate;
+	public void setUpdateDate(Date updateteDate) {
+		this.updateDate = updateteDate;
 	}
 
 	public Date getDeleteDate() {

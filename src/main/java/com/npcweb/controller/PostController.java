@@ -26,28 +26,27 @@ import com.npcweb.service.PostService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
-@RequestMapping("/board")
+//@RequestMapping("/board")
 public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired	PostService postService;
 
 
 	//게시글 목록보기
-	@RequestMapping("/{board_id}")
+	@RequestMapping("/board/{board_id}")
 	public List<Post> postList(@PathVariable long board_id, Model model) {
 		List<Post> pList = postService.getAllPostList(board_id);
 		return pList;
 	}
-
+	
 	//read
-	@GetMapping("{board_id}/post/{post_id}")
-	public ResponseEntity<Map<String, Object>> readPost(@PathVariable long board_id, @PathVariable long post_id, Map<String, Object> model) {
+	@GetMapping("/post/{post_id}")
+	public ResponseEntity<Map<String, Object>> readPost(@PathVariable long post_id, Map<String, Object> model) {
 		Post post = postService.readPost(post_id);
 		PostRes res = new PostRes();
 		res.setPostId(post.getPostId());
 		res.setBoardId(post.getBoardId());
 		res.setContent(post.getContent());
-		res.setCreateDate(new Date());
 		res.setImportant(post.getImportant());
 		res.setRangePost(post.getRangePost());
 		res.setTitle(post.getTitle());
@@ -57,21 +56,14 @@ public class PostController {
 
 		return ResponseEntity.ok(model);
 	}
-
-	//delete
-	@DeleteMapping("/{board_id}/post/{post_id}")
-	public void deletePost(@PathVariable long post_id) {
-		Post post = postService.readPost(post_id);
-		postService.deletePost(post);
-	}
-
-
-	/*
+	
 	//create
-	@PostMapping("/{board_id}/post")
+	@PostMapping("/post/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
 		HttpSession session = (HttpSession) request.getSession();
 		long userNo = (long) session.getAttribute("user_id");
+		
+		System.out.println("create post");
 
 		Post post = new Post();
 		post.setBoardId(board_id);
@@ -88,10 +80,11 @@ public class PostController {
 	@PutMapping("/post/{post_id}")
 	public void updatePost(@RequestBody PostReq req, @PathVariable long postId) {
 		Post post = postService.readPost(postId);
-		//post.setPostId(req.getPostId());
+		post.setPostId(req.getPostId());
 		post.setBoardId(req.getBoardId());
 		post.setContent(req.getContent());
 		post.setImportant(req.getImportant());
+		post.setUpdateDate(new Date());
 		post.setRangePost(req.getRangePost());
 		post.setTitle(req.getTitle());
 		post.setUserNo(req.getUserNo());
@@ -99,7 +92,13 @@ public class PostController {
 		postService.updatePost(post);
 	}
 
-	 */
+	//delete
+	@DeleteMapping("/post/{post_id}")
+	public void deletePost(@PathVariable long boardId, @PathVariable long post_id) {
+		Post post = postService.readPost(post_id);
+		postService.deletePost(post);
+	}
+
 }
 
 
@@ -180,19 +179,14 @@ class PostRes {
 
 class PostReq {
 	private String title, content, rangePost;
-	private long userNo, boardId;
+	private long userNo, boardId, postId;
 	private int important;
-	private Date createDate;
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
+	
 	public PostReq() {}
+
+	public long getPostId() {
+		return postId;
+	}
 
 	public String getTitle() {
 		return title;

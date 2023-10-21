@@ -67,6 +67,4 @@ public class Comment {
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
 	}
-	
-	
 }
