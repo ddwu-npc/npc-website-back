@@ -44,10 +44,11 @@ public class LoginController {
 			String nickname = user.getNickname();
 			HttpSession session = request.getSession();
 			session.setAttribute("nickname", nickname);
+			session.setAttribute("npc_point", user.getNpcPoint());
 			session.setAttribute("userId", userId);
 			session.setAttribute("userno", user.getUserNo());
 			
-			System.out.println(session.getAttribute("userno"));
+			// System.out.println(session.getAttribute("userno"));
 			System.out.println("Login Success");
 			return userId;
 		}
