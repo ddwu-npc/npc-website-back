@@ -6,26 +6,29 @@ import javax.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
 import com.npcweb.service.UserService;
+import com.npcweb.service.PostService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
-
+	//private final PostService postService;
+	
 	public MyPageController(UserService userService) {
 		this.userService = userService;
 	}
 	
 	@GetMapping
-	public ResponseEntity<MyPageResponse> readUserInfo(HttpServletRequest request) {
-		MyPageResponse res = new MyPageResponse();
+	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request) {
+		MyPageReqRes res = new MyPageReqRes();
 		HttpSession session = request.getSession();
 
 		if (session.getAttribute("userno") != null) {
@@ -44,12 +47,36 @@ public class MyPageController {
 		}
 		return null;
 	}
+	
+	// 마이페이지 프로필 정보 수정
+//	@PostMapping("/mypage/update")
+//	public String updateUserInfo(HttpServletRequest request, @RequestBody MyPageReqRes req) {
+//		
+//		HttpSession session = request.getSession();
+//		
+//		if (session.getAttribute("userno") != null) {
+//			long userNo = (long) session.getAttribute("userno");
+//			User user = userService.getUserByUserNo(userNo);
+//			
+//			user.setNickname(req.getNickname());
+//			user.setEmail(req.getEmail());
+//	//		user.setBirthday(req.getBirthday());
+//			user.setNpcPoint(req.getNpcPoint());
+//	//		user.setDeptNo(req.getDeptno());
+//	//		user.setPid(req.getPid());
+//			userService.update(user);
+//			
+//			return "/mypage";
+//		}
+//		return null;
+//	}
 }
 
-class MyPageResponse {
+class MyPageReqRes {
 	String userId, nickname, profile, email, birthday;
 	int npcPoint, rank;
 	long userNo;
+//	int deptno, pid;
 	
 	public String getUserId() {
 		return userId;
@@ -99,4 +126,16 @@ class MyPageResponse {
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
 	}
+//	public int getDeptno() {
+//		return deptno;
+//	}
+//	public void setDeptno(int deptno) {
+//		this.deptno = deptno;
+//	}
+//	public int getPid() {
+//		return pid;
+//	}
+//	public void setPid(int pid) {
+//		this.pid = pid;
+//	}
 }
