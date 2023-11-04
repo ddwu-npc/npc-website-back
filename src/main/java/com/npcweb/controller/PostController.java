@@ -30,14 +30,6 @@ import com.npcweb.service.PostService;
 public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired	PostService postService;
-
-
-	//게시글 목록보기
-	@RequestMapping("/board/{board_id}")
-	public List<Post> postList(@PathVariable long board_id, Model model) {
-		List<Post> pList = postService.getAllPostList(board_id);
-		return pList;
-	}
 	
 	//read
 	@GetMapping("/post/{post_id}")
