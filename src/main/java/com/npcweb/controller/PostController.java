@@ -26,13 +26,13 @@ import com.npcweb.service.PostService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
-//@RequestMapping("/board")
+@RequestMapping("/post")
 public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired	PostService postService;
 	
 	//read
-	@GetMapping("/post/{post_id}")
+	@GetMapping("/{post_id}")
 	public ResponseEntity<Post> readPost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		if(post != null) {
@@ -58,7 +58,7 @@ public class PostController {
 	}
 	
 	//create
-	@PostMapping("/post/{board_id}")
+	@PostMapping("/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
 		HttpSession session = (HttpSession) request.getSession();
 		long userNo = (long) session.getAttribute("userno");
@@ -78,7 +78,7 @@ public class PostController {
 	}
 	/*
 	//update
-	@PutMapping("/post/{post_id}")
+	@PutMapping("/{post_id}")
 	public void updatePost(@RequestBody PostReq req, @PathVariable long postId) {
 		Post post = postService.readPost(postId);
 		post.setPostId(req.getPostId());
@@ -94,7 +94,7 @@ public class PostController {
 	}
 
 	//delete
-	@DeleteMapping("/post/{post_id}")
+	@DeleteMapping("/{post_id}")
 	public void deletePost(@PathVariable long boardId, @PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
