@@ -26,13 +26,13 @@ import com.npcweb.service.CommentService;
 public class CommentController {
 	@Autowired JpaCommentDAO commentDao;
 	@Autowired CommentService commentService;
-
+	/*
 	@RequestMapping("/{postId}")
 	public List<Comment> commentList(@PathVariable long postId, Model model) {
 		List<Comment> cList = commentService.getAllCommentList(postId);
 		return cList;
 	}
-	/*
+	
 	//delete
 	@DeleteMapping("/{commentId}")
 	public void deleteComment(@PathVariable long commentId) {
