@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,8 +31,23 @@ import com.npcweb.service.PostService;
 public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired	PostService postService;
-	
+
 	//read
+	@GetMapping("/{post_id}")
+	public ResponseEntity<Post> readPost(@PathVariable long post_id) {
+	    try {
+	        Post post = postService.readPost(post_id);
+	        if (post != null) {
+	            return ResponseEntity.ok(post);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    } catch (Exception e) {
+	        // Handle the exception and return an error response
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	/*
 	@GetMapping("/{post_id}")
 	public ResponseEntity<Post> readPost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
@@ -40,8 +56,8 @@ public class PostController {
 		}else {
 			return ResponseEntity.notFound().build();
 		}
-		
-		/*
+
+
 		PostRes res = new PostRes();
 		res.setPostId(post.getPostId());
 		res.setBoardId(post.getBoardId());
@@ -54,15 +70,15 @@ public class PostController {
 		model.put("post", res);
 
 		return ResponseEntity.ok(model);
-		*/
+
 	}
-	
+	 */
 	//create
 	@PostMapping("/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
 		HttpSession session = (HttpSession) request.getSession();
 		long userNo = (long) session.getAttribute("userno");
-		
+
 		System.out.println("create post "+req.toString());
 
 		Post post = new Post();
@@ -99,7 +115,7 @@ public class PostController {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
 	}
-	*/
+	 */
 }
 
 
@@ -183,33 +199,33 @@ class PostReq {
 	private long userNo, boardId;
 	private int important, readCount;
 	private Date create_date;
-	
+
 	public PostReq() {}
 
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public String getContent() {
 		return content;
 	}
-	
+
 	public String getRangePost() {
 		return rangePost;
 	}
-	
+
 	public long getUserNo() {
 		return userNo;
 	}
-	
+
 	public long getBoardId() {
 		return boardId;
 	}
-	
+
 	public int getImportant() {
 		return important;
 	}
-	
+
 	public Date getCreate_date() {
 		return create_date;
 	}
@@ -217,7 +233,7 @@ class PostReq {
 	public int getReadCount() {
 		return readCount;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PostReq [title=" + title + ", content=" + content + ", rangePost=" + rangePost + ", userNo=" + userNo
