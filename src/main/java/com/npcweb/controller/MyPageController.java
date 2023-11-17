@@ -48,7 +48,7 @@ public class MyPageController {
 		return null;
 	}
 	
-	// 마이페이지 프로필 정보 수정
+	// 마이페이지 프로필 정보 수정  
 //	@PostMapping("/mypage/update")
 //	public String updateUserInfo(HttpServletRequest request, @RequestBody MyPageReqRes req) {
 //		
