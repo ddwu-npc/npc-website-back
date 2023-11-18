@@ -84,6 +84,7 @@ public class PostController {
 	public void deletePost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
+		//commentService.deleteComment(post_id);
 	}
 }
 

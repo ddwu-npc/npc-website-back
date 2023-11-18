@@ -29,9 +29,11 @@ public class CommentController {
 	
 	@RequestMapping("/{postId}")
 	public List<Comment> commentList(@PathVariable long postId, Model model) {
+		System.out.println("commentList");
 		List<Comment> cList = commentService.getAllCommentList(postId);
 		return cList;
 	}
+	
 	/*
 	//delete
 	@DeleteMapping("/{commentId}")
