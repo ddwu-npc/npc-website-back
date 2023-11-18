@@ -47,32 +47,6 @@ public class PostController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
-	/*
-	@GetMapping("/{post_id}")
-	public ResponseEntity<Post> readPost(@PathVariable long post_id) {
-		Post post = postService.readPost(post_id);
-		if(post != null) {
-			return ResponseEntity.ok(post);
-		}else {
-			return ResponseEntity.notFound().build();
-		}
-
-
-		PostRes res = new PostRes();
-		res.setPostId(post.getPostId());
-		res.setBoardId(post.getBoardId());
-		res.setContent(post.getContent());
-		res.setImportant(post.getImportant());
-		res.setRangePost(post.getRangePost());
-		res.setTitle(post.getTitle());
-		res.setUserNo(post.getUserNo());
-
-		model.put("post", res);
-
-		return ResponseEntity.ok(model);
-
-	}
-	 */
 	//create
 	@PostMapping("/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
@@ -108,14 +82,13 @@ public class PostController {
 
 		postService.updatePost(post);
 	}
-
+	*/
 	//delete
 	@DeleteMapping("/{post_id}")
-	public void deletePost(@PathVariable long boardId, @PathVariable long post_id) {
+	public void deletePost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
 	}
-	 */
 }
 
 

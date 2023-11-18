@@ -19,7 +19,6 @@ public class JpaPostDAO implements PostDAO {
 	@Override
 	public Post readPost(long post_id) throws DataAccessException {
 		Post p = em.find(Post.class, post_id);
-		System.out.println("p "+p.getTitle());
 		return p;
 	}
 
@@ -35,6 +34,7 @@ public class JpaPostDAO implements PostDAO {
 
 	@Override
 	public void deletePost(Post post) throws DataAccessException {
+		System.out.println("deletePost "+post.getTitle());
 		em.remove(post);
 	}
 }
