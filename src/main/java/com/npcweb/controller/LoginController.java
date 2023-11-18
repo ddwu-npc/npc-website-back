@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,17 +21,19 @@ import com.npcweb.service.UserService;
 @RequestMapping("/login")
 public class LoginController {
 	private final UserService userService;
-
+	private JWTProvider jwtProvider = new JWTProvider();
+	
 	public LoginController(UserService userService) {
 		this.userService = userService;
 	}
 
 	@GetMapping
-	public Long getLoginSession(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		if(session.getAttribute("userno") != null)
-			return (long) session.getAttribute("userno");
-		return null;
+	public Long getUserno(HttpServletRequest request, @RequestHeader("Authorization") String token) {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        System.out.println(jwtToken);
+        long userno = jwtProvider.getUsernoFromToken(jwtToken);
+		//return userno;
+        return null;
 	}
 	
 	@PostMapping
@@ -41,16 +44,11 @@ public class LoginController {
 		User user = userService.getUserByUserPw(userId, userPw);
 		
 		if (user != null) {
-			String nickname = user.getNickname();
-			HttpSession session = request.getSession();
-			session.setAttribute("nickname", nickname);
-			session.setAttribute("npc_point", user.getNpcPoint());
-			session.setAttribute("userId", userId);
-			session.setAttribute("userno", user.getUserNo());
+			long userno = user.getUserNo();
+			String token = jwtProvider.generateToken(userno);
 			
-			// System.out.println(session.getAttribute("userno"));
-			System.out.println("Login Success");
-			return userId;
+			System.out.println("Login Success, JWT Token : " + token);
+			return token;
 		}
 		
 		return null;

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +21,7 @@ import com.npcweb.service.PostService;
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
+	private JWTProvider jwtProvider = new JWTProvider();
 	//private final PostService postService;
 	
 	public MyPageController(UserService userService) {
@@ -27,14 +29,12 @@ public class MyPageController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request) {
+	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestHeader("Authorization") String token) {
 		MyPageReqRes res = new MyPageReqRes();
-		HttpSession session = request.getSession();
-
-		if (session.getAttribute("userno") != null) {
-			long userNo = (long) session.getAttribute("userno");
-			
-			User u = userService.getUserByUserNo(userNo);
+		
+		if (token != null) {
+			long userno = (long) jwtProvider.getUsernoFromToken(token);
+			User u = userService.getUserByUserNo(userno);
 			res.setBirthday("2020-01-01"); // 임시
 			res.setEmail(u.getEmail());
 			res.setNickname(u.getNickname());
