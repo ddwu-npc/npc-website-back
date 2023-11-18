@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
@@ -29,11 +30,10 @@ public class MyPageController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestParam long userno) {
 		MyPageReqRes res = new MyPageReqRes();
-		
-		if (token != null) {
-			long userno = (long) jwtProvider.getUsernoFromToken(token);
+
+		if (userno != 0) {
 			User u = userService.getUserByUserNo(userno);
 			res.setBirthday("2020-01-01"); // 임시
 			res.setEmail(u.getEmail());
@@ -77,55 +77,56 @@ class MyPageReqRes {
 	int npcPoint, rank;
 	long userNo;
 //	int deptno, pid;
-	
 	public String getUserId() {
 		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 	public String getNickname() {
 		return nickname;
 	}
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
 	public String getProfile() {
 		return profile;
-	}
-	public void setProfile(String profile) {
-		this.profile = profile;
 	}
 	public String getEmail() {
 		return email;
 	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
 	public String getBirthday() {
 		return birthday;
-	}
-	public void setBirthday(String birthday) {
-		this.birthday = birthday;
 	}
 	public int getNpcPoint() {
 		return npcPoint;
 	}
-	public void setNpcPoint(int npcPoint) {
-		this.npcPoint = npcPoint;
-	}
 	public int getRank() {
 		return rank;
-	}
-	public void setRank(int rank) {
-		this.rank = rank;
 	}
 	public long getUserNo() {
 		return userNo;
 	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+	public void setNpcPoint(int npcPoint) {
+		this.npcPoint = npcPoint;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
 	}
+	
+
 //	public int getDeptno() {
 //		return deptno;
 //	}

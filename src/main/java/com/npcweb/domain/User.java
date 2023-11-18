@@ -20,7 +20,7 @@ public class User {
 	String userId;
 	@Column(name="user_pw")
 	String userPw; 
-	String nickname, email;
+	String nickname, email, profile;
 	@Column(name="recent_date")
 	Date recentDate;
 	Date birthday;
@@ -116,5 +116,10 @@ public class User {
 		this.npcPoint = npcPoint;
 	}
 	
-	
+	public String getProfile() {
+		return profile;
+	}
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
 }

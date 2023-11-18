@@ -30,10 +30,9 @@ public class LoginController {
 	@GetMapping
 	public Long getUserno(HttpServletRequest request, @RequestHeader("Authorization") String token) {
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
-        System.out.println(jwtToken);
+        System.out.println("header: " + jwtToken);
         long userno = jwtProvider.getUsernoFromToken(jwtToken);
-		//return userno;
-        return null;
+		return userno;
 	}
 	
 	@PostMapping
@@ -56,8 +55,8 @@ public class LoginController {
 
 	@PostMapping("/logout")
 	public void logout(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		session.setAttribute("userId", null);
+		//HttpSession session = request.getSession();
+		//session.setAttribute("userId", null);
 	}
 }
 
