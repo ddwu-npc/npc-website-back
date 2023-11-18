@@ -62,9 +62,10 @@ public class MyPageController {
 				user.setNickname(req.getNickname());
 				user.setEmail(req.getEmail());
 		//		user.setBirthday(req.getBirthday());
+				
 				userService.update(user);
 
-		        return ResponseEntity.ok().build();
+				return ResponseEntity.ok().build();
 			}
 			return null;
 		}
