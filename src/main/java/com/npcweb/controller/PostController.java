@@ -53,8 +53,6 @@ public class PostController {
 		HttpSession session = (HttpSession) request.getSession();
 		long userNo = (long) session.getAttribute("userno");
 
-		System.out.println("create post "+req.toString());
-
 		Post post = new Post();
 		post.setBoardId(board_id);
 		post.setContent(req.getContent());
@@ -66,12 +64,11 @@ public class PostController {
 
 		postService.insertPost(post);
 	}
-	/*
 	//update
 	@PutMapping("/{post_id}")
-	public void updatePost(@RequestBody PostReq req, @PathVariable long postId) {
-		Post post = postService.readPost(postId);
-		post.setPostId(req.getPostId());
+	public void updatePost(@RequestBody PostReq req, @PathVariable long post_id) {
+		Post post = postService.readPost(post_id);
+		post.setPostId(post_id);
 		post.setBoardId(req.getBoardId());
 		post.setContent(req.getContent());
 		post.setImportant(req.getImportant());
@@ -82,7 +79,6 @@ public class PostController {
 
 		postService.updatePost(post);
 	}
-	*/
 	//delete
 	@DeleteMapping("/{post_id}")
 	public void deletePost(@PathVariable long post_id) {
@@ -91,7 +87,7 @@ public class PostController {
 	}
 }
 
-
+/*
 class PostRes {
 	private long postId, userNo, boardId;
 	private String title, rangePost, content;
@@ -166,7 +162,7 @@ class PostRes {
 		this.postId = postId;
 	}
 }
-
+*/
 class PostReq {
 	private String title, content, rangePost;
 	private long userNo, boardId;

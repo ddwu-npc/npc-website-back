@@ -34,7 +34,6 @@ public class JpaPostDAO implements PostDAO {
 
 	@Override
 	public void deletePost(Post post) throws DataAccessException {
-		System.out.println("deletePost "+post.getTitle());
 		em.remove(post);
 	}
 }
