@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,28 +49,26 @@ public class MyPageController {
 		return null;
 	}
 	
-	// 마이페이지 프로필 정보 수정
-//	@PostMapping("/mypage/update")
-//	public String updateUserInfo(HttpServletRequest request, @RequestBody MyPageReqRes req) {
-//		
-//		HttpSession session = request.getSession();
-//		
-//		if (session.getAttribute("userno") != null) {
-//			long userNo = (long) session.getAttribute("userno");
-//			User user = userService.getUserByUserNo(userNo);
-//			
-//			user.setNickname(req.getNickname());
-//			user.setEmail(req.getEmail());
-//	//		user.setBirthday(req.getBirthday());
-//			user.setNpcPoint(req.getNpcPoint());
-//	//		user.setDeptNo(req.getDeptno());
-//	//		user.setPid(req.getPid());
-//			userService.update(user);
-//			
-//			return "/mypage";
-//		}
-//		return null;
-//	}
+	// 마이페이지 프로필 정보 수정  
+		@PutMapping("/update")
+		public ResponseEntity<?> updateUserInfo(HttpServletRequest request, @RequestBody MyPageReqRes req) {
+			
+			HttpSession session = request.getSession();
+			
+			if (session.getAttribute("userno") != null) {
+				long userNo = (long) session.getAttribute("userno");
+				User user = userService.getUserByUserNo(userNo);
+				
+				user.setNickname(req.getNickname());
+				user.setEmail(req.getEmail());
+		//		user.setBirthday(req.getBirthday());
+				
+				userService.update(user);
+
+				return ResponseEntity.ok().build();
+			}
+			return null;
+		}
 }
 
 class MyPageReqRes {
