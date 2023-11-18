@@ -69,13 +69,13 @@ public class PostController {
 	public void updatePost(@RequestBody PostReq req, @PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		post.setPostId(post_id);
-		post.setBoardId(req.getBoardId());
+		post.setBoardId(post.getBoardId());
 		post.setContent(req.getContent());
 		post.setImportant(req.getImportant());
 		post.setUpdateDate(new Date());
 		post.setRangePost(req.getRangePost());
 		post.setTitle(req.getTitle());
-		post.setUserNo(req.getUserNo());
+		post.setUserNo(post.getUserNo());
 
 		postService.updatePost(post);
 	}
@@ -84,6 +84,7 @@ public class PostController {
 	public void deletePost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
+		//commentService.deleteComment(post_id);
 	}
 }
 
