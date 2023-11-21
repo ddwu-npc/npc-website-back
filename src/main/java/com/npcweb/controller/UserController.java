@@ -1,5 +1,6 @@
 package com.npcweb.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,14 +32,22 @@ public class UserController {
 		userService.insert(user);
     }
 	
-	@GetMapping("/{userId}")
-	public User getUser(@PathVariable String userId) {
-		return userService.getUserByUserId(userId);
+	// 타인의 정보기 때문에 제한적으로 전달
+	@GetMapping("/{userNo}")
+	public ResponseEntity<UserRes> getUser(@PathVariable("userNo") long userNo) {
+		User u = userService.getUserByUserNo(userNo);
+		UserRes res = new UserRes();
+		res.setNickname(u.getNickname());
+		res.setProfile(u.getNickname());
+		res.setUserNo(userNo);
+		
+		return ResponseEntity.ok(res);
 	}
 
 	@PutMapping("/{userId}/password")
 	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
 		// request body에 있는 password로 변경
+		// 암호화가 필요하여 추후 변경 필요
 		System.out.println("PW : " + request.getPassword());
 		userService.UpdatePassword(userId, request.getPassword());
     }
@@ -54,4 +63,29 @@ class ChangePasswordRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+}
+
+class UserRes {
+	long userNo;
+	String nickname; String profile;
+
+	public long getUserNo() {
+		return userNo;
+	}
+	public String getNickname() {
+		return nickname;
+	}
+	public String getProfile() {
+		return profile;
+	}
+	public void setUserNo(long userNo) {
+		this.userNo = userNo;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+	
 }

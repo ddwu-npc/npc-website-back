@@ -30,7 +30,6 @@ public class LoginController {
 	@GetMapping
 	public Long getUserno(HttpServletRequest request, @RequestHeader("Authorization") String token) {
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
-        System.out.println("header: " + jwtToken);
         long userno = jwtProvider.getUsernoFromToken(jwtToken);
 		return userno;
 	}
@@ -45,11 +44,8 @@ public class LoginController {
 		if (user != null) {
 			long userno = user.getUserNo();
 			String token = jwtProvider.generateToken(userno);
-			
-			System.out.println("Login Success, JWT Token : " + token);
 			return token;
 		}
-		
 		return null;
     }
 
