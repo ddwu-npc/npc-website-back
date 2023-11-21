@@ -27,6 +27,7 @@ public class UserController {
 	@PostMapping
     public void signup(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
+		System.out.println(user.getUserId());
 		userService.insert(user);
     }
 	
