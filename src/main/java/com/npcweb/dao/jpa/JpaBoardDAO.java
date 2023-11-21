@@ -27,5 +27,4 @@ public class JpaBoardDAO implements BoardDAO {
         query.setParameter("boardId", board_id);
         return query.getResultList();
 	}
-
 }

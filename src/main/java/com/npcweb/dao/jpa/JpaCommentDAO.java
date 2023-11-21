@@ -25,22 +25,26 @@ public class JpaCommentDAO implements CommentDAO {
 	}
 
 	@Override
-	public void deleteComment(Comment comment) throws DataAccessException {
-		em.remove(comment);
+	public void deleteComment(long commentId) throws DataAccessException {
+		Comment comm = em.find(Comment.class, commentId);
+		em.remove(comm);
 	}
 
 	@Override
 	public List<Comment> getAllComment(long post_id) throws DataAccessException {
-		System.out.println("read comments of "+post_id);
 		String jpql = "SELECT c FROM Comment c WHERE c.postId = :postId";
 	    TypedQuery<Comment> query = em.createQuery(jpql, Comment.class);
 	    query.setParameter("postId", post_id);
 	    return query.getResultList();
 	}
-
+	
+	//게시글 삭제 시 해당 게시글의 모든 댓글 삭제
 	@Override
-	public Comment readComment(long commentId) {
-		return em.find(Comment.class, commentId);
+	public void deleteCommentList(long post_id) {
+		List<Comment> commList = getAllComment(post_id);
+		
+		for(Comment e : commList)
+			em.remove(e);
 	}
 
 }

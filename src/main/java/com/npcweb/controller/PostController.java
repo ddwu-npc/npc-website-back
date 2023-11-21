@@ -1,8 +1,6 @@
 package com.npcweb.controller;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -10,7 +8,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,13 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.npcweb.dao.jpa.JpaPostDAO;
 import com.npcweb.domain.Post;
 import com.npcweb.service.PostService;
+import com.npcweb.service.CommentService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/post")
 public class PostController {
 	@Autowired JpaPostDAO postDao;
-	@Autowired	PostService postService;
+	@Autowired PostService postService;
+	@Autowired CommentService commentService;
 
 	//read
 	@GetMapping("/{post_id}")
@@ -51,8 +50,9 @@ public class PostController {
 	@PostMapping("/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
 		HttpSession session = (HttpSession) request.getSession();
-		long userNo = (long) session.getAttribute("userno");
-
+		//long userNo = (long) session.getAttribute("userno");
+		long userNo = 12;
+		
 		Post post = new Post();
 		post.setBoardId(board_id);
 		post.setContent(req.getContent());
@@ -81,89 +81,20 @@ public class PostController {
 	}
 	//delete
 	@DeleteMapping("/{post_id}")
-	public void deletePost(@PathVariable long post_id) {
+	public long deletePost(@PathVariable long post_id) {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
-		//commentService.deleteComment(post_id);
+		commentService.deleteCommentList(post_id);
+		
+		return post.getBoardId();
+	}
+	
+	@GetMapping("/findBoard/{post_id}")
+	public long findBoard(@PathVariable long post_id) {
+		return postService.getBoardIdByPostId(post_id);
 	}
 }
 
-/*
-class PostRes {
-	private long postId, userNo, boardId;
-	private String title, rangePost, content;
-	private int important;
-	private Date createDate;
-
-	public PostRes(){}
-
-	//getter
-	public long getPostId() {
-		return postId;
-	}
-
-	public long getUserNo() {
-		return userNo;
-	}
-
-	public long getBoardId() {
-		return boardId;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getRangePost() {
-		return rangePost;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public Date getCreateDate() {
-		return createDate;
-	}
-
-	public int getImportant() {
-		return important;
-	}
-
-	//setter
-	public void setUserNo(long userNo) {
-		this.userNo = userNo;
-	}
-
-	public void setBoardId(long boardId) {
-		this.boardId = boardId;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setRangePost(String rangePost) {
-		this.rangePost = rangePost;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public void setImportant(int important) {
-		this.important = important;
-	}
-
-	public void setCreateDate(Date date) {
-		createDate = date;
-	}
-
-	public void setPostId(long postId) {
-		this.postId = postId;
-	}
-}
-*/
 class PostReq {
 	private String title, content, rangePost;
 	private long userNo, boardId;
