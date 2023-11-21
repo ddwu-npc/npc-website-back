@@ -29,34 +29,33 @@ public class CommentController {
 	
 	@RequestMapping("/{postId}")
 	public List<Comment> commentList(@PathVariable long postId, Model model) {
-		System.out.println("commentList");
 		List<Comment> cList = commentService.getAllCommentList(postId);
 		return cList;
 	}
 	
-	/*
-	//delete
-	@DeleteMapping("/{commentId}")
-	public void deleteComment(@PathVariable long commentId) {
-		Comment comment = commentService.findComment(commentId);
-		commentService.deleteComment(comment);
-	}
-	*/
 	//insert
-	@PostMapping("/{post_id}")
-	public void insertComment(HttpServletRequest request, @PathVariable long post_id, @RequestBody CommentReq req) {
+	@PostMapping("/{postId}")
+	public void insertComment(HttpServletRequest request, @PathVariable long postId, @RequestBody CommentReq req) {
 		HttpSession session = (HttpSession) request.getSession();
-		long userNo = (long) session.getAttribute("user_id");
-
+		//long userNo = (long) session.getAttribute("user_id");
+		long userNo = 12;
+		
 		Comment comment = new Comment();
 
-		comment.setPostId(post_id);
+		comment.setPostId(postId);
 		comment.setUserNo(userNo);
 		comment.setContent(req.getContent());
 		comment.setCreateDate(new Date());
 
 		commentService.insertComment(comment);
 	}
+
+	//delete
+	@DeleteMapping("/{commentId}")
+	public void deleteComment(@PathVariable long commentId) {
+		commentService.deleteComment(commentId);
+	}
+	
 }
 
 class CommentReq {

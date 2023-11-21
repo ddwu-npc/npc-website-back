@@ -36,4 +36,10 @@ public class JpaPostDAO implements PostDAO {
 	public void deletePost(Post post) throws DataAccessException {
 		em.remove(post);
 	}
+
+	@Override
+	public long getBoardIdByPostId(long post_id) {
+		System.out.println("getBoardId "+readPost(post_id).getBoardId());
+		return readPost(post_id).getBoardId();
+	}
 }

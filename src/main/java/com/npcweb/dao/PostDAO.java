@@ -16,4 +16,6 @@ public interface PostDAO {
 	
 	//delete
 	public void deletePost(Post post) throws DataAccessException;
+
+	public long getBoardIdByPostId(long post_id);
 }

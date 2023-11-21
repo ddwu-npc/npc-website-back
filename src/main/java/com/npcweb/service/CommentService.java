@@ -20,11 +20,11 @@ public class CommentService {
 		commentDao.insertComment(comment);
 	}
 	
-	public void deleteComment(Comment comment) {
-		commentDao.deleteComment(comment);
+	public void deleteComment(long commentId) {
+		commentDao.deleteComment(commentId);
 	}
-
-	public Comment findComment(long commentId) {
-		return commentDao.readComment(commentId);
+	
+	public void deleteCommentList(long post_id) {
+		commentDao.deleteCommentList(post_id);
 	}
 }

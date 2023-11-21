@@ -11,10 +11,11 @@ public interface CommentDAO {
 	public void insertComment(Comment comment) throws DataAccessException;
 
 	//delete
-	public void deleteComment(Comment comment) throws DataAccessException;
+	public void deleteComment(long commentId) throws DataAccessException;
 		
 	//목록보기
 	List<Comment> getAllComment(long post_id) throws DataAccessException;
-
-	public Comment readComment(long commentId);
+	
+	//게시글 삭제 시 해당 게시글의 모든 댓글 삭제
+	public void deleteCommentList(long post_id);
 }

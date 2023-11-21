@@ -31,4 +31,7 @@ public class PostService {
 	public void deletePost(Post post) {
 		postDao.deletePost(post);
 	}
+	public long getBoardIdByPostId(long post_id) {
+		return postDao.getBoardIdByPostId(post_id);
+	}
 }
