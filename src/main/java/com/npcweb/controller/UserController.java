@@ -28,7 +28,6 @@ public class UserController {
 	@PostMapping
     public void signup(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
-		System.out.println(user.getUserId());
 		userService.insert(user);
     }
 	
@@ -48,7 +47,6 @@ public class UserController {
 	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
 		// request body에 있는 password로 변경
 		// 암호화가 필요하여 추후 변경 필요
-		System.out.println("PW : " + request.getPassword());
 		userService.UpdatePassword(userId, request.getPassword());
     }
 }

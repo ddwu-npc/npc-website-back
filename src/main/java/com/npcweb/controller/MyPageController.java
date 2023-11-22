@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
 

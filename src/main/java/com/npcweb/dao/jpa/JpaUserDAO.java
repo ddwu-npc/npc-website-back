@@ -41,9 +41,6 @@ public class JpaUserDAO {
 		query.setParameter("userId", userId);
 		query.setParameter("userPw", userPw);
 		
-		System.out.println("id : " + userId);
-		System.out.println("pw : " + userPw);
-		
 		User user = null;
 		
 		try {
