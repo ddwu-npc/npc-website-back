@@ -42,4 +42,16 @@ public class JpaPostDAO implements PostDAO {
 		System.out.println("getBoardId "+readPost(post_id).getBoardId());
 		return readPost(post_id).getBoardId();
 	}
+
+	@Override
+	public int getReadCountByPostId(long post_id) throws DataAccessException {
+		return em.find(Post.class, post_id).getReadCount();
+	}
+
+	@Override
+	public void updateReadCount(long post_id, int readCount) {
+		Post p = em.find(Post.class, post_id);
+		p.setReadCount(readCount);;
+		em.merge(p);
+	}
 }

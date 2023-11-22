@@ -34,4 +34,14 @@ public class PostService {
 	public long getBoardIdByPostId(long post_id) {
 		return postDao.getBoardIdByPostId(post_id);
 	}
+	
+	// 조회수 조회
+	public int getReadCount(long post_id) {
+		return postDao.getReadCountByPostId(post_id);
+	}
+	
+	// 조회수 업데이트
+	public void updateReadCount(long post_id, int readCount) {
+		postDao.updateReadCount(post_id, readCount);
+	}
 }
