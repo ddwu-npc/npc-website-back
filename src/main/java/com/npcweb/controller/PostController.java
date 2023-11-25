@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.dao.jpa.JpaPostDAO;
 import com.npcweb.domain.Post;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.PostService;
 import com.npcweb.service.CommentService;
 
@@ -30,6 +32,8 @@ public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired PostService postService;
 	@Autowired CommentService commentService;
+	@Autowired
+	private JWTProvider jwtProvider;
 
 	//read
 	@GetMapping("/{post_id}")
@@ -48,10 +52,11 @@ public class PostController {
 	}
 	//create
 	@PostMapping("/{board_id}")
-	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req) {
-		HttpSession session = (HttpSession) request.getSession();
-		//long userNo = (long) session.getAttribute("userno");
-		long userNo = 12;
+	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req, @RequestHeader("Authorization") String token) {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+		System.out.println("content:"+req.getContent());
+		
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 		
 		Post post = new Post();
 		post.setBoardId(board_id);

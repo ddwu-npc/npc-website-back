@@ -18,4 +18,8 @@ public interface PostDAO {
 	public void deletePost(Post post) throws DataAccessException;
 
 	public long getBoardIdByPostId(long post_id);
+	
+	public int getReadCountByPostId(long post_id);
+
+	public void updateReadCount(long post_id, int readCount);
 }

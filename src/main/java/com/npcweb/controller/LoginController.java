@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -21,7 +23,8 @@ import com.npcweb.service.UserService;
 @RequestMapping("/login")
 public class LoginController {
 	private final UserService userService;
-	private JWTProvider jwtProvider = new JWTProvider();
+	@Autowired
+	private JWTProvider jwtProvider;
 	
 	public LoginController(UserService userService) {
 		this.userService = userService;
@@ -30,7 +33,7 @@ public class LoginController {
 	@GetMapping
 	public Long getUserno(HttpServletRequest request, @RequestHeader("Authorization") String token) {
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
-        System.out.println("header: " + jwtToken);
+		System.out.println("받은 token:"+token);
         long userno = jwtProvider.getUsernoFromToken(jwtToken);
 		return userno;
 	}
@@ -45,11 +48,9 @@ public class LoginController {
 		if (user != null) {
 			long userno = user.getUserNo();
 			String token = jwtProvider.generateToken(userno);
-			
-			System.out.println("Login Success, JWT Token : " + token);
+			System.out.println("token 생성"+token);
 			return token;
 		}
-		
 		return null;
     }
 
