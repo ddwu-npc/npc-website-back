@@ -54,7 +54,7 @@ public class PostController {
 	@PostMapping("/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req, @RequestHeader("Authorization") String token) {
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
-		System.out.println("content:"+req.getContent());
+		//System.out.println("content:"+req.getContent());
 		
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 		

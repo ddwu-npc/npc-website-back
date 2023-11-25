@@ -18,4 +18,6 @@ public interface CommentDAO {
 	
 	//게시글 삭제 시 해당 게시글의 모든 댓글 삭제
 	public void deleteCommentList(long post_id);
+
+	public void updateComment(Comment comm);
 }

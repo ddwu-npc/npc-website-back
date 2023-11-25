@@ -19,6 +19,10 @@ public class CommentService {
 	public void insertComment(Comment comment) {
 		commentDao.insertComment(comment);
 	}
+
+	public void updateComment(Comment comm) {
+		commentDao.updateComment(comm);
+	}
 	
 	public void deleteComment(long commentId) {
 		commentDao.deleteComment(commentId);
