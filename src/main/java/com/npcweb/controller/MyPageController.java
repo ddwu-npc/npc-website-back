@@ -1,5 +1,6 @@
 package com.npcweb.controller;
 
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.npcweb.domain.User;
+import com.npcweb.domain.Post;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
@@ -24,11 +27,12 @@ import com.npcweb.service.PostService;
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
+	private final PostService postService;
 	private JWTProvider jwtProvider = new JWTProvider();
-	//private final PostService postService;
 	
-	public MyPageController(UserService userService) {
+	public MyPageController(UserService userService, PostService postService) {
 		this.userService = userService;
+		this.postService = postService;
 	}
 	
 	@GetMapping
@@ -49,6 +53,13 @@ public class MyPageController {
 		}
 		return null;
 	}
+	
+	 @PostMapping("/{userno}")
+	 public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable("userno") long userno) {
+	    List<Post> pList = postService.getUserPostList(userno);
+	    System.out.println("확인 " + pList);
+	    return ResponseEntity.ok(pList);
+	 }
 	
 	// 마이페이지 프로필 정보 수정  
 		@PutMapping("/update")

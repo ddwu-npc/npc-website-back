@@ -1,6 +1,7 @@
 package com.npcweb.dao;
 
 import org.springframework.dao.DataAccessException;
+import java.util.List;
 
 import com.npcweb.domain.Post;
 
@@ -22,4 +23,7 @@ public interface PostDAO {
 	public int getReadCountByPostId(long post_id);
 
 	public void updateReadCount(long post_id, int readCount);
+
+	// 내가 쓴 게시물
+	List<Post> getUserPost(long userno) throws DataAccessException;
 }

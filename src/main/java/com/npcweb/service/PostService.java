@@ -1,5 +1,6 @@
 package com.npcweb.service;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +44,10 @@ public class PostService {
 	// 조회수 업데이트
 	public void updateReadCount(long post_id, int readCount) {
 		postDao.updateReadCount(post_id, readCount);
+	}
+	
+	// 내가 쓴 게시물
+	public List<Post> getUserPostList(long userno){
+		return postDao.getUserPost(userno);
 	}
 }
