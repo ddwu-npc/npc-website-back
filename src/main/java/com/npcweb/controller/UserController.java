@@ -45,8 +45,6 @@ public class UserController {
 
 	@PutMapping("/{userId}/password")
 	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
-		// request body에 있는 password로 변경
-		// 암호화가 필요하여 추후 변경 필요
 		userService.UpdatePassword(userId, request.getPassword());
     }
 }
