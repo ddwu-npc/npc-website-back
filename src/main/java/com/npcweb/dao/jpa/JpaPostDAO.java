@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import com.npcweb.dao.PostDAO;
 import com.npcweb.domain.Post;
 
+import java.util.List;
+import javax.persistence.TypedQuery;
+
 @Repository
 @Transactional
 public class JpaPostDAO implements PostDAO {
@@ -53,5 +56,16 @@ public class JpaPostDAO implements PostDAO {
 		Post p = em.find(Post.class, post_id);
 		p.setReadCount(readCount);;
 		em.merge(p);
+	}
+	
+	@Override
+	public List<Post> getUserPost (long userno) throws DataAccessException {
+		TypedQuery<Post> query = em.createQuery(
+			    "select p from Post p where p.userNo=:userno ORDER BY p.createDate DESC", Post.class
+			);
+		query.setParameter("userno", userno);
+		List<Post> userPosts = query.getResultList();
+
+		return userPosts;
 	}
 }
