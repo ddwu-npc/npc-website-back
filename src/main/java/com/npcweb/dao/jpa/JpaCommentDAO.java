@@ -23,6 +23,11 @@ public class JpaCommentDAO implements CommentDAO {
 	public void insertComment(Comment comment) throws DataAccessException {
 		em.persist(comment);
 	}
+	
+	@Override
+	public void updateComment(Comment comm) {
+		em.merge(comm);
+	}
 
 	@Override
 	public void deleteComment(long commentId) throws DataAccessException {

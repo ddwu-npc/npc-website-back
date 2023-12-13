@@ -77,4 +77,20 @@ public class JpaUserDAO {
     	int count = query.getFirstResult();
     	return count;
 	}
+
+	public User getUserByNickname(String nickname) {
+		TypedQuery<User> query = em.createQuery(
+				"select u from User u where u.nickname=:nickname",
+				User.class);
+		query.setParameter("nickname", nickname);
+		
+		User user = null;
+		
+		try {
+			user = query.getSingleResult();
+		} catch(NoResultException ex) {
+			return null;
+		}
+		return user;
+	}
 }
