@@ -17,4 +17,9 @@ public class BoardService {
 	public List<Post> getAllPostList(long board_id){
 		return boardDao.getAllPost(board_id);
 	}
+	
+	//게시글 검색
+	public List<Post> getAllPostListByKeyword(long board_id, long rangeId, long searchRange, String text){
+		return boardDao.getAllPostListByKeyword(board_id, rangeId, searchRange, text);
+	}
 }

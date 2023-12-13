@@ -34,17 +34,18 @@ public class CommentController {
 	@Autowired private JWTProvider jwtProvider;
 
 	@RequestMapping("/{postId}")
-	public List<Comment> commentList(@PathVariable long postId, Model model) {
+	public List<Comment> commentList(@PathVariable long postId) {
 		List<Comment> cList = commentService.getAllCommentList(postId);
 		return cList;
 	}
 
 	//insert
 	@PostMapping("/{postId}")
-	public void insertComment(HttpServletRequest request, @PathVariable long postId, @RequestBody CommentReq req) {
-		HttpSession session = (HttpSession) request.getSession();
-		//long userNo = (long) session.getAttribute("user_id");
-		long userNo = 12;
+	public void insertComment(HttpServletRequest request, @PathVariable long postId, @RequestBody CommentReq req, @RequestHeader("Authorization") String token) {
+		//System.out.println("insert comment "+req.toString());
+		
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+		long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 
 		Comment comment = new Comment();
 
@@ -58,7 +59,9 @@ public class CommentController {
 
 	//update
 	@PutMapping("/{comment_id}")
-	public void updateComment(@RequestBody CommentReq req, @PathVariable long comment_id, @RequestHeader("Authorization") String token) {
+	public void updateComment(@RequestBody CommentReq req, @PathVariable long comment_id) {
+		System.out.println("update comment "+req.toString());
+		
 		Comment comm = new Comment();
 		comm.setPostId(req.getPostId());
 		comm.setContent(req.getContent());
@@ -97,5 +100,11 @@ class CommentReq {
 	}
 	public void setUserno(long userno) {
 		this.userno = userno;
+	}
+	
+
+	@Override
+	public String toString() {
+		return "CommentReq [postId=" + postId + ", content=" + content + ", userno=" + userno + "]";
 	}
 }

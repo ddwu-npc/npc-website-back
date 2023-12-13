@@ -44,4 +44,8 @@ public class UserService {
 	public int NicknameCheck (String nickname) {
 		return userDao.NicknameCheck(nickname);
 	}
+	
+	public User getUserByNickname(String nickname) {
+		return userDao.getUserByNickname(nickname);
+	}
 }
