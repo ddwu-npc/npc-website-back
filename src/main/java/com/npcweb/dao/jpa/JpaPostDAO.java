@@ -68,4 +68,16 @@ public class JpaPostDAO implements PostDAO {
 
 		return userPosts;
 	}
+	
+	// 내가 쓴 댓글의 게시물 정보
+	@Override
+	public List<Post> getUserCommentPost(long userno) throws DataAccessException{
+		TypedQuery<Post> query = em.createQuery(
+				"SELECT p FROM Post p WHERE p.postId IN (SELECT c.postId FROM Comment c WHERE c.userNo = :userno) ORDER BY p.createDate DESC", Post.class
+			);
+		query.setParameter("userno", userno);
+		List<Post> userPosts = query.getResultList();
+
+		return userPosts;
+	}
 }

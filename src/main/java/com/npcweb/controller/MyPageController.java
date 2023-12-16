@@ -1,6 +1,10 @@
 package com.npcweb.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -18,9 +22,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.npcweb.domain.User;
 import com.npcweb.domain.Post;
+import com.npcweb.domain.Comment;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
+import com.npcweb.service.CommentService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -28,11 +34,13 @@ import com.npcweb.service.PostService;
 public class MyPageController {
 	private final UserService userService;
 	private final PostService postService;
+	private final CommentService commentService;
 	private JWTProvider jwtProvider = new JWTProvider();
 	
-	public MyPageController(UserService userService, PostService postService) {
+	public MyPageController(UserService userService, PostService postService, CommentService commentService) {
 		this.userService = userService;
-		this.postService = postService;
+		this.postService = postService;		
+		this.commentService = commentService;
 	}
 	
 	@GetMapping
@@ -62,6 +70,28 @@ public class MyPageController {
 	    
 	    return ResponseEntity.ok(pList);
 	 }
+	 
+	 // 내가 쓴 댓글
+		@PostMapping("/comment/{userno}")
+		public ResponseEntity<List<Object>> getCommentsByUserId(@PathVariable("userno") long userno) {
+			 List<Object> oList = new ArrayList<>();
+			
+			 List<Comment> cList = commentService.getUserCommentList(userno);
+			 List<Post> pList = postService.getUserCommentPost(userno);
+			 
+			 for (int i = 0; i < cList.size(); i++) {
+				 Map<String, Object> totalData = new HashMap<>();
+		         totalData.put("commentId", cList.get(i).getCommentId());
+		         totalData.put("content", cList.get(i).getContent());
+		         totalData.put("createDate", cList.get(i).getCreateDate());
+		         totalData.put("title", pList.get(i).getTitle());
+		         totalData.put("postId", pList.get(i).getPostId());
+		         totalData.put("boardId", pList.get(i).getBoardId());
+		         oList.add(totalData);
+			}
+			 
+			 return ResponseEntity.ok(oList);
+		}
 	
 	// 마이페이지 프로필 정보 수정  
 		@PutMapping("/update")

@@ -20,4 +20,7 @@ public interface CommentDAO {
 	public void deleteCommentList(long post_id);
 
 	public void updateComment(Comment comm);
+	
+	// 내가 쓴 댓글
+	List<Comment> getUserComment(long userno) throws DataAccessException;
 }
