@@ -54,10 +54,12 @@ public class MyPageController {
 		return null;
 	}
 	
-	 @PostMapping("/{userno}")
+	// 내가 쓴 게시물
+	 @PostMapping("/post/{userno}")
 	 public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable("userno") long userno) {
 	    List<Post> pList = postService.getUserPostList(userno);
 	    System.out.println("확인 " + pList);
+	    
 	    return ResponseEntity.ok(pList);
 	 }
 	
