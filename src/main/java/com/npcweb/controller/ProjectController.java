@@ -1,5 +1,6 @@
 package com.npcweb.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
+import com.npcweb.domain.User;
 import com.npcweb.service.ProjectService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -23,14 +25,17 @@ public class ProjectController {
 	ProjectService projectService;
 	
 	@RequestMapping
-	public List<Project> getAllProject() {
+	public List<Project> getProjectList() {
 		List<Project> projectList = projectService.getAllProject();
 		return projectList;
 	}
 	
 	@GetMapping("/{project_id}")
-	public Project getProject(@PathVariable long project_id) {
-		return projectService.getProject(project_id);
+	public ProjectReq getProjectInfo(@PathVariable long project_id) {
+		ProjectReq req = new ProjectReq();
+		req.setP(projectService.getProject(project_id));
+		
+		return req;
 	}
 	
 	@DeleteMapping("/{project_id}")
@@ -41,5 +46,31 @@ public class ProjectController {
 	@PostMapping
     public void insertProject(@RequestBody Project project) {
 		projectService.insert(project);
+	}
+	
+	class ProjectReq {
+		Project project;
+		List<String> userList = new ArrayList<String>();
+		
+		public ProjectReq() {
+			userList.add("1118");
+		}
+		
+		public Project getProject() {
+			return project;
+		}
+		public void setP(Project p) {
+			this.project = p;
+		}
+
+		public List<String> getUserList() {
+			return userList;
+		}
+
+		public void setUserList(List<String> userList) {
+			this.userList = userList;
+		}
+		
+		
 	}
 }

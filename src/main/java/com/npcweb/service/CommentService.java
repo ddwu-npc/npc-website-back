@@ -31,4 +31,9 @@ public class CommentService {
 	public void deleteCommentList(long post_id) {
 		commentDao.deleteCommentList(post_id);
 	}
+	
+	// 내가 쓴 뎃글
+	public List<Comment> getUserCommentList(long userno){
+		return commentDao.getUserComment(userno);
+	}
 }

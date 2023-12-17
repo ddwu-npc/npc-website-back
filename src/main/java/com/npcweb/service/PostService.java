@@ -50,4 +50,9 @@ public class PostService {
 	public List<Post> getUserPostList(long userno){
 		return postDao.getUserPost(userno);
 	}
+	
+	// 내가 쓴 댓글의 게시물 정보
+	public List<Post> getUserCommentPost(long userno){
+		return postDao.getUserCommentPost(userno);
+	}
 }
