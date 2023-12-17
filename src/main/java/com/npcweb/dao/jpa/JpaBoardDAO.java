@@ -27,35 +27,39 @@ public class JpaBoardDAO implements BoardDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Post> getAllPost(long board_id) throws DataAccessException {
-		String jpql = "SELECT p FROM Post p WHERE p.boardId = :boardId";
+		String jpql = "SELECT p FROM Post p WHERE p.boardId = :boardId ORDER BY postId DESC";
         TypedQuery<Post> query = em.createQuery(jpql, Post.class);
         query.setParameter("boardId", board_id);
         return query.getResultList();
 	}
 
 	@Override
-	public List<Post> getAllPostListByKeyword(long board_id, long rangeId, long searchRange, String text) {
+	public List<Post> getAllPostListByKeyword(long board_id, long rangeId, long searchRange, String text) throws DataAccessException {
+		//board_id
 		//rangeId : 전체0 임원1 팀장2
 		//searchRange : 제목0 내용1 제목+내용2  작성자3
+				
 		String jpql = "";
 		
 		if(searchRange == 0)
-			jpql = "SELECT p FROM Post p WHERE p.title LIKE '%:text%'";
+			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text AND p.boardId=:board_id";
 		else if(searchRange == 1)
-			jpql = "SELECT p FROM Post p WHERE p.content LIKE '%:text%'";
+			jpql = "SELECT p FROM Post p WHERE p.content LIKE :text AND p.boardId=:board_id";
 		else if(searchRange == 2)
-			jpql = "SELECT p FROM Post p WHERE p.title LIKE '%:text%' OR p.content LIKE '%:text%'";
+			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text OR p.content LIKE :text AND p.boardId=:board_id";
 		else if(searchRange == 3) {
-			jpql = "SELECT p FROM Post p WHERE p.userno = :userno";
+			jpql = "SELECT p FROM Post p WHERE p.userno = :userno AND p.boardId=:board_id";
 		}
 		
         TypedQuery<Post> query = em.createQuery(jpql, Post.class);
         if(searchRange <3)
-        	query.setParameter("text", text);
+        	query.setParameter("text", "%"+text+"%");
         else {
         	User user = us.getUserByNickname(text);
         	query.setParameter("userno", user.getUserNo());        	
         }
+    	query.setParameter("board_id", board_id);
+        
         
         return query.getResultList();
 	}
