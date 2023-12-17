@@ -1,12 +1,14 @@
 package com.npcweb.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,9 +31,13 @@ public class BoardController {
 	
 	//게시글 검색
 	@PostMapping("/{board_id}/search")
-	public List<Post> postList(@PathVariable long board_id, @RequestParam(name="rangePost") long rangeId, @RequestParam(name="searchRange") long searchRange, @RequestParam(name="text") String text ) {
-		System.out.println("확인용 "+board_id+" "+rangeId+" "+searchRange+" "+text);
-		List<Post> pList = boardService.getAllPostListByKeyword(board_id, rangeId, searchRange, text);
+	public List<Post> postList(@PathVariable long board_id, @RequestBody Map<String, String> requestBody ) {
+		long rangePost = Long.parseLong(requestBody.get("rangePost"));		
+		long searchRange = Long.parseLong(requestBody.get("searchRange"));
+		String text = requestBody.get("text");
+		
+		//System.out.println("확인용 "+board_id+" "+rangeId+" "+searchRange+" "+text);
+		List<Post> pList = boardService.getAllPostListByKeyword(board_id, rangePost, searchRange, text);
 		return pList;
 	}
 }
