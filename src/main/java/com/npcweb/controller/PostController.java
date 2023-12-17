@@ -23,6 +23,7 @@ import com.npcweb.dao.jpa.JpaPostDAO;
 import com.npcweb.domain.Post;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.PostService;
+import com.npcweb.service.RedisService;
 import com.npcweb.service.CommentService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -32,21 +33,24 @@ public class PostController {
 	@Autowired JpaPostDAO postDao;
 	@Autowired PostService postService;
 	@Autowired CommentService commentService;
-	@Autowired
-	private JWTProvider jwtProvider;
+	@Autowired RedisService redisService;
+	@Autowired JWTProvider jwtProvider;
 
 	//read
 	@GetMapping("/{post_id}")
-	public ResponseEntity<Post> readPost(@PathVariable long post_id) {
+	public ResponseEntity<Post> readPost(@PathVariable long post_id, @RequestHeader("Authorization") String token) {
 	    try {
 	        Post post = postService.readPost(post_id);
 	        if (post != null) {
+	        	String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+	            long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+	            
+	        	redisService.getReadCountByUser(post_id, userNo);
 	            return ResponseEntity.ok(post);
 	        } else {
 	            return ResponseEntity.notFound().build();
 	        }
 	    } catch (Exception e) {
-	        // Handle the exception and return an error response
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
@@ -54,8 +58,6 @@ public class PostController {
 	@PostMapping("/{board_id}")
 	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req, @RequestHeader("Authorization") String token) {
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
-		//System.out.println("content:"+req.getContent());
-		
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 		
 		Post post = new Post();
@@ -63,6 +65,7 @@ public class PostController {
 		post.setContent(req.getContent());
 		post.setCreateDate(new Date());
 		post.setImportant(req.getImportant());
+		post.setReadCount(0);
 		post.setRangePost(req.getRangePost());
 		post.setTitle(req.getTitle());
 		post.setUserNo(userNo);
