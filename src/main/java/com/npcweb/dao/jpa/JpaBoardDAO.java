@@ -42,13 +42,13 @@ public class JpaBoardDAO implements BoardDAO {
 		String jpql = "";
 		
 		if(searchRange == 0)
-			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text AND p.boardId=:board_id";
+			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		else if(searchRange == 1)
-			jpql = "SELECT p FROM Post p WHERE p.content LIKE :text AND p.boardId=:board_id";
+			jpql = "SELECT p FROM Post p WHERE p.content LIKE :text AND p.rangePost LIKE :rangePost AND p.boardId=:board_id";
 		else if(searchRange == 2)
-			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text OR p.content LIKE :text AND p.boardId=:board_id";
+			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text OR p.content LIKE :text AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		else if(searchRange == 3) {
-			jpql = "SELECT p FROM Post p WHERE p.userno = :userno AND p.boardId=:board_id";
+			jpql = "SELECT p FROM Post p WHERE p.userno = :userno AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		}
 		
         TypedQuery<Post> query = em.createQuery(jpql, Post.class);
@@ -56,8 +56,18 @@ public class JpaBoardDAO implements BoardDAO {
         	query.setParameter("text", "%"+text+"%");
         else {
         	User user = us.getUserByNickname(text);
-        	query.setParameter("userno", user.getUserNo());        	
+        	query.setParameter("userno", user.getUserNo());
         }
+        
+        String rangePost="";
+        if(rangeId==0)
+        	rangePost = "public";
+        else if(rangeId==1)
+        	rangePost = "임원";
+        else if(rangeId==2)
+        	rangePost = "팀장";
+        
+        query.setParameter("rangePost", rangePost);
     	query.setParameter("board_id", board_id);
         
         
