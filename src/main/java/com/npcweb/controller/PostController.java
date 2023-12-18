@@ -42,6 +42,8 @@ public class PostController {
 	    try {
 	        Post post = postService.readPost(post_id);
 	        if (post != null) {
+	        	System.out.println("token "+token);
+	        	
 	        	String jwtToken = token.replace("Bearer ", "").replace("\"", "");
 	            long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 	            
