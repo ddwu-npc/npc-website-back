@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
-public class RedisService {
+public class ReadCountService {
 	@Autowired
 	private PostService postService;
     @Autowired
@@ -54,7 +54,7 @@ public class RedisService {
     		// 유저가 읽은 게시글 ID 조회
     	    String[] readCountArray = readCountValue.split(" ");
     	    List<String> existingReads = Arrays.asList(readCountArray);
-
+    	    
     	    if (!existingReads.isEmpty()) {
     	        for (String existingId : existingReads) {
     	            if (String.valueOf(post_id).equals(existingId)) {
@@ -73,41 +73,36 @@ public class RedisService {
     	}
     }
     
-    // Redis와 DB의 조회수를 비교해 저장
+    // 조회수 불러오기
     @Transactional
     public int getReadCountByPost(long post_id) {
     	String readCountKey = "read by post:" + String.valueOf(post_id);
-    	String readCount = getData(readCountKey);
-    	
+    	String readCount = "0";
+    	if (getData(readCountKey) == null)
+    		setData(readCountKey, readCount);
+    	else 
+    		readCount = getData(readCountKey);
+    	    	
     	int readCountFromRedis = Integer.parseInt(readCount);
-        int readCountByDB = postService.getReadCount(post_id);
 
-        if (readCountByDB > readCountFromRedis) {
-            // Redis: 조회수 update
-            setData(readCountKey, String.valueOf(readCountByDB));
-        } else {
-            // Redis: 조회수를 1 증가시켜 update
-            int updatedCount = readCountFromRedis + 1;
-            setData(readCountKey, String.valueOf(updatedCount));
-            return updatedCount;
-        }
-    	
-    	return readCountByDB;
+        // Redis: 조회수를 1 증가시켜 update
+        int updatedCount = readCountFromRedis + 1;
+        setData(readCountKey, String.valueOf(updatedCount));
+        return updatedCount;
     }
     
     // 18초마다 Redis -> DB
  	@Scheduled(fixedDelay = 1000L*18L)
     @Transactional
     public void deleteReadCount() {
+    	 String readCountKey = "read by post:";
          Set<String> redisKey = redisTemplate.keys("read by post" + "*");
          for (String key : redisKey) {
         	 String post_id = key.split(":")[1];
-             if (getData(post_id) == null){
-                 break;
-             }
-             int readCount = Integer.parseInt(getData(post_id));
+        	 
+             int readCount = Integer.parseInt(getData(readCountKey + post_id));
              postService.updateReadCount(Long.parseLong(post_id), readCount);
-             redisTemplate.delete(post_id);
+             redisTemplate.delete(readCountKey + post_id);
          }
     }
  	

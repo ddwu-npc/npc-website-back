@@ -41,7 +41,7 @@ public class CommentController {
 
 	//insert
 	@PostMapping("/{postId}")
-	public void insertComment(HttpServletRequest request, @PathVariable long postId, @RequestBody CommentReq req, @RequestHeader("Authorization") String token) {
+	public void insertComment(@PathVariable long postId, @RequestBody CommentReq req, @RequestHeader("Authorization") String token) {
 		System.out.println("insert comment "+req.toString());
 		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");

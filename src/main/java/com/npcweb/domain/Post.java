@@ -36,7 +36,7 @@ public class Post implements Serializable {
 	int important;
 	
 	@Column(name="read_count")
-	long readCount;
+	int readCount;
 	
 	@Column(name="rangePost")
 	String rangePost;
@@ -113,11 +113,11 @@ public class Post implements Serializable {
 		this.important = important;
 	}
 
-	public long getReadCount() {
+	public int getReadCount() {
 		return readCount;
 	}
 
-	public void setReadCount(long readCount) {
+	public void setReadCount(int readCount) {
 		this.readCount = readCount;
 	}
 
