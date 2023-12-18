@@ -21,6 +21,7 @@ public class JpaCommentDAO implements CommentDAO {
 	
 	@Override
 	public void insertComment(Comment comment) throws DataAccessException {
+		System.out.println("insert comment");
 		em.persist(comment);
 	}
 	

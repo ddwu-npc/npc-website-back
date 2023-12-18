@@ -48,7 +48,7 @@ public class JpaPostDAO implements PostDAO {
 
 	@Override
 	public int getReadCountByPostId(long post_id) throws DataAccessException {
-		return em.find(Post.class, post_id).getReadCount();
+		return (int) em.find(Post.class, post_id).getReadCount();
 	}
 
 	@Override
