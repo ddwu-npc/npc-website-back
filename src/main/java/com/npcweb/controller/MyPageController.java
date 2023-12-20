@@ -1,6 +1,9 @@
 package com.npcweb.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +52,14 @@ public class MyPageController {
 
 		if (userno != 0) {
 			User u = userService.getUserByUserNo(userno);
-			res.setBirthday("2020-01-01"); // 임시
+			if (u.getBirthday() == null) {
+				res.setBirthday("2020-01-01"); // 임시
+			}
+			else {
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		        String birthday = format.format(u.getBirthday());
+				res.setBirthday(birthday); 	
+			}
 			res.setEmail(u.getEmail());
 			res.setNickname(u.getNickname());
 			res.setNpcPoint(u.getNpcPoint());
@@ -102,7 +112,16 @@ public class MyPageController {
 				
 				user.setNickname(req.getNickname());
 				user.setEmail(req.getEmail());
-		//		user.setBirthday(req.getBirthday());
+				
+				String str = req.getBirthday();
+	            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	            Date birthday = null;
+				try {
+					birthday = format.parse(str);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				user.setBirthday(birthday);
 				
 				userService.update(user);
 
