@@ -38,7 +38,7 @@ public class JpaCommentDAO implements CommentDAO {
 
 	@Override
 	public List<Comment> getAllComment(long post_id) throws DataAccessException {
-		String jpql = "SELECT c FROM Comment c WHERE c.postId = :postId";
+		String jpql = "SELECT c FROM Comment c WHERE c.postId = :postId ORDER BY c.commentId";
 	    TypedQuery<Comment> query = em.createQuery(jpql, Comment.class);
 	    query.setParameter("postId", post_id);
 	    return query.getResultList();
@@ -49,8 +49,9 @@ public class JpaCommentDAO implements CommentDAO {
 	public void deleteCommentList(long post_id) {
 		List<Comment> commList = getAllComment(post_id);
 		
-		for(Comment e : commList)
-			em.remove(e);
+		if(commList != null)
+			for(Comment e : commList)
+				em.remove(e);
 	}
 	
 	// 내가 쓴 댓글
