@@ -97,11 +97,8 @@ public class MyPageController {
 		@PutMapping("/update")
 		public ResponseEntity<?> updateUserInfo(HttpServletRequest request, @RequestBody MyPageReqRes req) {
 			
-			HttpSession session = request.getSession();
-			
-			if (session.getAttribute("userno") != null) {
-				long userNo = (long) session.getAttribute("userno");
-				User user = userService.getUserByUserNo(userNo);
+			if (req.getUserNo() != 0) {
+				User user = userService.getUserByUserNo(req.getUserNo());
 				
 				user.setNickname(req.getNickname());
 				user.setEmail(req.getEmail());
