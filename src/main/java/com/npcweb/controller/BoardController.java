@@ -26,7 +26,7 @@ public class BoardController {
 		List<Post> pList = boardService.getAllPostList(board_id);
 		return pList;
 	}
-	/*
+	
 	//게시글 검색
 	@PostMapping("/{board_id}/search")
 	public List<Post> postList(@PathVariable long board_id, @RequestBody Map<String, String> requestBody ) {
@@ -38,5 +38,4 @@ public class BoardController {
 		List<Post> pList = boardService.getAllPostListByKeyword(board_id, rangePost, searchRange, text);
 		return pList;
 	}
-	*/
 }
