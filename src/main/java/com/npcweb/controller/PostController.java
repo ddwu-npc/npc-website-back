@@ -53,15 +53,23 @@ public class PostController {
 	}
 	//create
 	@PostMapping("/{board_id}")
-	public void createPost(HttpServletRequest request, @PathVariable long board_id, @RequestBody PostReq req, @RequestHeader("Authorization") String token) {
+	public void createPost(@PathVariable long board_id, @RequestBody PostReq req, @RequestHeader("Authorization") String token) {
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 		
 		Post post = new Post();
-		post.setBoardId(board_id);
-		post.setContent(req.getContent());
+		post.setBoardId(board_id);		
+		if(req.getContent()==null)
+			post.setContent("");
+		else
+			post.setContent(req.getContent());
 		post.setCreateDate(new Date());
-		post.setImportant(req.getImportant());
+		
+		if(req.getImportant()==null)
+			post.setImportant(0);
+		else
+			post.setImportant(1);
+		
 		post.setReadCount(0);
 		post.setRangePost(req.getRangePost());
 		post.setTitle(req.getTitle());
@@ -75,8 +83,15 @@ public class PostController {
 		Post post = postService.readPost(post_id);
 		post.setPostId(post_id);
 		post.setBoardId(post.getBoardId());
-		post.setContent(req.getContent());
-		post.setImportant(req.getImportant());
+		if(req.getContent()==null)
+			post.setContent("");
+		else
+			post.setContent(req.getContent());
+		
+		if(req.getImportant()==null)
+			post.setImportant(0);
+		else
+			post.setImportant(1);
 		post.setUpdateDate(new Date());
 		post.setRangePost(req.getRangePost());
 		post.setTitle(req.getTitle());
@@ -106,9 +121,9 @@ public class PostController {
 }
 
 class PostReq {
-	private String title, content, rangePost;
+	private String title, content, rangePost, important;
 	private long userNo, boardId;
-	private int important, readCount;
+	private int readCount;
 	private Date create_date;
 
 	public PostReq() {}
@@ -133,7 +148,7 @@ class PostReq {
 		return boardId;
 	}
 
-	public int getImportant() {
+	public String getImportant() {
 		return important;
 	}
 
