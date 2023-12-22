@@ -98,6 +98,11 @@ public class PostController {
 	public long findBoard(@PathVariable long post_id) {
 		return postService.getBoardIdByPostId(post_id);
 	}
+	
+	@GetMapping("/find/{id}")
+	public long findUserByCommentId(@PathVariable long id) {
+		return postService.findUserByPostId(id);
+	}
 }
 
 class PostReq {

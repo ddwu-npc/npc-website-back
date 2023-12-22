@@ -21,7 +21,6 @@ public class JpaCommentDAO implements CommentDAO {
 	
 	@Override
 	public void insertComment(Comment comment) throws DataAccessException {
-		System.out.println("insert comment");
 		em.persist(comment);
 	}
 	
@@ -64,6 +63,10 @@ public class JpaCommentDAO implements CommentDAO {
 		List<Comment> userComments = query.getResultList();
 
 		return userComments;
+	}
+
+	public long findUserByCommentId(long commentId) {
+		return em.find(Comment.class, commentId).getUserNo();
 	}
 
 }

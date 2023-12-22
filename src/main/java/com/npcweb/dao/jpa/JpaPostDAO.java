@@ -42,7 +42,6 @@ public class JpaPostDAO implements PostDAO {
 
 	@Override
 	public long getBoardIdByPostId(long post_id) {
-		System.out.println("getBoardId "+readPost(post_id).getBoardId());
 		return readPost(post_id).getBoardId();
 	}
 
@@ -79,5 +78,10 @@ public class JpaPostDAO implements PostDAO {
 		List<Post> userPosts = query.getResultList();
 
 		return userPosts;
+	}
+
+	@Override
+	public long findUserByPostId(long postId) {
+		return readPost(postId).getUserNo();
 	}
 }

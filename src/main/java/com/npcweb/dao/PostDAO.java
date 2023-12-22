@@ -29,4 +29,6 @@ public interface PostDAO {
 	
 	// 내가 쓴 댓글의 게시물 정보
 	List<Post> getUserCommentPost(long userno) throws DataAccessException;
+
+	public long findUserByPostId(long postId);
 }
