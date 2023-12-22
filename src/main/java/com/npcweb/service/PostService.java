@@ -55,4 +55,7 @@ public class PostService {
 	public List<Post> getUserCommentPost(long userno){
 		return postDao.getUserCommentPost(userno);
 	}
+	public long findUserByPostId(long postId) {
+		return postDao.findUserByPostId(postId);
+	}
 }

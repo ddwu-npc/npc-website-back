@@ -30,9 +30,6 @@ public class Post implements Serializable {
 	@Column(name="update_date")
 	Date updateDate;
 	
-	@Column(name="delete_date")
-	Date deleteDate;
-	
 	int important;
 	
 	@Column(name="read_count")
@@ -95,14 +92,6 @@ public class Post implements Serializable {
 
 	public void setUpdateDate(Date updateteDate) {
 		this.updateDate = updateteDate;
-	}
-
-	public Date getDeleteDate() {
-		return deleteDate;
-	}
-
-	public void setDeleteDate(Date deleteDate) {
-		this.deleteDate = deleteDate;
 	}
 
 	public int getImportant() {

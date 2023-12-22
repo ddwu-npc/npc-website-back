@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -74,6 +75,11 @@ public class CommentController {
 	@DeleteMapping("/{commentId}")
 	public void deleteComment(@PathVariable long commentId) {
 		commentService.deleteComment(commentId);
+	}
+	
+	@GetMapping("/find/{id}")
+	public long findUserByCommentId(@PathVariable long id) {
+		return commentDao.findUserByCommentId(id);
 	}
 
 }
