@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,17 +35,10 @@ import com.npcweb.service.DeptService;
 @RestController
 @RequestMapping("/mypage")
 public class MyPageController {
-	private final UserService userService;
-	private final PostService postService;
-	private final CommentService commentService;
-	private final DeptService deptService;
-	
-	public MyPageController(UserService userService, PostService postService, CommentService commentService, DeptService deptService) {
-		this.userService = userService;
-		this.postService = postService;		
-		this.commentService = commentService;
-		this.deptService = deptService;
-	}	
+	@Autowired UserService userService;
+	@Autowired PostService postService;
+	@Autowired CommentService commentService;
+	@Autowired DeptService deptService;
 	
 	@GetMapping
 	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestParam long userno) {
@@ -88,16 +82,16 @@ public class MyPageController {
 			 List<Object> oList = new ArrayList<>();
 			
 			 List<Comment> cList = commentService.getUserCommentList(userno);
-			 List<Post> pList = postService.getUserCommentPost(userno);
 			 
 			 for (int i = 0; i < cList.size(); i++) {
 				 Map<String, Object> totalData = new HashMap<>();
+				 Post p = postService.findPost(cList.get(i).getPostId());
 		         totalData.put("commentId", cList.get(i).getCommentId());
 		         totalData.put("content", cList.get(i).getContent());
 		         totalData.put("createDate", cList.get(i).getCreateDate());
-		         totalData.put("title", pList.get(i).getTitle());
-		         totalData.put("postId", pList.get(i).getPostId());
-		         totalData.put("boardId", pList.get(i).getBoardId());
+		         totalData.put("title", p.getTitle());
+		         totalData.put("postId", p.getPostId());
+		         totalData.put("boardId", p.getBoardId());
 		         oList.add(totalData);
 			}
 			 
