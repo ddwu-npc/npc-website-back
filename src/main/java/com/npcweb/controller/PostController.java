@@ -63,7 +63,7 @@ public class PostController {
 	//create
 	@PostMapping(value="/{board_id}")
 	public void createPost(@PathVariable long board_id, 
-			@RequestParam(value = "attachment", required = false) MultipartFile[] files,
+			@RequestParam(value = "attachment", required = false) MultipartFile file,
 		    @RequestParam("title") String title,
 		    @RequestParam(value="content") String content,
 		    @RequestParam("rangePost") String rangePost,
@@ -72,21 +72,15 @@ public class PostController {
 		
 		//System.out.println("create Post "+title+" "+content+" "+rangePost+" "+important);
 		
-		System.out.println("files"+files);
-		for(MultipartFile mf : files) {
-			System.out.println("files "+mf.getOriginalFilename());
-		}
+		//프론트에서 파일이 하나여야 들어옴....일단 한다
+		if (file != null) {
+	        System.out.println("File Name: " + file.getOriginalFilename());
+	        System.out.println("File Size: " + file.getSize());
+	        System.out.println("File Content Type: " + file.getContentType());
+	    }
 		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
-        
-        /*
-        List<MultipartFile> files = req.getAttachment();
-        
-        for(MultipartFile mf : files) {
-        	System.out.println("파일 이름 "+mf.getName());
-        }
-		*/
         
 		Post post = new Post();
 		post.setBoardId(board_id);		
@@ -108,13 +102,12 @@ public class PostController {
 		
 		postService.insertPost(post);
 		
-		/*		
-		if (files != null && files.length > 0) {
+		if (file != null) {
+			System.out.println("here");
 			long createdPostId = postService.findLastPost();
 			
-			pfService.submitFileUpload(createdPostId, files);
+			pfService.submitFileUpload(createdPostId, file);
 	    }
-		*/
 	}
 	//update
 	@PutMapping("/{post_id}")
@@ -164,10 +157,6 @@ class PostReq {
 	private long userNo, boardId;
 	private int readCount;
 	private Date create_date;
-	//MultipartFile attachment; //400
-	//MultipartFile[] attachment;	//400
-	
-    //private List<MultipartFile> attachment;
 
 	public PostReq() {}
 
@@ -202,13 +191,4 @@ class PostReq {
 	public int getReadCount() {
 		return readCount;
 	}
-	/*
-	public MultipartFile[] getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(MultipartFile[] attachment) {
-        this.attachment = attachment;
-    }
-    */
 }

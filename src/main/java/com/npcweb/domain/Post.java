@@ -37,6 +37,17 @@ public class Post implements Serializable {
 	
 	@Column(name="rangePost")
 	String rangePost;
+	
+	@Column(name="postfile")
+	int havePostfile;
+
+	public int getHavePostfile() {
+		return havePostfile;
+	}
+
+	public void setHavePostfile(int havePostfile) {
+		this.havePostfile = havePostfile;
+	}
 
 	public long getPostId() {
 		return postId;
@@ -116,5 +127,5 @@ public class Post implements Serializable {
 
 	public void setRangePost(String rangePost) {
 		this.rangePost = rangePost;
-	}	
+	}
 }
