@@ -57,7 +57,9 @@ public class CommentController {
 
 		commentService.insertComment(comment);
 	}
-
+	
+	/*
+	 * 기능이 없어져 주석 처리됨. 나중에 필요시 주석 해제하고 쓸 것.
 	//update
 	@PutMapping("/{comment_id}")
 	public void updateComment(@RequestBody CommentReq req, @PathVariable long comment_id) {
@@ -70,7 +72,7 @@ public class CommentController {
 
 		commentService.updateComment(comm);
 	}
-
+	*/
 	//delete
 	@DeleteMapping("/{commentId}")
 	public void deleteComment(@PathVariable long commentId) {

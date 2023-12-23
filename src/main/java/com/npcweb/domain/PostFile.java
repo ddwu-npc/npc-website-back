@@ -13,7 +13,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name="FILE")
-public class File {
+public class PostFile {
 	@Id
 	@Column(name="file_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +22,32 @@ public class File {
 	@Column(name="post_id")
 	long postId;
 	
-	@Column
-	String filename;
-	@Column
-	String filepath;
+	@Column(name="org_file_name")
+	String orgName;
+	@Column(name="stored_file_name")
+	String sName;
 	
+	@Column
+	String filePath;
+	
+	public String getOrgName() {
+		return orgName;
+	}
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+	public String getsName() {
+		return sName;
+	}
+	public void setsName(String sName) {
+		this.sName = sName;
+	}
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 	public long getFileId() {
 		return fileId;
 	}
@@ -39,16 +60,5 @@ public class File {
 	public void setPostId(long postId) {
 		this.postId = postId;
 	}
-	public String getFilename() {
-		return filename;
-	}
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
-	public String getFilepath() {
-		return filepath;
-	}
-	public void setFilepath(String filepath) {
-		this.filepath = filepath;
-	}
+	
 }
