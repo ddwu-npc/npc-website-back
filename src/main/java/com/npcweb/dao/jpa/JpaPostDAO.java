@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.npcweb.dao.PostDAO;
+import com.npcweb.domain.Comment;
 import com.npcweb.domain.Post;
 
 import java.util.List;
@@ -83,5 +84,14 @@ public class JpaPostDAO implements PostDAO {
 	@Override
 	public long findUserByPostId(long postId) {
 		return readPost(postId).getUserNo();
+	}
+	
+	@Override
+	public long findLastPost() {
+		Post post = (Post) em.createQuery("SELECT p FROM Post p ORDER BY p.post_id DESC LIMIT 1").getSingleResult();
+		
+		System.out.println("findLastPost jpa "+post.getPostId());
+		
+		return post.getPostId();
 	}
 }

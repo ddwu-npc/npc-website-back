@@ -1,8 +1,9 @@
 package com.npcweb.controller;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Date;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.npcweb.domain.Post;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.PostService;
 import com.npcweb.service.ReadCountService;
 import com.npcweb.service.CommentService;
+import com.npcweb.service.PostFileService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -32,6 +37,10 @@ public class PostController {
 	@Autowired CommentService commentService;
 	@Autowired private JWTProvider jwtProvider;
 	@Autowired private ReadCountService readCountService;
+	@Autowired PostFileService pfService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+
 
 	//read
 	@GetMapping("/{post_id}")
@@ -52,30 +61,60 @@ public class PostController {
 	    }
 	}
 	//create
-	@PostMapping("/{board_id}")
-	public void createPost(@PathVariable long board_id, @RequestBody PostReq req, @RequestHeader("Authorization") String token) {
+	@PostMapping(value="/{board_id}")
+	public void createPost(@PathVariable long board_id, 
+			@RequestParam(value = "attachment", required = false) MultipartFile[] files,
+		    @RequestParam("title") String title,
+		    @RequestParam(value="content") String content,
+		    @RequestParam("rangePost") String rangePost,
+		    @RequestParam("important") String important,
+		    @RequestHeader("Authorization") String token) {
+		
+		//System.out.println("create Post "+title+" "+content+" "+rangePost+" "+important);
+		
+		System.out.println("files"+files);
+		for(MultipartFile mf : files) {
+			System.out.println("files "+mf.getOriginalFilename());
+		}
+		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
-		
+        
+        /*
+        List<MultipartFile> files = req.getAttachment();
+        
+        for(MultipartFile mf : files) {
+        	System.out.println("파일 이름 "+mf.getName());
+        }
+		*/
+        
 		Post post = new Post();
 		post.setBoardId(board_id);		
-		if(req.getContent()==null)
+		if(content==null)
 			post.setContent("");
 		else
-			post.setContent(req.getContent());
+			post.setContent(content);
 		post.setCreateDate(new Date());
 		
-		if(req.getImportant()==null)
-			post.setImportant(0);
-		else
+		if(important.equals("on"))
 			post.setImportant(1);
+		else
+			post.setImportant(0);
 		
 		post.setReadCount(0);
-		post.setRangePost(req.getRangePost());
-		post.setTitle(req.getTitle());
+		post.setRangePost(rangePost);
+		post.setTitle(title);
 		post.setUserNo(userNo);
-
+		
 		postService.insertPost(post);
+		
+		/*		
+		if (files != null && files.length > 0) {
+			long createdPostId = postService.findLastPost();
+			
+			pfService.submitFileUpload(createdPostId, files);
+	    }
+		*/
 	}
 	//update
 	@PutMapping("/{post_id}")
@@ -125,6 +164,10 @@ class PostReq {
 	private long userNo, boardId;
 	private int readCount;
 	private Date create_date;
+	//MultipartFile attachment; //400
+	//MultipartFile[] attachment;	//400
+	
+    //private List<MultipartFile> attachment;
 
 	public PostReq() {}
 
@@ -159,11 +202,13 @@ class PostReq {
 	public int getReadCount() {
 		return readCount;
 	}
+	/*
+	public MultipartFile[] getAttachment() {
+        return attachment;
+    }
 
-	@Override
-	public String toString() {
-		return "PostReq [title=" + title + ", content=" + content + ", rangePost=" + rangePost + ", userNo=" + userNo
-				+ ", boardId=" + boardId + ", important=" + important + ", readCount=" + readCount + ", create_date="
-				+ create_date + "]";
-	}
+    public void setAttachment(MultipartFile[] attachment) {
+        this.attachment = attachment;
+    }
+    */
 }
