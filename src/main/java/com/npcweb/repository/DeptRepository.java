@@ -4,5 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.npcweb.domain.Dept;
 
-public interface DeptRepository extends CrudRepository<Dept, Long> {
+public interface DeptRepository extends CrudRepository<Dept, Integer> {
+	public Dept findByDname(String dname);
 }

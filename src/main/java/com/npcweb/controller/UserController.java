@@ -1,5 +1,6 @@
 package com.npcweb.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +18,7 @@ import com.npcweb.service.UserService;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-	private final UserService userService;
-	
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
+	@Autowired UserService userService;
 	
 	// 회원 가입
 	@PostMapping

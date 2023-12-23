@@ -9,15 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,25 +25,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.npcweb.domain.User;
 import com.npcweb.domain.Post;
 import com.npcweb.domain.Comment;
-import com.npcweb.security.JWTProvider;
+import com.npcweb.domain.Dept;
 import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
 import com.npcweb.service.CommentService;
+import com.npcweb.service.DeptService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/mypage")
 public class MyPageController {
-	private final UserService userService;
-	private final PostService postService;
-	private final CommentService commentService;
-	private JWTProvider jwtProvider = new JWTProvider();
-	
-	public MyPageController(UserService userService, PostService postService, CommentService commentService) {
-		this.userService = userService;
-		this.postService = postService;		
-		this.commentService = commentService;
-	}
+	@Autowired UserService userService;
+	@Autowired PostService postService;
+	@Autowired CommentService commentService;
+	@Autowired DeptService deptService;
 	
 	@GetMapping
 	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestParam long userno) {
@@ -52,6 +46,7 @@ public class MyPageController {
 
 		if (userno != 0) {
 			User u = userService.getUserByUserNo(userno);
+			
 			if (u.getBirthday() == null) {
 				res.setBirthday("2020-01-01"); // 임시
 			}
@@ -64,7 +59,7 @@ public class MyPageController {
 			res.setNickname(u.getNickname());
 			res.setNpcPoint(u.getNpcPoint());
 			res.setProfile("profile"); // 임시
-			res.setRank(u.getRank());
+			res.setDname(u.getDept().getDname());
 			res.setUserId(u.getUserId());
 			
 			return ResponseEntity.ok(res);
@@ -87,16 +82,16 @@ public class MyPageController {
 			 List<Object> oList = new ArrayList<>();
 			
 			 List<Comment> cList = commentService.getUserCommentList(userno);
-			 List<Post> pList = postService.getUserCommentPost(userno);
 			 
 			 for (int i = 0; i < cList.size(); i++) {
 				 Map<String, Object> totalData = new HashMap<>();
+				 Post p = postService.findPost(cList.get(i).getPostId());
 		         totalData.put("commentId", cList.get(i).getCommentId());
 		         totalData.put("content", cList.get(i).getContent());
 		         totalData.put("createDate", cList.get(i).getCreateDate());
-		         totalData.put("title", pList.get(i).getTitle());
-		         totalData.put("postId", pList.get(i).getPostId());
-		         totalData.put("boardId", pList.get(i).getBoardId());
+		         totalData.put("title", p.getTitle());
+		         totalData.put("postId", p.getPostId());
+		         totalData.put("boardId", p.getBoardId());
 		         oList.add(totalData);
 			}
 			 
@@ -112,6 +107,8 @@ public class MyPageController {
 				
 				user.setNickname(req.getNickname());
 				user.setEmail(req.getEmail());
+				Dept d = deptService.findDeptByDname(req.getDname());
+				user.setDept(d);
 				
 				String str = req.getBirthday();
 	            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -135,7 +132,8 @@ class MyPageReqRes {
 	String userId, nickname, profile, email, birthday;
 	int npcPoint, rank;
 	long userNo;
-//	int deptno, pid;
+	String dname;
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -159,6 +157,9 @@ class MyPageReqRes {
 	}
 	public long getUserNo() {
 		return userNo;
+	}
+	public String getDname() {
+		return dname;
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -184,18 +185,8 @@ class MyPageReqRes {
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
 	}
-	
+	public void setDname(String dname) {
+		this.dname = dname;
+	}
 
-//	public int getDeptno() {
-//		return deptno;
-//	}
-//	public void setDeptno(int deptno) {
-//		this.deptno = deptno;
-//	}
-//	public int getPid() {
-//		return pid;
-//	}
-//	public void setPid(int pid) {
-//		this.pid = pid;
-//	}
 }

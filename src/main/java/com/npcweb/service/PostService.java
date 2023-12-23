@@ -24,6 +24,11 @@ public class PostService {
 	public Post readPost(long post_id) {
 		return postDao.readPost(post_id);
 	}
+	
+	public Post findPost(long post_id) {
+		return postRepo.findById(post_id).get();
+	}
+	
 	//게시글 수정
 	public void updatePost(Post post) {
 		postDao.updatePost(post);
