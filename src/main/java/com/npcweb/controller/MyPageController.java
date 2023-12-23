@@ -113,9 +113,11 @@ public class MyPageController {
 			
 			if (req.getUserNo() != 0) {
 				User user = userService.getUserByUserNo(req.getUserNo());
+				int deptNum = deptService.findDeptnoByDname(req.getDname());
 				
 				user.setNickname(req.getNickname());
 				user.setEmail(req.getEmail());
+				user.setDeptno(deptNum);
 				
 				String str = req.getBirthday();
 	            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

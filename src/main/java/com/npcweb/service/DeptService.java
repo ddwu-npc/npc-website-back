@@ -18,4 +18,7 @@ public class DeptService{
 		return deptDao.findDnameByDeptno(deptno);
 	}
 	
+	public int findDeptnoByDname(String dname) {
+		return deptDao.findDeptnoByDname(dname);
+	}
 }
