@@ -54,8 +54,10 @@ public class JpaPostDAO implements PostDAO {
 	@Override
 	public void updateReadCount(long post_id, int readCount) {
 		Post p = em.find(Post.class, post_id);
-		p.setReadCount(readCount);;
-		em.merge(p);
+		if(p!=null) {
+			p.setReadCount(readCount);;
+			em.merge(p);
+		}
 	}
 	
 	@Override
@@ -88,7 +90,9 @@ public class JpaPostDAO implements PostDAO {
 	
 	@Override
 	public long findLastPost() {
-		Post post = (Post) em.createQuery("SELECT p FROM Post p ORDER BY p.post_id DESC LIMIT 1").getSingleResult();
+		Post post = (Post) em.createQuery("SELECT p FROM Post p ORDER BY p.postId DESC")
+                .setMaxResults(1)
+                .getSingleResult();
 		
 		System.out.println("findLastPost jpa "+post.getPostId());
 		
