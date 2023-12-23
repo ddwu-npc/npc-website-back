@@ -22,4 +22,9 @@ public class JpaDeptDAO {
 	public void updateDept(Dept dept) throws DataAccessException {
         em.merge(dept);
 	}
+	
+	public String findDnameByDeptno(int deptno) throws DataAccessException {
+        Dept d = em.find(Dept.class, deptno);
+        return d.getDname();
+	}
 }

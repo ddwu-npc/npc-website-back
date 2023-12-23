@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +29,7 @@ import com.npcweb.security.JWTProvider;
 import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
 import com.npcweb.service.CommentService;
+import com.npcweb.service.DeptService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -38,12 +38,14 @@ public class MyPageController {
 	private final UserService userService;
 	private final PostService postService;
 	private final CommentService commentService;
+	private final DeptService deptService;
 	private JWTProvider jwtProvider = new JWTProvider();
 	
-	public MyPageController(UserService userService, PostService postService, CommentService commentService) {
+	public MyPageController(UserService userService, PostService postService, CommentService commentService, DeptService deptService) {
 		this.userService = userService;
 		this.postService = postService;		
 		this.commentService = commentService;
+		this.deptService = deptService;
 	}
 	
 	@GetMapping
@@ -52,6 +54,8 @@ public class MyPageController {
 
 		if (userno != 0) {
 			User u = userService.getUserByUserNo(userno);
+			String deptName = deptService.findDnameByDeptno(u.getDeptno());
+			
 			if (u.getBirthday() == null) {
 				res.setBirthday("2020-01-01"); // 임시
 			}
@@ -64,7 +68,7 @@ public class MyPageController {
 			res.setNickname(u.getNickname());
 			res.setNpcPoint(u.getNpcPoint());
 			res.setProfile("profile"); // 임시
-			res.setRank(u.getRank());
+			res.setDname(deptName);
 			res.setUserId(u.getUserId());
 			
 			return ResponseEntity.ok(res);
@@ -135,7 +139,8 @@ class MyPageReqRes {
 	String userId, nickname, profile, email, birthday;
 	int npcPoint, rank;
 	long userNo;
-//	int deptno, pid;
+	String dname;
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -159,6 +164,9 @@ class MyPageReqRes {
 	}
 	public long getUserNo() {
 		return userNo;
+	}
+	public String getDname() {
+		return dname;
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
@@ -184,18 +192,8 @@ class MyPageReqRes {
 	public void setUserNo(long userNo) {
 		this.userNo = userNo;
 	}
-	
+	public void setDname(String dname) {
+		this.dname = dname;
+	}
 
-//	public int getDeptno() {
-//		return deptno;
-//	}
-//	public void setDeptno(int deptno) {
-//		this.deptno = deptno;
-//	}
-//	public int getPid() {
-//		return pid;
-//	}
-//	public void setPid(int pid) {
-//		this.pid = pid;
-//	}
 }
