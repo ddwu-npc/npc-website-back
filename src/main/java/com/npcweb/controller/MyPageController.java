@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.npcweb.domain.User;
 import com.npcweb.domain.Post;
 import com.npcweb.domain.Comment;
-import com.npcweb.security.JWTProvider;
+import com.npcweb.domain.Dept;
 import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
 import com.npcweb.service.CommentService;
@@ -39,14 +38,13 @@ public class MyPageController {
 	private final PostService postService;
 	private final CommentService commentService;
 	private final DeptService deptService;
-	private JWTProvider jwtProvider = new JWTProvider();
 	
 	public MyPageController(UserService userService, PostService postService, CommentService commentService, DeptService deptService) {
 		this.userService = userService;
 		this.postService = postService;		
 		this.commentService = commentService;
 		this.deptService = deptService;
-	}
+	}	
 	
 	@GetMapping
 	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestParam long userno) {
@@ -54,7 +52,6 @@ public class MyPageController {
 
 		if (userno != 0) {
 			User u = userService.getUserByUserNo(userno);
-			String deptName = deptService.findDnameByDeptno(u.getDeptno());
 			
 			if (u.getBirthday() == null) {
 				res.setBirthday("2020-01-01"); // 임시
@@ -68,7 +65,7 @@ public class MyPageController {
 			res.setNickname(u.getNickname());
 			res.setNpcPoint(u.getNpcPoint());
 			res.setProfile("profile"); // 임시
-			res.setDname(deptName);
+			res.setDname(u.getDept().getDname());
 			res.setUserId(u.getUserId());
 			
 			return ResponseEntity.ok(res);
@@ -113,11 +110,11 @@ public class MyPageController {
 			
 			if (req.getUserNo() != 0) {
 				User user = userService.getUserByUserNo(req.getUserNo());
-				int deptNum = deptService.findDeptnoByDname(req.getDname());
 				
 				user.setNickname(req.getNickname());
 				user.setEmail(req.getEmail());
-				user.setDeptno(deptNum);
+				Dept d = deptService.findDeptByDname(req.getDname());
+				user.setDept(d);
 				
 				String str = req.getBirthday();
 	            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

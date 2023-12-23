@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -27,7 +29,10 @@ public class User {
 	int rank;
 	@Column(name="npc_point")
 	int npcPoint;
-	int deptno;
+	
+	@OneToOne
+	@JoinColumn(name = "deptno")
+	private Dept dept;
 	
 	public User() {
 		
@@ -41,7 +46,7 @@ public class User {
 	}
 	
 	public User(long userNo, String userId, String userPw, String nickname, String email, Date recentDate,
-			Date birthday, int rank, int npcPoint, int deptno) {
+			Date birthday, int rank, int npcPoint, Dept dept) {
 		super();
 		this.userNo = userNo;
 		this.userId = userId;
@@ -52,7 +57,7 @@ public class User {
 		this.birthday = birthday;
 		this.rank = rank;
 		this.npcPoint = npcPoint;
-		this.deptno = deptno;
+		this.dept = dept;
 	}
 
 	public long getUserNo() {
@@ -125,12 +130,12 @@ public class User {
 		this.profile = profile;
 	}
 
-	public int getDeptno() {
-		return deptno;
+	public Dept getDept() {
+		return dept;
 	}
 
-	public void setDeptno(int deptno) {
-		this.deptno = deptno;
+	public void setDept(Dept dept) {
+		this.dept = dept;
 	}
 	
 }
