@@ -63,7 +63,4 @@ public class PostService {
 	public long findUserByPostId(long postId) {
 		return postDao.findUserByPostId(postId);
 	}
-	public long findLastPost() {
-		return postDao.findLastPost();
-	}
 }

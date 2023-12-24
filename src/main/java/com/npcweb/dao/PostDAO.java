@@ -31,6 +31,4 @@ public interface PostDAO {
 	List<Post> getUserCommentPost(long userno) throws DataAccessException;
 
 	public long findUserByPostId(long postId);
-
-	public long findLastPost();
 }

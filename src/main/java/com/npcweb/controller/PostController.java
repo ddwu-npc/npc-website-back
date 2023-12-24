@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.npcweb.domain.Post;
+import com.npcweb.domain.PostFile;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.PostService;
 import com.npcweb.service.ReadCountService;
@@ -56,7 +57,6 @@ public class PostController {
 	            return ResponseEntity.notFound().build();
 	        }
 	    } catch (Exception e) {
-	        // Handle the exception and return an error response
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    }
 	}
@@ -69,8 +69,6 @@ public class PostController {
 		    @RequestParam("rangePost") String rangePost,
 		    @RequestParam("important") String important,
 		    @RequestHeader("Authorization") String token) {
-		
-		//System.out.println("create Post "+title+" "+content+" "+rangePost+" "+important);
 		
 		//프론트에서 파일이 하나여야 들어옴....일단 한다
 		if (file != null) {
@@ -104,9 +102,9 @@ public class PostController {
 		
 		if (file != null) {
 			System.out.println("here");
-			long createdPostId = postService.findLastPost();
+			post.setHavePostfile(1);
 			
-			pfService.submitFileUpload(createdPostId, file);
+			pfService.submitFileUpload(file, post);
 	    }
 	}
 	//update

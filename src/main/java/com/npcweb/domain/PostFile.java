@@ -2,9 +2,12 @@ package com.npcweb.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -16,9 +19,6 @@ public class PostFile {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long fileId;
 	
-	@Column(name="post_id")
-	long postId;
-	
 	@Column(name="org_file_name")
 	String orgName;
 	@Column(name="stored_file_name")
@@ -26,6 +26,10 @@ public class PostFile {
 	
 	@Column
 	String filePath;
+
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 	
 	public String getOrgName() {
 		return orgName;
@@ -51,11 +55,10 @@ public class PostFile {
 	public void setFileId(long fileId) {
 		this.fileId = fileId;
 	}
-	public long getPostId() {
-		return postId;
+	public Post getPost() {
+		return post;
 	}
-	public void setPostId(long postId) {
-		this.postId = postId;
+	public void setPost(Post post) {
+		this.post = post;
 	}
-	
 }
