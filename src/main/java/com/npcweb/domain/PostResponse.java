@@ -1,14 +1,11 @@
 package com.npcweb.domain;
 
-import java.util.Date;
-
 public class PostResponse {
 	private long postId, boardId, userNo;
-	private String title, content;
-	private Date createDate, updateDate;
-	private int important, readCount;
+	private String title;
+	private String createDate, updateDate;
+	private int important;
 	private String rangePost;
-	private int havePostfile;
 	
 	public PostResponse(Post p) {
 		super();
@@ -16,13 +13,10 @@ public class PostResponse {
 		this.boardId = p.getBoardId();
 		this.userNo = p.getUserNo();
 		this.title = p.getTitle();
-		this.content = p.getContent();
-		this.createDate = p.getCreateDate();
-		this.updateDate = p.getUpdateDate();
+		this.createDate = p.getFormattedCreateDate();
+		this.updateDate = p.getFormattedUpdateDate();
 		this.important = p.getImportant();
-		this.readCount = p.getReadCount();
 		this.rangePost = p.getRangePost();
-		this.havePostfile = p.getHavePostfile();
 	}
 	
 	public long getPostId() {
@@ -37,25 +31,16 @@ public class PostResponse {
 	public String getTitle() {
 		return title;
 	}
-	public String getContent() {
-		return content;
-	}
-	public Date getCreateDate() {
+	public String getCreateDate() {
 		return createDate;
 	}
-	public Date getUpdateDate() {
+	public String getUpdateDate() {
 		return updateDate;
 	}
 	public int getImportant() {
 		return important;
 	}
-	public int getReadCount() {
-		return readCount;
-	}
 	public String getRangePost() {
 		return rangePost;
-	}
-	public int getHavePostfile() {
-		return havePostfile;
 	}
 }

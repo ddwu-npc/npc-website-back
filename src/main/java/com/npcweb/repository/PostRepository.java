@@ -19,4 +19,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	//게시글 검색 - 게시글 기능
 	//List<Post> findPostByTitle(String title);
 	//게시글 검색 - 마이페이지(도경님)
+
+	Page<Post> findAllByBoardId(long boardId, Pageable pageable);
 }

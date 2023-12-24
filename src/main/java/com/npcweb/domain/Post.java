@@ -1,6 +1,7 @@
 package com.npcweb.domain;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -127,5 +128,17 @@ public class Post implements Serializable {
 
 	public void setRangePost(String rangePost) {
 		this.rangePost = rangePost;
+	}
+	
+	// 날짜 변환
+	public String getFormattedCreateDate() {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    return dateFormat.format(createDate);
+	}
+	public String getFormattedUpdateDate() {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    if (updateDate != null)
+	    	return dateFormat.format(updateDate);
+	    else return null;
 	}
 }

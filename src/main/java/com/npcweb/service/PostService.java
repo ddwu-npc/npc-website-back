@@ -69,18 +69,31 @@ public class PostService {
 		return postDao.findUserByPostId(postId);
 	}
 	
-	//페이징
+	/* 전체 페이징
 	public Page<PostResponse> paging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
         int pageLimit = 10; // 한페이지에 보여줄 글 개수
  
-        // 한 페이지당 3개식 글을 보여주고 정렬 기준은 ID기준으로 내림차순
         Page<Post> postsPages = postRepo.findAll(PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "postId")));
  
-        // 목록 : id, title, content, author
         Page<PostResponse> postsResponseDtos = postsPages.map(
                 postPage -> new PostResponse(postPage));
  
         return postsResponseDtos;
     }
+    */
+	
+	// 게시판별 페이징
+	public Page<PostResponse> pagingByBoard(Pageable pageable, long boardId) {
+	    int page = pageable.getPageNumber(); // page 위치에 있는 값은 0부터 시작한다.
+	    int pageLimit = 10; // 한 페이지에 보여줄 글 개수
+
+	    Pageable p = PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "postId"));
+	    Page<Post> postsPages = postRepo.findAllByBoardId(boardId, p);
+
+	    Page<PostResponse> postsResponseDtos = postsPages.map(PostResponse::new);
+
+	    return postsResponseDtos;
+	}
+
 }
