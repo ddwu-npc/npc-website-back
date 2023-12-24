@@ -1,5 +1,6 @@
 package com.npcweb.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -90,5 +91,14 @@ public class Project {
 		this.process = process;
 	}
 	
+	// 날짜 변환
+	public String getFormattedStartDate() {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    return dateFormat.format(startDate);
+	}
 	
+	public String getFormattedEndDate() {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    return dateFormat.format(endDate);
+	}
 }

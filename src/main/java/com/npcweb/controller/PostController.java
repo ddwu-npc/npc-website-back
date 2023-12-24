@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.npcweb.domain.Post;
 import com.npcweb.domain.PostFile;
-import com.npcweb.domain.PostResponse;
+import com.npcweb.domain.response.PostResponse;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.PostService;
 import com.npcweb.service.ReadCountService;

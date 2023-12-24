@@ -1,4 +1,6 @@
-package com.npcweb.domain;
+package com.npcweb.domain.response;
+
+import com.npcweb.domain.Post;
 
 public class PostResponse {
 	private long postId, boardId, userNo;

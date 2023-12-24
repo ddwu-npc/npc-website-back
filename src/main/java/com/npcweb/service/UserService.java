@@ -17,6 +17,11 @@ public class UserService {
 	public void insert(User user) {
 		userRepo.save(user);
 	}	
+	
+	public String getNickname(long userNo) {
+		return userRepo.findById(userNo).get().getNickname();
+	}
+	
 	public User getUserByUserId(String userId) {
 		return userRepo.findByUserId(userId);
 	}
