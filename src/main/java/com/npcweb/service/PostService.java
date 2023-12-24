@@ -72,7 +72,7 @@ public class PostService {
 	/* 전체 페이징
 	public Page<PostResponse> paging(Pageable pageable) {
         int page = pageable.getPageNumber() - 1; // page 위치에 있는 값은 0부터 시작한다.
-        int pageLimit = 10; // 한페이지에 보여줄 글 개수
+        int pageLimit = 11; // 한페이지에 보여줄 글 개수
  
         Page<Post> postsPages = postRepo.findAll(PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "postId")));
  
@@ -86,7 +86,7 @@ public class PostService {
 	// 게시판별 페이징
 	public Page<PostResponse> pagingByBoard(Pageable pageable, long boardId) {
 	    int page = pageable.getPageNumber(); // page 위치에 있는 값은 0부터 시작한다.
-	    int pageLimit = 10; // 한 페이지에 보여줄 글 개수
+	    int pageLimit = 11; // 한 페이지에 보여줄 글 개수
 
 	    Pageable p = PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "postId"));
 	    Page<Post> postsPages = postRepo.findAllByBoardId(boardId, p);
