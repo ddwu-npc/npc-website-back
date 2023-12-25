@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.UserResponse;
 import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -29,14 +30,11 @@ public class UserController {
 	
 	// 타인의 정보기 때문에 제한적으로 전달
 	@GetMapping("/{userNo}")
-	public ResponseEntity<UserRes> getUser(@PathVariable("userNo") long userNo) {
-		User u = userService.getUserByUserNo(userNo);
-		UserRes res = new UserRes();
-		res.setNickname(u.getNickname());
-		res.setProfile(u.getNickname());
-		res.setUserNo(userNo);
+	public ResponseEntity<UserResponse> getUser(@PathVariable("userNo") long userNo) {
+		User user = userService.getUserByUserNo(userNo);
+		UserResponse resUser = new UserResponse(user);
 		
-		return ResponseEntity.ok(res);
+		return ResponseEntity.ok(resUser);
 	}
 
 	@PutMapping("/{userId}/password")
@@ -55,29 +53,4 @@ class ChangePasswordRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-}
-
-class UserRes {
-	long userNo;
-	String nickname; String profile;
-
-	public long getUserNo() {
-		return userNo;
-	}
-	public String getNickname() {
-		return nickname;
-	}
-	public String getProfile() {
-		return profile;
-	}
-	public void setUserNo(long userNo) {
-		this.userNo = userNo;
-	}
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-	public void setProfile(String profile) {
-		this.profile = profile;
-	}
-	
 }

@@ -1,6 +1,7 @@
 package com.npcweb.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.service.ProjectService;
+import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -23,6 +26,8 @@ import com.npcweb.service.ProjectService;
 public class ProjectController {
 	@Autowired
 	ProjectService projectService;
+	@Autowired
+	UserService userService;
 	
 	@RequestMapping
 	public List<Project> getProjectList() {
@@ -33,7 +38,14 @@ public class ProjectController {
 	@GetMapping("/{project_id}")
 	public ProjectReq getProjectInfo(@PathVariable long project_id) {
 		ProjectReq req = new ProjectReq();
-		req.setP(projectService.getProject(project_id));
+		// projectRes
+		Project project = projectService.getProject(project_id);
+		ProjectResponse projectRes = new ProjectResponse(project);
+		long leader = Long.parseLong(projectRes.getLeader());
+		projectRes.setNickname(userService.getNickname(leader));
+		req.setProjectRes(projectRes);
+		// userList
+		// 작성 필요
 		
 		return req;
 	}
@@ -49,28 +61,30 @@ public class ProjectController {
 	}
 	
 	class ProjectReq {
-		Project project;
-		List<String> userList = new ArrayList<String>();
+		ProjectResponse projectRes;
+		HashMap<String, String> userList = new HashMap<String, String>();
 		
 		public ProjectReq() {
-			userList.add("1118");
-		}
-		
-		public Project getProject() {
-			return project;
-		}
-		public void setP(Project p) {
-			this.project = p;
+			// 이 부분 DB 연동 필요
+			// 프로젝트 가입 시 DB에 반영되야함. 여기서는 부서랑 닉네임만 출력
+			userList.put("1118", "개발팀");
 		}
 
-		public List<String> getUserList() {
+		public ProjectResponse getProjectRes() {
+			return projectRes;
+		}
+
+		public HashMap<String, String> getUserList() {
 			return userList;
 		}
-
-		public void setUserList(List<String> userList) {
-			this.userList = userList;
+		
+		public void setProjectRes(ProjectResponse projectRes) {
+			this.projectRes = projectRes;
 		}
 		
-		
+		public void setUserList(HashMap<String, String> userList) {
+			this.userList = userList;
+		}
+
 	}
 }
