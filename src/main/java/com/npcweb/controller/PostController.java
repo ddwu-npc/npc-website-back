@@ -2,13 +2,9 @@ package com.npcweb.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
-import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.npcweb.domain.Post;
-import com.npcweb.domain.PostFile;
-import com.npcweb.domain.response.PostResponse;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.PostService;
 import com.npcweb.service.ReadCountService;
@@ -74,11 +67,6 @@ public class PostController {
 		    @RequestHeader("Authorization") String token) {
 		
 		//프론트에서 파일이 하나여야 들어옴....일단 한다
-		if (file != null) {
-	        System.out.println("File Name: " + file.getOriginalFilename());
-	        System.out.println("File Size: " + file.getSize());
-	        System.out.println("File Content Type: " + file.getContentType());
-	    }
 		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
@@ -104,7 +92,6 @@ public class PostController {
 		postService.insertPost(post);
 		
 		if (file != null) {
-			System.out.println("here");
 			post.setHavePostfile(1);
 			
 			pfService.submitFileUpload(file, post);
@@ -138,6 +125,7 @@ public class PostController {
 		Post post = postService.readPost(post_id);
 		postService.deletePost(post);
 		commentService.deleteCommentList(post_id);
+		pfService.deleteFile(post_id);
 		
 		return post.getBoardId();
 	}

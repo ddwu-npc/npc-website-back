@@ -2,11 +2,15 @@ package com.npcweb.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +22,10 @@ import com.npcweb.domain.PostFile;
 public class PostFileService {
 	@Autowired JpaPostFileDAO pfDao;
 	
+	@Value("${file.upload.path}")
+	private String upPath;
+	
+	@Transactional
 	public void submitFileUpload(MultipartFile uploadFile, Post post) {
 		
 		if(uploadFile == null)
@@ -26,20 +34,20 @@ public class PostFileService {
         try {
         	String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
-            String uploadPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+            //String uploadPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files\\";
             
             String uuid = UUID.randomUUID().toString();
 
-            String savefileName = uploadPath + File.separator + uuid + "_" + fileName;
+            String savefileName = upPath + File.separator + uuid + "_" + fileName;
 
             Path savePath = Paths.get(savefileName);
-            
+            Files.createDirectories(savePath.getParent());
         	uploadFile.transferTo(savePath);
             
             PostFile pf = new PostFile();
-            pf.setFilePath(uploadPath);
+            pf.setFilePath(upPath);
             pf.setOrgName(originalName);
-            pf.setsName(fileName);
+            pf.setsName(savefileName);
             pf.setPost(post);
             
             pfDao.insertFile(pf);
@@ -47,21 +55,13 @@ public class PostFileService {
             e.printStackTrace();
         }
     }
-	/*
-	// 다운로드 API 구현 (파일명을 받아서 해당 파일을 응답으로 전송)
-    @GetMapping("/download/{filename}")
-    public ResponseEntity<PostFile> downloadFile(@PathVariable String filename) {
-        // 파일 다운로드 로직을 구현
-        // ...
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
-    }
-    */
 	
 	//read
 	public PostFile readFile(long post_id) {
 		return pfDao.readFile(post_id);
+	}
+
+	public void deleteFile(long post_id) {
+		pfDao.deleteFile(post_id);
 	}
 }
