@@ -3,6 +3,7 @@ package com.npcweb.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,15 +39,22 @@ public class ProjectController {
 	@GetMapping("/{project_id}")
 	public ProjectReq getProjectInfo(@PathVariable long project_id) {
 		ProjectReq req = new ProjectReq();
-		// projectRes
+		
+		// projectRes로 전달
 		Project project = projectService.getProject(project_id);
 		ProjectResponse projectRes = new ProjectResponse(project);
 		long leader = Long.parseLong(projectRes.getLeader());
 		projectRes.setNickname(userService.getNickname(leader));
 		req.setProjectRes(projectRes);
-		// userList
-		// 작성 필요
 		
+		// userList
+		Set<User> userList = project.getUser();
+		HashMap<String, String> userListRes = new HashMap<String, String>();
+		
+		for (User user : userList) {
+			userListRes.put(user.getNickname(), user.getDept().getDname());
+		}
+		req.setUserList(userListRes);
 		return req;
 	}
 	
@@ -65,9 +73,6 @@ public class ProjectController {
 		HashMap<String, String> userList = new HashMap<String, String>();
 		
 		public ProjectReq() {
-			// 이 부분 DB 연동 필요
-			// 프로젝트 가입 시 DB에 반영되야함. 여기서는 부서랑 닉네임만 출력
-			userList.put("1118", "개발팀");
 		}
 
 		public ProjectResponse getProjectRes() {

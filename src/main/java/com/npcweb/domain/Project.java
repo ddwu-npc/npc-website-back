@@ -2,11 +2,14 @@ package com.npcweb.domain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -19,6 +22,9 @@ public class Project {
 	String pname, tname, content, type, process;
 	Date startDate, endDate;
 	
+    @ManyToMany(mappedBy = "PROJECT")
+    private Set<User> USER = new HashSet<>();
+    
 	public long getPid() {
 		return pid;
 	}
@@ -100,5 +106,13 @@ public class Project {
 	public String getFormattedEndDate() {
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    return dateFormat.format(endDate);
+	}
+
+	public Set<User> getUser() {
+		return USER;
+	}
+
+	public void setUser(Set<User> USER) {
+		this.USER = USER;
 	}
 }
