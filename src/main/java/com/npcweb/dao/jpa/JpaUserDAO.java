@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import com.npcweb.domain.Dept;
 import com.npcweb.domain.User;
 
 @Repository
@@ -45,6 +46,7 @@ public class JpaUserDAO {
 		
 		try {
 			user = query.getSingleResult();
+			user.setDept(new Dept());;
 		} catch(NoResultException ex) {
 			return null;
 		}

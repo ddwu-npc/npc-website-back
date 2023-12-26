@@ -1,23 +1,25 @@
 package com.npcweb.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="DEPT")
 public class Dept {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int deptno;
 	private String dname;
 
-	@OneToOne(mappedBy = "dept")
-	private User user;
-	
+    @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL)
+    private List<User> users = new ArrayList<>();
 	
 	public int getDeptno() {
 		return deptno;
@@ -34,6 +36,13 @@ public class Dept {
 	public void setDname(String dname) {
 		this.dname = dname;
 	}
-	
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
 	
 }
