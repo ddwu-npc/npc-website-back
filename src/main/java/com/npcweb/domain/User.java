@@ -33,7 +33,7 @@ public class User {
 	Date birthday;
 	int rank;
 	@Column(name="npc_point")
-	int npcPoint;
+	int npcPoint; 
 	
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "deptno")

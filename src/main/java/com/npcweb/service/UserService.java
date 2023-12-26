@@ -32,7 +32,7 @@ public class UserService {
 	
 	public User getUserByUserPw(String userId, String userPw) {
 		return userRepo.findByUserIdAndUserPw(userId, userPw);
-	}
+	} 
 	
 	public void update(User user) {
 		userDao.updateUser(user);

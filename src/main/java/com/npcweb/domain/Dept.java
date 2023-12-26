@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -17,7 +15,7 @@ public class Dept {
 	@Id
 	private int deptno;
 	private String dname;
-
+ 
     @OneToMany(mappedBy = "dept", cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
 	
