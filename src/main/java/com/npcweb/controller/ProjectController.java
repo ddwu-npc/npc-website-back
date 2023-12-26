@@ -3,8 +3,13 @@ package com.npcweb.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.PostResponse;
 import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
@@ -30,23 +36,39 @@ public class ProjectController {
 	UserService userService;
 	
 	@RequestMapping
-	public List<Project> getProjectList() {
-		List<Project> projectList = projectService.getAllProject();
-		return projectList;
+	public List<ProjectResponse> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
+		int adjustedPage = pageable.getPageNumber() - 1;
+	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
+	    
+	    Page<ProjectResponse> projectPages = projectService.paging(pageRequest);
+
+	    int blockLimit = 5;
+	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
+	    int endPage = Math.min(startPage + blockLimit - 1, projectPages.getTotalPages());
+
+	    List<ProjectResponse> projectList = projectPages.getContent();
+	    return projectList;
 	}
 	
 	@GetMapping("/{project_id}")
 	public ProjectReq getProjectInfo(@PathVariable long project_id) {
 		ProjectReq req = new ProjectReq();
-		// projectRes
+		
+		// projectRes로 전달
 		Project project = projectService.getProject(project_id);
 		ProjectResponse projectRes = new ProjectResponse(project);
 		long leader = Long.parseLong(projectRes.getLeader());
 		projectRes.setNickname(userService.getNickname(leader));
 		req.setProjectRes(projectRes);
-		// userList
-		// 작성 필요
 		
+		// userList
+		Set<User> userList = project.getUser();
+		HashMap<String, String> userListRes = new HashMap<String, String>();
+		
+		for (User user : userList) {
+			userListRes.put(user.getNickname(), user.getDept().getDname());
+		}
+		req.setUserList(userListRes);
 		return req;
 	}
 	
@@ -65,9 +87,6 @@ public class ProjectController {
 		HashMap<String, String> userList = new HashMap<String, String>();
 		
 		public ProjectReq() {
-			// 이 부분 DB 연동 필요
-			// 프로젝트 가입 시 DB에 반영되야함. 여기서는 부서랑 닉네임만 출력
-			userList.put("1118", "개발팀");
 		}
 
 		public ProjectResponse getProjectRes() {

@@ -7,7 +7,7 @@ import com.npcweb.domain.Project;
 public class ProjectResponse {
 	long pid;
 	String leader;
-	String pname, tname, content, type, process;
+	String pname, tname, process;
 	String startDate, endDate;
 	
 	public ProjectResponse(Project p) {
@@ -15,8 +15,6 @@ public class ProjectResponse {
 		this.leader = String.valueOf(p.getLeader());
 		this.pname = p.getPname();
 		this.tname = p.getTname();
-		this.content = p.getContent();
-		this.type = p.getType();
 		this.process = p.getProcess();
 		this.startDate = p.getFormattedStartDate();
 		this.endDate = p.getFormattedEndDate();
@@ -34,12 +32,6 @@ public class ProjectResponse {
 	public String getTname() {
 		return tname;
 	}
-	public String getContent() {
-		return content;
-	}
-	public String getType() {
-		return type;
-	}
 	public String getProcess() {
 		return process;
 	}
@@ -49,7 +41,6 @@ public class ProjectResponse {
 	public String getEndDate() {
 		return endDate;
 	}
-	
 	public void setNickname(String leader) {
 		this.leader = leader;
 	}

@@ -1,6 +1,8 @@
 package com.npcweb.domain;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -33,6 +37,14 @@ public class User {
 	@OneToOne
 	@JoinColumn(name = "deptno")
 	private Dept dept;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "USER_PROJECT",
+	        joinColumns = @JoinColumn(name = "userNo"),
+	        inverseJoinColumns = @JoinColumn(name = "pid")
+	)
+	private Set<Project> PROJECT = new HashSet<>();
 	
 	public User() {
 		
@@ -136,6 +148,14 @@ public class User {
 
 	public void setDept(Dept dept) {
 		this.dept = dept;
+	}
+
+	public Set<Project> getProjects() {
+		return PROJECT;
+	}
+
+	public void setProjects(Set<Project> PROJECT) {
+		this.PROJECT = PROJECT;
 	}
 	
 }
