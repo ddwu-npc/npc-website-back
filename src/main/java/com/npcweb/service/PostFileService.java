@@ -34,14 +34,13 @@ public class PostFileService {
         try {
         	String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
-            //String uploadPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files\\";
             
             String uuid = UUID.randomUUID().toString();
 
-            String savefileName = upPath + File.separator + uuid + "_" + fileName;
+            String savefileName = uuid + "_" + fileName;
 
-            Path savePath = Paths.get(savefileName);
-            Files.createDirectories(savePath.getParent());
+            Path savePath = Paths.get(upPath + File.separator + savefileName);
+            //Files.createDirectories(savePath.getParent());
         	uploadFile.transferTo(savePath);
             
             PostFile pf = new PostFile();
