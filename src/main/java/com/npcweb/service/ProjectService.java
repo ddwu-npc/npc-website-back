@@ -26,8 +26,9 @@ public class ProjectService {
 		p.getUser().add(u);
 		// 리더 유저에 프로젝트 추가
 		u.getProjects().add(p);
-		// 프로젝트 추가
+		// 저장
 		projectRepo.save(p);
+		userRepo.save(u);
 	}
 	
 	public void delete(long project_id) {
@@ -56,5 +57,8 @@ public class ProjectService {
 		p.getUser().add(u);
 		// 유저에 프로젝트 추가
 		u.getProjects().add(p);
+		// 저장
+		userRepo.save(u);
+		projectRepo.save(p);
 	}
 }
