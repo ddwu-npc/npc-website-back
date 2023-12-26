@@ -22,6 +22,11 @@
 	
 	<dependencies>
 		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-core</artifactId>
+		    <version>5.3.15</version> <!-- Spring Framework 버전에 맞게 변경 -->
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
