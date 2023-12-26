@@ -3,11 +3,17 @@ package com.npcweb.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.npcweb.dao.jpa.JpaProjectDAO;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.repository.ProjectRepository;
 import com.npcweb.repository.UserRepository;
 
@@ -61,4 +67,18 @@ public class ProjectService {
 		userRepo.save(u);
 		projectRepo.save(p);
 	}
+	
+	// 페이징
+	public Page<ProjectResponse> paging(Pageable pageable) {
+	    int page = pageable.getPageNumber(); // page 위치에 있는 값은 0부터 시작한다.
+	    int pageLimit = 11; // 한 페이지에 보여줄 글 개수
+
+	    Pageable p = PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "pid"));
+	    Page<Project> projectPages = projectRepo.findAll(p);
+
+	    Page<ProjectResponse> projectResponseDtos = projectPages.map(ProjectResponse::new);
+
+	    return projectResponseDtos;
+	}
+
 }

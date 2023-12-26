@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.PostResponse;
 import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
@@ -31,9 +36,18 @@ public class ProjectController {
 	UserService userService;
 	
 	@RequestMapping
-	public List<Project> getProjectList() {
-		List<Project> projectList = projectService.getAllProject();
-		return projectList;
+	public List<ProjectResponse> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
+		int adjustedPage = pageable.getPageNumber() - 1;
+	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
+	    
+	    Page<ProjectResponse> projectPages = projectService.paging(pageRequest);
+
+	    int blockLimit = 5;
+	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
+	    int endPage = Math.min(startPage + blockLimit - 1, projectPages.getTotalPages());
+
+	    List<ProjectResponse> projectList = projectPages.getContent();
+	    return projectList;
 	}
 	
 	@GetMapping("/{project_id}")
