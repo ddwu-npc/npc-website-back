@@ -27,7 +27,8 @@ public class User {
 	String userId;
 	@Column(name="user_pw")
 	String userPw; 
-	String nickname, email, profile;
+	String nickname, email;
+	int profile;
 	@Column(name="recent_date")
 	Date recentDate;
 	Date birthday;
@@ -60,7 +61,7 @@ public class User {
 	}
 	
 	public User(long userNo, String userId, String userPw, String nickname, String email, Date recentDate,
-			Date birthday, int rank, int npcPoint, Dept dept) {
+			Date birthday, int rank, int npcPoint, Dept dept, int profile) {
 		super();
 		this.userNo = userNo;
 		this.userId = userId;
@@ -72,6 +73,7 @@ public class User {
 		this.rank = rank;
 		this.npcPoint = npcPoint;
 		this.dept = dept;
+		this.profile = profile;
 	}
 
 	public long getUserNo() {
@@ -137,10 +139,10 @@ public class User {
 		this.npcPoint = npcPoint;
 	}
 	
-	public String getProfile() {
+	public int getProfile() {
 		return profile;
 	}
-	public void setProfile(String profile) {
+	public void setProfile(int profile) {
 		this.profile = profile;
 	}
 

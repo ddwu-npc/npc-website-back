@@ -4,7 +4,7 @@ import com.npcweb.domain.User;
 
 public class UserResponse {
 	long userNo;
-	String nickname; String profile; String dept;
+	String nickname; int profile; String dept;
 	
 	public UserResponse(User u) {
 		super();
@@ -22,7 +22,7 @@ public class UserResponse {
 		return nickname;
 	}
 
-	public String getProfile() {
+	public int getProfile() {
 		return profile;
 	}
 
