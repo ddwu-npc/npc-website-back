@@ -6,13 +6,14 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -32,9 +33,9 @@ public class User {
 	Date birthday;
 	int rank;
 	@Column(name="npc_point")
-	int npcPoint;
+	int npcPoint; 
 	
-	@OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "deptno")
 	private Dept dept;
 	
@@ -47,7 +48,8 @@ public class User {
 	private Set<Project> PROJECT = new HashSet<>();
 	
 	public User() {
-		
+        this.dept = new Dept(); 
+        this.dept.setDeptno(0); 
 	}
 	
 	public User(String userId, String nickname, String userPw, String email) {
@@ -147,7 +149,8 @@ public class User {
 	}
 
 	public void setDept(Dept dept) {
-		this.dept = dept;
+        this.dept = dept;
+        dept.getUsers().add(this);
 	}
 
 	public Set<Project> getProjects() {
