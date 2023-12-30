@@ -80,5 +80,12 @@ public class ProjectService {
 
 	    return projectResponseDtos;
 	}
+	
+	// 리더 변경
+	public void changeLeader(long pid, long userno) {
+		Project p = projectRepo.findById(pid).get();
+		p.setLeader(userno);
+		projectRepo.save(p);
+	}
 
 }
