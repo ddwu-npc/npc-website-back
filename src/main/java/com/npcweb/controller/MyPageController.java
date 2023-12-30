@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.npcweb.domain.User;
@@ -30,6 +31,7 @@ import com.npcweb.service.UserService;
 import com.npcweb.service.PostService;
 import com.npcweb.service.CommentService;
 import com.npcweb.service.DeptService;
+import com.npcweb.service.UserFileService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -39,6 +41,7 @@ public class MyPageController {
 	@Autowired PostService postService;
 	@Autowired CommentService commentService;
 	@Autowired DeptService deptService;
+	@Autowired UserFileService ufService;
 	
 	@GetMapping
 	public ResponseEntity<MyPageReqRes> readUserInfo(HttpServletRequest request, @RequestParam long userno) {
@@ -71,7 +74,6 @@ public class MyPageController {
 	 @PostMapping("/post/{userno}")
 	 public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable("userno") long userno) {
 	    List<Post> pList = postService.getUserPostList(userno);
-	    System.out.println("확인 " + pList);
 	    
 	    return ResponseEntity.ok(pList);
 	 }
@@ -100,17 +102,24 @@ public class MyPageController {
 	
 	// 마이페이지 프로필 정보 수정  
 		@PutMapping("/update")
-		public ResponseEntity<?> updateUserInfo(HttpServletRequest request, @RequestBody MyPageReqRes req) {
+		public ResponseEntity<?> updateUserInfo(
+			    @RequestParam("userNo") int userNo,
+			    @RequestParam("nickname") String nickname,
+			    @RequestParam("email") String email,
+			    @RequestParam("birthday") String birthdayTmp,
+			    @RequestParam("dname") String dname,
+			    @RequestParam(value = "profile", required = false) MultipartFile profileFile) {
 			
-			if (req.getUserNo() != 0) {
-				User user = userService.getUserByUserNo(req.getUserNo());
+			
+			if (userNo != 0) {
+				User user = userService.getUserByUserNo(userNo);
 				
-				user.setNickname(req.getNickname());
-				user.setEmail(req.getEmail());
-				Dept d = deptService.findDeptByDname(req.getDname());
+				user.setNickname(nickname);
+				user.setEmail(email);
+				Dept d = deptService.findDeptByDname(dname);
 				user.setDept(d);
 				
-				String str = req.getBirthday();
+				String str = birthdayTmp;
 	            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	            Date birthday = null;
 				try {
@@ -119,6 +128,13 @@ public class MyPageController {
 					e.printStackTrace();
 				}
 				user.setBirthday(birthday);
+
+				if(profileFile != null) {
+					user.setProfile(1);
+					
+//					ufService.deleteFile(userNo);
+					ufService.submitFileUpload(profileFile, user);
+				}
 				
 				userService.update(user);
 
