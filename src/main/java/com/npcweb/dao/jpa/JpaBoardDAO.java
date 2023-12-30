@@ -48,7 +48,7 @@ public class JpaBoardDAO implements BoardDAO {
 		else if(searchRange == 2)
 			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text OR p.content LIKE :text AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		else if(searchRange == 3) {
-			jpql = "SELECT p FROM Post p WHERE p.userno = :userno AND p.rangePost=:rangePost AND p.boardId=:board_id";
+			jpql = "SELECT p FROM Post p WHERE p.userNo = :userno AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		}
 		
         TypedQuery<Post> query = em.createQuery(jpql, Post.class);
