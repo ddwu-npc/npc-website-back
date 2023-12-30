@@ -35,12 +35,14 @@ import org.springframework.core.io.UrlResource;
 
 import com.npcweb.domain.PostFile;
 import com.npcweb.service.PostFileService;
+import com.npcweb.service.PostService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
 @RequestMapping("/files")
 public class PostFileController {
 	@Autowired PostFileService pfService;
+	@Autowired PostService postService;
 	@Value("${file.upload.path}")
 	private String upPath;
 	
@@ -48,12 +50,16 @@ public class PostFileController {
 	
 	@GetMapping("/{post_id}")
     public PostFile readFile(@PathVariable long post_id) {
-		PostFile pf = pfService.readFile(post_id);
-	    if (pf != null)
-	    	return pf;
-	    else
-	    	return null;
-	            
+		long haveFile = postService.readPost(post_id).getHavePostfile();
+		
+		if(haveFile == 1) {
+			PostFile pf = pfService.readFile(post_id);
+		    if (pf != null)
+		    	return pf;
+		    else
+		    	return null;
+		}
+		return null;    
     }
 	
 	@GetMapping("/download/{fileName}")
@@ -65,6 +71,10 @@ public class PostFileController {
 		try {
 			//Path filePath = Paths.get(upPath, String.valueOf(post.getStudy().getId()), post.getTileUrl());
 			Path filePath = Paths.get(upPath).resolve(fileName);
+			
+			if (!Files.exists(filePath)) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        }
 			
 			Resource resource = new UrlResource(filePath.toUri());
 			InputStreamResource inputStreamResource = new InputStreamResource(resource.getInputStream());
