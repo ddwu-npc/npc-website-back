@@ -38,7 +38,6 @@ public class JpaBoardDAO implements BoardDAO {
 		//board_id
 		//rangeId : 전체0 임원1 팀장2
 		//searchRange : 제목0 내용1 제목+내용2  작성자3
-				
 		String jpql = "";
 		
 		if(searchRange == 0)
@@ -61,7 +60,7 @@ public class JpaBoardDAO implements BoardDAO {
         
         String rangePost="";
         if(rangeId==0)
-        	rangePost = "public";
+        	rangePost = "전체";
         else if(rangeId==1)
         	rangePost = "임원";
         else if(rangeId==2)
@@ -69,7 +68,6 @@ public class JpaBoardDAO implements BoardDAO {
         
         query.setParameter("rangePost", rangePost);
     	query.setParameter("board_id", board_id);
-        
         
         return query.getResultList();
 	}
