@@ -31,7 +31,7 @@ public class PostFileService {
 		if(uploadFile == null)
 			return;
 
-        try {
+		try {
         	String originalName = uploadFile.getOriginalFilename();
             String fileName = originalName.substring(originalName.lastIndexOf("\\") + 1);
             

@@ -86,6 +86,8 @@ public class JpaPostDAO implements PostDAO {
 
 	@Override
 	public long findUserByPostId(long postId) {
-		return readPost(postId).getUserNo();
+		if(readPost(postId) != null)
+			return readPost(postId).getUserNo();
+		return -1;
 	}
 }
