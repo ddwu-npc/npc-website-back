@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -26,9 +27,9 @@ public class Attendance {
 	@Column(name="attendance_date")
 	Date attendanceDate;
 	
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "pid")
-	private Project project;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pid")
+    private Project project;
     
 	public long getAttendanceId() {
 		return attendanceId;

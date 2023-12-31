@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -29,8 +30,8 @@ public class Project {
     @ManyToMany(mappedBy = "PROJECT")
     private Set<User> USER = new HashSet<>();
     
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<Attendance> attendances = new ArrayList<>();
+    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
+    private Attendance attendance;
     
 	public long getPid() {
 		return pid;
@@ -123,12 +124,14 @@ public class Project {
 		this.USER = USER;
 	}
 
-	public List<Attendance> getAttendances() {
-		return attendances;
+	public Attendance getAttendance() {
+		return attendance;
 	}
 
-	public void setAttendances(List<Attendance> attendances) {
-		this.attendances = attendances;
+	public void setAttendance(Attendance attendance) {
+		this.attendance = attendance;
 	}
+
+
 	
 }
