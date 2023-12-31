@@ -132,7 +132,7 @@ public class MyPageController {
 				if(profileFile != null) {
 					user.setProfile(1);
 					
-//					ufService.deleteFile(userNo);
+					ufService.deleteFile(userNo);
 					ufService.submitFileUpload(profileFile, user);
 				}
 				
