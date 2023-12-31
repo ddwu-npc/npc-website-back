@@ -3,14 +3,17 @@ package com.npcweb.domain;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Attendance")
+@Table(name="ATTENDANCE")
 public class Attendance {
 	@Id
 	@Column(name="attendance_id")
@@ -18,12 +21,15 @@ public class Attendance {
 	long attendanceId;
 	
 	long userno;
-	
 	String type, meeting;
 	
 	@Column(name="attendance_date")
 	Date attendanceDate;
-
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pid")
+	private Project project;
+    
 	public long getAttendanceId() {
 		return attendanceId;
 	}
@@ -62,6 +68,14 @@ public class Attendance {
 
 	public void setAttendanceDate(Date attendanceDate) {
 		this.attendanceDate = attendanceDate;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 	
 	
