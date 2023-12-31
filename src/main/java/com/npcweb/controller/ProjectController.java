@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
 import com.npcweb.domain.response.PostResponse;
+import com.npcweb.domain.response.ProjectInfoResponse;
 import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
@@ -56,7 +57,7 @@ public class ProjectController {
 		
 		// projectRes로 전달
 		Project project = projectService.getProject(project_id);
-		ProjectResponse projectRes = new ProjectResponse(project);
+		ProjectInfoResponse projectRes = new ProjectInfoResponse(project);
 		long leader = Long.parseLong(projectRes.getLeader());
 		projectRes.setNickname(userService.getNickname(leader));
 		req.setProjectRes(projectRes);
@@ -83,13 +84,13 @@ public class ProjectController {
 	}
 	
 	class ProjectReq {
-		ProjectResponse projectRes;
+		ProjectInfoResponse projectRes;
 		HashMap<String, String> userList = new HashMap<String, String>();
 		
 		public ProjectReq() {
 		}
 
-		public ProjectResponse getProjectRes() {
+		public ProjectInfoResponse getProjectRes() {
 			return projectRes;
 		}
 
@@ -97,7 +98,7 @@ public class ProjectController {
 			return userList;
 		}
 		
-		public void setProjectRes(ProjectResponse projectRes) {
+		public void setProjectRes(ProjectInfoResponse projectRes) {
 			this.projectRes = projectRes;
 		}
 		
