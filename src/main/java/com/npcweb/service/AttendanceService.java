@@ -1,57 +1,62 @@
 package com.npcweb.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AttendanceService {
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+	 @Autowired
+	    private SimpMessagingTemplate messagingTemplate;
 
-    private static final int RANDOM_NUMBER_RANGE = 1000; // 숫자 범위 설정 (0부터 999까지)
-    private static final long ATTENDANCE_EXPIRATION = 60; // 출석 번호의 유효 기간(60초)
+	    private Map<String, LocalDateTime> attendanceMap = new ConcurrentHashMap<>();
 
-    public String createAttendance(String userId) {
-        String attendanceNumber;
+	    // 출석 생성
+	    public String createAttendance() {
+	        String attendanceCode = generateRandomAttendanceCode();
+	        LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(10); // 10분 후 만료
 
-        // 랜덤 숫자 생성 및 중복 확인
-        do {
-            attendanceNumber = generateRandomNumber();
-        } while (isAttendanceNumberExists(attendanceNumber));
+	        // 생성된 출석 코드를 WebSocket을 통해 클라이언트에게 브로드캐스트
+	        messagingTemplate.convertAndSend("/topic/attendance", attendanceCode);
 
-        // 출석 정보 Redis에 저장 및 TTL 설정
-        String key = "attendance:" + userId;
-        redisTemplate.opsForValue().set(key, attendanceNumber);
-        redisTemplate.expire(key, ATTENDANCE_EXPIRATION, TimeUnit.SECONDS);
+	        // 1분 후에 해당 출석을 파기하는 스케줄링 작업 실행
+	        scheduleAttendanceDestroy(attendanceCode, expirationTime);
 
-        return attendanceNumber;
-    }
+	        // 출석 코드와 만료 시간을 저장
+	        attendanceMap.put(attendanceCode, expirationTime);
 
-    // 일단은 userId로 했는데 출석 Id?같은 걸로 수정이 필요해보임
-	public String getAttendanceNumber(String userId) {
-        String key = "attendance:" + userId;
-        String attendanceNumber = redisTemplate.opsForValue().get(key);
+	        return attendanceCode;
+	    }
 
-        return attendanceNumber;
-    }
+	    // 출석 파기
+	    public void destroyAttendance(String attendanceCode) {
+	        attendanceMap.remove(attendanceCode);
+	    }
 
-    private String generateRandomNumber() {
-        Random random = new Random();
-        int randomNumber = random.nextInt(RANDOM_NUMBER_RANGE);
-        return String.format("%03d", randomNumber);
-    }
+	    // 출석 파기 스케줄링
+	    private void scheduleAttendanceDestroy(String attendanceCode, LocalDateTime expirationTime) {
+	        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	        scheduler.schedule(() -> {
+	            destroyAttendance(attendanceCode);
+	            scheduler.shutdown();
+	        }, Duration.between(LocalDateTime.now(), expirationTime).toMillis(), TimeUnit.MILLISECONDS);
+	    }
 
-    private boolean isAttendanceNumberExists(String attendanceNumber) {
-        Set<String> keys = redisTemplate.keys("attendance:*");
-        return keys.contains("attendance:" + attendanceNumber);
-    }
-    
-    public void givePoints(String userId) {
-    	// User u = userService.getUser();
-    }
+	    // 랜덤한 3자리 수의 출석 코드 생성 (예시)
+	    private String generateRandomAttendanceCode() {
+	        Random random = new Random();
+	        int randomNumber = 100 + random.nextInt(900); // 100부터 999까지의 랜덤 숫자 생성
+	        return String.valueOf(randomNumber);
+	    }
 }

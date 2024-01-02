@@ -38,7 +38,6 @@ public class JpaBoardDAO implements BoardDAO {
 		//board_id
 		//rangeId : 전체0 임원1 팀장2
 		//searchRange : 제목0 내용1 제목+내용2  작성자3
-				
 		String jpql = "";
 		
 		if(searchRange == 0)
@@ -48,7 +47,7 @@ public class JpaBoardDAO implements BoardDAO {
 		else if(searchRange == 2)
 			jpql = "SELECT p FROM Post p WHERE p.title LIKE :text OR p.content LIKE :text AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		else if(searchRange == 3) {
-			jpql = "SELECT p FROM Post p WHERE p.userno = :userno AND p.rangePost=:rangePost AND p.boardId=:board_id";
+			jpql = "SELECT p FROM Post p WHERE p.userNo = :userno AND p.rangePost=:rangePost AND p.boardId=:board_id";
 		}
 		
         TypedQuery<Post> query = em.createQuery(jpql, Post.class);
@@ -61,7 +60,7 @@ public class JpaBoardDAO implements BoardDAO {
         
         String rangePost="";
         if(rangeId==0)
-        	rangePost = "public";
+        	rangePost = "전체";
         else if(rangeId==1)
         	rangePost = "임원";
         else if(rangeId==2)
@@ -69,7 +68,6 @@ public class JpaBoardDAO implements BoardDAO {
         
         query.setParameter("rangePost", rangePost);
     	query.setParameter("board_id", board_id);
-        
         
         return query.getResultList();
 	}

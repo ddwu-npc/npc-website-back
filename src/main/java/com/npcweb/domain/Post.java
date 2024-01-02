@@ -22,6 +22,7 @@ public class Post implements Serializable {
 	@Column(name="board_id")
 	long boardId;
 	
+	@Column(name="userno")
 	long userNo;
 	String title, content;
 	

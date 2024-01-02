@@ -1,15 +1,20 @@
 package com.npcweb.domain;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -24,6 +29,9 @@ public class Project {
 	
     @ManyToMany(mappedBy = "PROJECT")
     private Set<User> USER = new HashSet<>();
+    
+    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
+    private Attendance attendance;
     
 	public long getPid() {
 		return pid;
@@ -115,4 +123,15 @@ public class Project {
 	public void setUser(Set<User> USER) {
 		this.USER = USER;
 	}
+
+	public Attendance getAttendance() {
+		return attendance;
+	}
+
+	public void setAttendance(Attendance attendance) {
+		this.attendance = attendance;
+	}
+
+
+	
 }

@@ -35,7 +35,7 @@ public class BoardController {
 	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 	    
 	    Page<PostResponse> postsPages = postService.pagingByBoard(pageRequest, board_id);
-
+	    
 	    int blockLimit = 5;
 	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
 	    int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
