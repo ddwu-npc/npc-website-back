@@ -44,7 +44,7 @@ public class AttendanceController {
 			if (!a.getType().equals("종료"))
 				return a.getAttendanceId();
 		}
-		return 0; // 현재 출석이 없다고 띄워야 함
+		return -1; // 현재 열린 출석 없음
 	}
 	
 	@GetMapping("/create/{project_id}")
@@ -54,10 +54,12 @@ public class AttendanceController {
 		
 		attendance.setAttendanceDate(new Date());
 		attendance.setMeeting(new Date() + project.getPname());
-		attendance.setAuthCode(generateRandomAttendanceCode());
+		attendance.setAuthCode(attendanceService.generateRandomAttendanceCode());
 		attendance.setType("진행");
 		attendance.setProject(project);
 		attendanceService.insert(attendance);
+		
+		// 타이머 추가 필요
 		
 		return attendance.getAttendanceId();
 	}
@@ -69,9 +71,15 @@ public class AttendanceController {
 		return attendance;
 	}
 	
-    private int generateRandomAttendanceCode() {
-        Random random = new Random();
-        int randomNumber = 100 + random.nextInt(900); // 100부터 999까지의 랜덤 숫자 생성
-        return randomNumber;
-    }
+	@GetMapping("/{attendance_id}/{authcode}")
+	public boolean attend(@PathVariable long attendance_id, @PathVariable String authcode) {
+		Attendance attendance = attendanceService.getAttendance(attendance_id);
+		long _authcode = Integer.parseInt(authcode);
+		
+		// 포인트 주는 로직 추가 필요(토큰 추가)
+		
+		if (attendance.getAuthCode() == _authcode)
+			return true;
+		return false;
+	}
 }
