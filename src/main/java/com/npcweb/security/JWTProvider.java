@@ -1,6 +1,5 @@
 package com.npcweb.security;
 
-import java.security.Key;
 import java.util.Base64;
 
 import javax.crypto.SecretKey;
@@ -47,4 +46,14 @@ public class JWTProvider {
                     .getBody();
 			return Long.parseLong(claims.getSubject());
 	}
+	
+	public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            // 토큰 유효성 검사 실패
+            return false;
+        }
+    }
 }
