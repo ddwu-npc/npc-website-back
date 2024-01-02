@@ -1,8 +1,10 @@
 package com.npcweb.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Date;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,7 +61,9 @@ public class PostController {
 	//create
 	@PostMapping(value="/{board_id}")
 	public void createPost(@PathVariable long board_id, 
-			@RequestParam(value = "attachment", required = false) MultipartFile file,
+			@RequestParam(value = "attachment_0", required = false) MultipartFile file0,
+			@RequestParam(value = "attachment_1", required = false) MultipartFile file1,
+			@RequestParam(value = "attachment_2", required = false) MultipartFile file2,
 		    @RequestParam("title") String title,
 		    @RequestParam(value="content") String content,
 		    @RequestParam("rangePost") String rangePost,
@@ -86,15 +90,30 @@ public class PostController {
 		
 		post.setReadCount(0);
 		post.setRangePost(rangePost);
-		post.setTitle(title);
+		
+		if(title==null || title.equals(""))
+			post.setTitle("제목이 없습니다.");
+		else
+			post.setTitle(title);
 		post.setUserNo(userNo);
 		
 		postService.insertPost(post);
 		
-		if (file != null) {
+		ArrayList<MultipartFile> files = new ArrayList<>();
+		if(file0 != null)
+			files.add(file0);
+		if(file1 != null)
+			files.add(file1);
+		if(file2 != null)
+			files.add(file2);
+		
+		
+		
+		if (file0 != null) {
 			post.setHavePostfile(1);
 			
-			pfService.submitFileUpload(file, post);
+			for(MultipartFile file : files)
+				pfService.submitFileUpload(file, post);
 	    }
 	}
 	//update
