@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,16 +51,16 @@ public class JpaPostFileDAO {
 			return;
 	}
 
-	public PostFile readFile(long post_id) {
+	public List<PostFile> readFile(long post_id) {
 		TypedQuery<PostFile> query = em.createQuery(
 				"SELECT pf FROM PostFile pf WHERE pf.post.postId=:post_id", PostFile.class
 			);
 		query.setParameter("post_id", post_id);		
 		
-		PostFile pf = query.getSingleResult();
+		List<PostFile> pfList = query.getResultList();
 		
-		if(pf!=null) {
-			return pf;
+		if(pfList!=null) {
+			return pfList;
 		}else
 			return null;
 	}

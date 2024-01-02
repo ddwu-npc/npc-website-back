@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -40,11 +41,10 @@ public class PostFileService {
             String savefileName = uuid + "_" + fileName;
 
             Path savePath = Paths.get(upPath + File.separator + savefileName);
-            //Files.createDirectories(savePath.getParent());
         	uploadFile.transferTo(savePath);
             
             PostFile pf = new PostFile();
-            pf.setFilePath(upPath);
+            pf.setFilePath(savePath.toString());
             pf.setOrgName(originalName);
             pf.setsName(savefileName);
             pf.setPost(post);
@@ -56,7 +56,7 @@ public class PostFileService {
     }
 	
 	//read
-	public PostFile readFile(long post_id) {
+	public List<PostFile> readFile(long post_id) {
 		return pfDao.readFile(post_id);
 	}
 
