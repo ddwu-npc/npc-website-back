@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name="PROJECT")
 public class Project {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long pid;
 	long leader;
 	String pname, tname, content, type, process;

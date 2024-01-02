@@ -18,7 +18,7 @@ import javax.persistence.Table;
 public class Attendance {
 	@Id
 	@Column(name="attendance_id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long attendanceId;
 	
 	String type, meeting;

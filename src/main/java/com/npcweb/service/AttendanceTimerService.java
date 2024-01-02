@@ -21,9 +21,8 @@ public class AttendanceTimerService {
             }
         };
 
-        // 5분(300초) 후에 타이머 작업 실행
-        // 예시로 30초
-        timer.schedule(task, 30000);
+        // 60초 후에 타이머 작업 실행(나중에 시간 늘리기)
+        timer.schedule(task, 60000);
     }
 
     public void cancelTimer() {
@@ -33,7 +32,6 @@ public class AttendanceTimerService {
     private void finishedAttendance(Attendance attendance) {
     	attendance.setType("종료");
     	attendanceService.insert(attendance);
-    	System.out.println("출석 종료입니당");
     }
 
 }

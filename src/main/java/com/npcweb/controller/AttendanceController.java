@@ -78,11 +78,11 @@ public class AttendanceController {
 	@GetMapping("/{attendance_id}/{authcode}")
 	public boolean attend(@PathVariable long attendance_id, @PathVariable String authcode) {
 		Attendance attendance = attendanceService.getAttendance(attendance_id);
-		long _authcode = Integer.parseInt(authcode);
+		String _authcode = Integer.toString(attendance.getAuthCode());
 		
 		// 포인트 주는 로직 추가 필요(토큰 추가)
 		
-		if (attendance.getAuthCode() == _authcode)
+		if (_authcode.equals(authcode))
 			return true;
 		return false;
 	}
