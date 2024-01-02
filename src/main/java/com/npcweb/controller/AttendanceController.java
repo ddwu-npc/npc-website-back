@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.npcweb.domain.Attendance;
 import com.npcweb.domain.Project;
 import com.npcweb.service.AttendanceService;
+import com.npcweb.service.AttendanceTimerService;
 import com.npcweb.service.ProjectService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -29,6 +30,8 @@ import com.npcweb.service.ProjectService;
 public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
+    @Autowired
+    private AttendanceTimerService timerService;
     @Autowired
     private ProjectService projectService;
     
@@ -52,15 +55,16 @@ public class AttendanceController {
 		Project project = projectService.getProject(project_id);
 		Attendance attendance = new Attendance();
 		
+		int meetingCount = project.getAttendances().size() + 1;
 		attendance.setAttendanceDate(new Date());
-		attendance.setMeeting(new Date() + project.getPname());
+		attendance.setMeeting(project.getPname() + " " + meetingCount +"차시 회의");
 		attendance.setAuthCode(attendanceService.generateRandomAttendanceCode());
 		attendance.setType("진행");
 		attendance.setProject(project);
 		attendanceService.insert(attendance);
 		
-		// 타이머 추가 필요
-		
+		// 타이머
+		timerService.scheduleTimer(attendance);
 		return attendance.getAttendanceId();
 	}
 	
