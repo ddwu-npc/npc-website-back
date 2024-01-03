@@ -36,17 +36,19 @@ public class JpaPostFileDAO {
 			);
 		query.setParameter("post_id", post_id);		
 		
-		PostFile pf = query.getSingleResult();
+		List<PostFile> pfList = query.getResultList();
 		
-		if(pf!=null) {
-			try {
-		        Path path = Paths.get(upPath + File.separator + pf.getsName());
-		        Files.deleteIfExists(path);
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }finally {
-		    	em.remove(pf);
-		    }
+		if(pfList!=null) {
+			for(PostFile pf : pfList) {
+				try {
+			        Path path = Paths.get(upPath + File.separator + pf.getsName());
+			        Files.deleteIfExists(path);
+			    } catch (Exception e) {
+			        e.printStackTrace();
+			    }finally {
+			    	em.remove(pf);
+			    }
+			}
 		}else
 			return;
 	}
