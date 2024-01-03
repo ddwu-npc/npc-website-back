@@ -18,7 +18,6 @@ public class JWTProvider {
 	private SecretKey secretKey;
 	
     private SecretKey encodeSecretKey() {
-    	System.out.println("sk bean" + secretKeyPlain);
         String keyBase64Encoded = Base64.getEncoder().encodeToString(secretKeyPlain.getBytes());
         return Keys.hmacShaKeyFor(keyBase64Encoded.getBytes());
     }
@@ -38,7 +37,6 @@ public class JWTProvider {
 	}
 	
 	public Long getUsernoFromToken(String token) {
-		System.out.println(token);
 		Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSecretKey())
                     .build()
