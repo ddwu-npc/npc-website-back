@@ -41,7 +41,7 @@ public class JpaPostFileDAO {
 		if(pfList!=null) {
 			for(PostFile pf : pfList) {
 				try {
-			        Path path = Paths.get(upPath + File.separator + pf.getsName());
+			        Path path = Paths.get(pf.getFilePath());
 			        Files.deleteIfExists(path);
 			    } catch (Exception e) {
 			        e.printStackTrace();
