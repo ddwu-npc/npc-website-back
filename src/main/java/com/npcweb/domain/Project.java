@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name="PROJECT")
 public class Project {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long pid;
 	long leader;
 	String pname, tname, content, type, process;
@@ -30,8 +30,8 @@ public class Project {
     @ManyToMany(mappedBy = "PROJECT")
     private Set<User> USER = new HashSet<>();
     
-    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL)
-    private Attendance attendance;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Attendance> attendances = new ArrayList<>();
     
 	public long getPid() {
 		return pid;
@@ -124,14 +124,12 @@ public class Project {
 		this.USER = USER;
 	}
 
-	public Attendance getAttendance() {
-		return attendance;
+	public List<Attendance> getAttendances() {
+		return attendances;
 	}
 
-	public void setAttendance(Attendance attendance) {
-		this.attendance = attendance;
+	public void setAttendances(List<Attendance> attendances) {
+		this.attendances = attendances;
 	}
 
-
-	
 }

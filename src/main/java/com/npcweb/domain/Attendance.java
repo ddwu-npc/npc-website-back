@@ -18,18 +18,18 @@ import javax.persistence.Table;
 public class Attendance {
 	@Id
 	@Column(name="attendance_id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long attendanceId;
 	
-	long userno;
 	String type, meeting;
-	
+	@Column(name="auth_code")
+	int authCode;
 	@Column(name="attendance_date")
 	Date attendanceDate;
 	
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pid")
-    private Project project;
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "pid")
+	private Project project;
     
 	public long getAttendanceId() {
 		return attendanceId;
@@ -37,14 +37,6 @@ public class Attendance {
 
 	public void setAttendanceId(long attendanceId) {
 		this.attendanceId = attendanceId;
-	}
-
-	public long getUserno() {
-		return userno;
-	}
-
-	public void setUserno(long userno) {
-		this.userno = userno;
 	}
 
 	public String getType() {
@@ -71,6 +63,14 @@ public class Attendance {
 		this.attendanceDate = attendanceDate;
 	}
 
+	public int getAuthCode() {
+		return authCode;
+	}
+
+	public void setAuthCode(int authCode) {
+		this.authCode = authCode;
+	}
+
 	public Project getProject() {
 		return project;
 	}
@@ -78,6 +78,5 @@ public class Attendance {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
 	
 }

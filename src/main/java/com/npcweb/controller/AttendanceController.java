@@ -1,6 +1,15 @@
 package com.npcweb.controller;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Attendance;
+import com.npcweb.domain.Project;
 import com.npcweb.service.AttendanceService;
+import com.npcweb.service.AttendanceTimerService;
+import com.npcweb.service.ProjectService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -18,18 +30,60 @@ import com.npcweb.service.AttendanceService;
 public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
+    @Autowired
+    private AttendanceTimerService timerService;
+    @Autowired
+    private ProjectService projectService;
+    
+    private Map<String, LocalDateTime> attendanceMap = new ConcurrentHashMap<>(); // 출석 정보를 저장할 Map (출석 번호, 생성 시간)
 
-    // 생성
-	@GetMapping("/{project_id}")
+    // 프로젝트의 출석 중 현재 가능한 것만 반환
+	@GetMapping("quick/{project_id}")
 	public long getQuickAttendance(@PathVariable long project_id) {
-		/*
-		 * 1. 팀장이 생성한 출석이 있다면 
-		 *  - 팀원을 그 출석을 봐야함
-		 *  1-1. 출석을 했다면
-		 *   - 반영
-		 *   - 10분이 지나면 종료하고 프로젝트에 붙은 출석을 null로
-		 * 2. 없다면
-		 *  - 현재 출석 불가
-		 * */
+		Project project = projectService.getProject(project_id);
+		List<Attendance> attendances = project.getAttendances();
+			
+		for (Attendance a : attendances) {
+			if (!a.getType().equals("종료"))
+				return a.getAttendanceId();
+		}
+		return -1; // 현재 열린 출석 없음
+	}
+	
+	@GetMapping("/create/{project_id}")
+	public long createAttendance(@PathVariable long project_id) {
+		Project project = projectService.getProject(project_id);
+		Attendance attendance = new Attendance();
+		
+		int meetingCount = project.getAttendances().size() + 1;
+		attendance.setAttendanceDate(new Date());
+		attendance.setMeeting(project.getPname() + " " + meetingCount +"차시 회의");
+		attendance.setAuthCode(attendanceService.generateRandomAttendanceCode());
+		attendance.setType("진행");
+		attendance.setProject(project);
+		attendanceService.insert(attendance);
+		
+		// 타이머
+		timerService.scheduleTimer(attendance);
+		return attendance.getAttendanceId();
+	}
+	
+	@GetMapping("/{attendance_id}")
+	public Attendance getAttendanceInfo(@PathVariable long attendance_id) {
+		Attendance attendance = attendanceService.getAttendance(attendance_id);
+
+		return attendance;
+	}
+	
+	@GetMapping("/{attendance_id}/{authcode}")
+	public boolean attend(@PathVariable long attendance_id, @PathVariable String authcode) {
+		Attendance attendance = attendanceService.getAttendance(attendance_id);
+		String _authcode = Integer.toString(attendance.getAuthCode());
+		
+		// 포인트 주는 로직 추가 필요(토큰 추가)
+		
+		if (_authcode.equals(authcode))
+			return true;
+		return false;
 	}
 }
