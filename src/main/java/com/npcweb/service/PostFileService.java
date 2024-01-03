@@ -60,7 +60,7 @@ public class PostFileService {
 		return pfDao.readFile(post_id);
 	}
 
-	public void deleteFile(long post_id) {
-		pfDao.deleteFile(post_id);
+	public void deleteFiles(long post_id) {
+		pfDao.deleteFiles(post_id);
 	}
 }

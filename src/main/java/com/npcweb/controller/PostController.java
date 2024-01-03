@@ -145,7 +145,7 @@ public class PostController {
 		postService.deletePost(post);
 		commentService.deleteCommentList(post_id);
 		if(post.getHavePostfile()==1)
-			pfService.deleteFile(post_id);
+			pfService.deleteFiles(post_id);
 		
 		return post.getBoardId();
 	}

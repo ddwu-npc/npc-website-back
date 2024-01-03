@@ -30,7 +30,7 @@ public class JpaPostFileDAO {
 		em.persist(pf);
 	}
 	
-	public void deleteFile(long post_id) throws DataAccessException {
+	public void deleteFiles(long post_id) throws DataAccessException {
 		TypedQuery<PostFile> query = em.createQuery(
 				"SELECT pf FROM PostFile pf WHERE pf.post.postId=:post_id", PostFile.class
 			);
@@ -41,7 +41,7 @@ public class JpaPostFileDAO {
 		if(pfList!=null) {
 			for(PostFile pf : pfList) {
 				try {
-			        Path path = Paths.get(upPath + File.separator + pf.getsName());
+			        Path path = Paths.get(pf.getFilePath());
 			        Files.deleteIfExists(path);
 			    } catch (Exception e) {
 			        e.printStackTrace();
