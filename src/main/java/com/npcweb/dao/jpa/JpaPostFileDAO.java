@@ -30,7 +30,7 @@ public class JpaPostFileDAO {
 		em.persist(pf);
 	}
 	
-	public void deleteFile(long post_id) throws DataAccessException {
+	public void deleteFiles(long post_id) throws DataAccessException {
 		TypedQuery<PostFile> query = em.createQuery(
 				"SELECT pf FROM PostFile pf WHERE pf.post.postId=:post_id", PostFile.class
 			);
