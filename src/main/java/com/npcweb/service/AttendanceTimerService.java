@@ -30,6 +30,8 @@ public class AttendanceTimerService {
     }
 
     private void finishedAttendance(Attendance attendance) {
+    	// 출석 안한 팀원 들은 점수 차감하는 로직 추가 필요
+    	
     	attendance.setType("종료");
     	attendanceService.insert(attendance);
     }

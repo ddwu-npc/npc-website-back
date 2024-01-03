@@ -36,6 +36,8 @@ public class ProjectController {
 	@Autowired
 	UserService userService;
 	
+	// 팀원 추가 필요
+	
 	@RequestMapping
 	public List<ProjectResponse> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
 		int adjustedPage = pageable.getPageNumber() - 1;

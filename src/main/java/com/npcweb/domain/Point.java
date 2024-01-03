@@ -16,7 +16,7 @@ public class Point {
 	@Column(name="point_id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	long pointId;
-	long userno, deptno;
+	long userno;
 	
 	@Column(name="change_point")
 	int changePoint;
@@ -26,6 +26,13 @@ public class Point {
 	@Column(name="point_date")
 	Date pointDate;
 
+	public Point(long userno, int changePoint, String content, Date pointDate) {
+		this.userno = userno;
+		this.changePoint = changePoint;
+		this.content = content;
+		this.pointDate = pointDate;
+	}
+	
 	public long getPointId() {
 		return pointId;
 	}
@@ -40,14 +47,6 @@ public class Point {
 
 	public void setUserno(long userno) {
 		this.userno = userno;
-	}
-
-	public long getDeptno() {
-		return deptno;
-	}
-
-	public void setDeptno(long deptno) {
-		this.deptno = deptno;
 	}
 
 	public int getChangePoint() {
@@ -73,6 +72,5 @@ public class Point {
 	public void setPointDate(Date pointDate) {
 		this.pointDate = pointDate;
 	}
-	
 	
 }
