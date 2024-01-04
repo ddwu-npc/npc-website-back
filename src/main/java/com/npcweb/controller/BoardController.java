@@ -23,7 +23,6 @@ import com.npcweb.domain.Post;
 import com.npcweb.domain.User;
 import com.npcweb.domain.response.PostResponse;
 import com.npcweb.service.BoardService;
-import com.npcweb.service.PostService;
 import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -31,7 +30,6 @@ import com.npcweb.service.UserService;
 @RequestMapping("/board")
 public class BoardController {
 	@Autowired BoardService boardService;
-	@Autowired PostService postService;
 	@Autowired UserService userService;
 	
 	// 게시글 목록
@@ -41,7 +39,7 @@ public class BoardController {
 	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 	    
 	    // 페이징
-	    Page<PostResponse> postsPages = postService.pagingByBoard(pageRequest, board_id);
+	    Page<PostResponse> postsPages = boardService.pagingByBoard(pageRequest, board_id);
 	    
 	    int endPage = postsPages.getTotalPages();
 
@@ -76,7 +74,7 @@ public class BoardController {
 	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 	    
 	    // 페이징
-	    Page<PostResponse> postsPages = postService.pagingBySearch(pageRequest, pList);
+	    Page<PostResponse> postsPages = boardService.pagingBySearch(pageRequest, pList);
 	    
 	    int blockLimit = 5;
 	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
