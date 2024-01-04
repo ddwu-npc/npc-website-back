@@ -52,9 +52,8 @@ public class ProjectController {
         Page<ProjectResponse> projectPages = projectService.paging(pageRequest);
         List<Integer> pageInfo = new ArrayList<>();
 
-        int blockLimit = 5;
-        int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
-        int endPage = Math.min(startPage + blockLimit - 1, projectPages.getTotalPages());
+        //int startPage = 1;
+        int endPage = projectPages.getTotalPages();
         pageInfo.add(adjustedPage + 1);
         pageInfo.add(endPage);
         

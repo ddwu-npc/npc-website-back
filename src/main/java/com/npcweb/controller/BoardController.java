@@ -43,9 +43,7 @@ public class BoardController {
 	    // 페이징
 	    Page<PostResponse> postsPages = postService.pagingByBoard(pageRequest, board_id);
 	    
-	    int blockLimit = 5;
-	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
-	    int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
+	    int endPage = postsPages.getTotalPages();
 
         Map<String, Object> response = new HashMap<>();
         // post 데이터
