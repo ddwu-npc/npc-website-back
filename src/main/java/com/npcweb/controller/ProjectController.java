@@ -1,6 +1,9 @@
 package com.npcweb.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,9 +89,52 @@ public class ProjectController {
 		return req;
 	}
 	
+	@GetMapping("/create/{userno}")
+	public void deleteProject(@PathVariable String userno) {
+	    User user = userService.getUserByNickname(userno);
+	    Date currentDate = new Date();
+	    
+	    Project project = null;
+		
+		project.setPname("");
+		project.setContent("");
+		project.setEndDate(currentDate);
+		project.setStartDate(currentDate);
+		project.setTname("");
+		project.setProcess("0");
+		project.setType("");
+		project.setLeader(user.getUserNo());
+		
+		
+
+	}
+	
 	@DeleteMapping("/{project_id}")
 	public void deleteProject(@PathVariable long project_id) {
 		projectService.delete(project_id);
+	}
+	
+	@PutMapping("/{project_id}")
+	public ResponseEntity<?> updateProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReqRes projectRes) throws ParseException {
+
+	    Project project = projectService.getProject(projectId);
+	    User user = userService.getUserByNickname(projectRes.getLeader());
+	    
+	    project.setPname(projectRes.getPname());
+	    project.setProcess(projectRes.getProcess());
+	    
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    Date startDate = dateFormat.parse(projectRes.getStartDate());
+	    Date endDate = dateFormat.parse(projectRes.getEndDate());
+	    
+	    project.setStartDate(startDate);
+	    project.setEndDate(endDate);
+	    
+	    
+	    projectService.update(project);
+	    
+	    Project updatedProject = projectService.getProject(projectId);
+	    return ResponseEntity.ok(updatedProject);
 	}
 	
 	@PostMapping
@@ -118,5 +165,87 @@ public class ProjectController {
 			this.userList = userList;
 		}
 
+	}
+	
+	static class ProjectReqRes {
+		long pid;
+		String leader;
+		String pname, tname, content, type, process;
+		String startDate, endDate;
+		
+		public ProjectReqRes() {
+		}
+		
+		public long getPid() {
+			return pid;
+		}
+
+		public void setPid(long pid) {
+			this.pid = pid;
+		}
+
+		public String getLeader() {
+			return leader;
+		}
+
+		public void setLeader(String leader) {
+			this.leader = leader;
+		}
+
+		public String getPname() {
+			return pname;
+		}
+
+		public void setPname(String pname) {
+			this.pname = pname;
+		}
+
+		public String getContent() {
+			return content;
+		}
+
+		public void setContent(String content) {
+			this.content = content;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public String getTname() {
+			return tname;
+		}
+
+		public String getStartDate() {
+			return startDate;
+		}
+
+		public String getEndDate() {
+			return endDate;
+		}
+
+		public void setTname(String tname) {
+			this.tname = tname;
+		}
+
+		public void setStartDate(String startDate) {
+			this.startDate = startDate;
+		}
+
+		public void setEndDate(String endDate) {
+			this.endDate = endDate;
+		}
+
+		public String getProcess() {
+			return process;
+		}
+
+		public void setProcess(String process) {
+			this.process = process;
+		}
 	}
 }
