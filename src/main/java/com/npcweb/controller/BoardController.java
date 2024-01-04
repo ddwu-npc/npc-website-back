@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Post;
+import com.npcweb.domain.User;
 import com.npcweb.domain.response.PostResponse;
 import com.npcweb.service.BoardService;
 import com.npcweb.service.PostService;
+import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
 @RestController
@@ -27,6 +29,7 @@ import com.npcweb.service.PostService;
 public class BoardController {
 	@Autowired BoardService boardService;
 	@Autowired PostService postService;
+	@Autowired UserService userService;
 	
 	// 게시글 목록
 	@GetMapping("/{board_id}")
@@ -41,6 +44,10 @@ public class BoardController {
 	    int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
 
 	    List<PostResponse> postsList = postsPages.getContent();
+	    for (PostResponse p : postsList) {
+	    	User u = userService.getUserByUserNo(Long.parseLong(p.getNickname()));
+	    	p.setNickname(u.getNickname());
+	    }
 	    return postsList;
 	}
 	
