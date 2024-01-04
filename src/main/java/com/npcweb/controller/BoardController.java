@@ -1,5 +1,7 @@
 package com.npcweb.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,33 +36,68 @@ public class BoardController {
 	
 	// 게시글 목록
 	@GetMapping("/{board_id}")
-	public List<PostResponse> page(@PathVariable long board_id, @PageableDefault(page = 1) Pageable pageable) {
+	public ResponseEntity<Map<String, Object>> page(@PathVariable long board_id, @PageableDefault(page = 1) Pageable pageable) {
 	    int adjustedPage = pageable.getPageNumber() - 1;
 	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 	    
+	    // 페이징
 	    Page<PostResponse> postsPages = postService.pagingByBoard(pageRequest, board_id);
 	    
 	    int blockLimit = 5;
 	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
 	    int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
 
+        Map<String, Object> response = new HashMap<>();
+        // post 데이터
 	    List<PostResponse> postsList = postsPages.getContent();
 	    for (PostResponse p : postsList) {
 	    	User u = userService.getUserByUserNo(Long.parseLong(p.getNickname()));
 	    	p.setNickname(u.getNickname());
 	    }
-	    return postsList;
+	    // 페이지 데이터
+	    List<Integer> pageInfo = new ArrayList<Integer>();
+	    pageInfo.add(adjustedPage); pageInfo.add(endPage);
+	   
+        response.put("postList", postsList);
+        response.put("pageInfo", pageInfo);
+
+        return ResponseEntity.ok().body(response);
 	}
 	
 	//게시글 검색
 	@PostMapping("/{board_id}/search")
-	public List<Post> postList(@PathVariable long board_id, @RequestBody Map<String, String> requestBody ) {
+	public ResponseEntity<Map<String, Object>> pageBySearch(@PathVariable long board_id, @RequestBody Map<String, String> requestBody, @PageableDefault(page = 1) Pageable pageable) {
 		long rangePost = Long.parseLong(requestBody.get("rangePost"));		
 		long searchRange = Long.parseLong(requestBody.get("searchRange"));
 		String text = requestBody.get("text");
 		
-		//System.out.println("확인용 "+board_id+" "+rangeId+" "+searchRange+" "+text);
+		// 검색 결과 리스트
 		List<Post> pList = boardService.getAllPostListByKeyword(board_id, rangePost, searchRange, text);
-		return pList;
+		
+	    int adjustedPage = pageable.getPageNumber() - 1;
+	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
+	    
+	    // 페이징
+	    Page<PostResponse> postsPages = postService.pagingBySearch(pageRequest, pList);
+	    
+	    int blockLimit = 5;
+	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
+	    int endPage = Math.min(startPage + blockLimit - 1, postsPages.getTotalPages());
+
+        Map<String, Object> response = new HashMap<>();
+        // post 데이터
+	    List<PostResponse> postsList = postsPages.getContent();
+	    for (PostResponse p : postsList) {
+	    	User u = userService.getUserByUserNo(Long.parseLong(p.getNickname()));
+	    	p.setNickname(u.getNickname());
+	    }
+	    // 페이지 데이터
+	    List<Integer> pageInfo = new ArrayList<Integer>();
+	    pageInfo.add(adjustedPage); pageInfo.add(endPage);
+	   
+        response.put("postList", postsList);
+        response.put("pageInfo", pageInfo);
+
+        return ResponseEntity.ok().body(response);
 	}
 }

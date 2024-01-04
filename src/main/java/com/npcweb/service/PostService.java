@@ -1,8 +1,12 @@
 package com.npcweb.service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.npcweb.dao.PostDAO;
 import com.npcweb.domain.Post;
 import com.npcweb.domain.response.PostResponse;
+import com.npcweb.repository.PostPagingRepository;
 import com.npcweb.repository.PostRepository;
 
 @Service
@@ -20,6 +25,8 @@ public class PostService {
 	PostDAO postDao;
 	@Autowired
 	PostRepository postRepo;
+	@Autowired
+	PostPagingRepository postPagingRepo;
 	
 	//게시글 생성
 	public void insertPost(Post post) {
@@ -89,11 +96,30 @@ public class PostService {
 	    int pageLimit = 11; // 한 페이지에 보여줄 글 개수
 
 	    Pageable p = PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "postId"));
-	    Page<Post> postsPages = postRepo.findAllByBoardId(boardId, p);
+	    Page<Post> postsPages = postPagingRepo.findAllByBoardIdWithImportantSorting(boardId, p);
 
 	    Page<PostResponse> postsResponseDtos = postsPages.map(PostResponse::new);
 
 	    return postsResponseDtos;
 	}
+	
+	// 검색 결과 페이징
+	public Page<PostResponse> pagingBySearch(Pageable pageable, List<Post> searchResult) {
+	    int page = pageable.getPageNumber();
+	    int pageLimit = 11;
 
+	    int startIdx = page * pageLimit;
+	    int endIdx = Math.min(startIdx + pageLimit, searchResult.size());
+	    List<Post> paginatedResults = searchResult.subList(startIdx, endIdx);
+
+	    paginatedResults.sort(Comparator.comparing(Post::getPostId).reversed());
+
+	    Page<PostResponse> pageResponse = new PageImpl<>(
+	            paginatedResults.stream().map(PostResponse::new).collect(Collectors.toList()),
+	            pageable,
+	            searchResult.size()
+	    );
+
+	    return pageResponse;
+	}
 }
