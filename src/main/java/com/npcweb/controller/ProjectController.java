@@ -119,20 +119,18 @@ public class ProjectController {
 
 	    Project project = projectService.getProject(projectId);
 	    User user = userService.getUserByNickname(projectRes.getLeader());
-	    
-	    project.setPname(projectRes.getPname());
-	    project.setProcess(projectRes.getProcess());
-	    
+	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date startDate = dateFormat.parse(projectRes.getStartDate());
 	    Date endDate = dateFormat.parse(projectRes.getEndDate());
 	    
 	    project.setStartDate(startDate);
 	    project.setEndDate(endDate);
-	    
+	    project.setContent(projectRes.getContent());
+	    project.setPname(projectRes.getPname());
+	    project.setProcess(projectRes.getProcess());
 	    
 	    projectService.update(project);
-	    
 	    Project updatedProject = projectService.getProject(projectId);
 	    return ResponseEntity.ok(updatedProject);
 	}

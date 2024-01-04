@@ -5,7 +5,7 @@ import com.npcweb.domain.Project;
 public class ProjectInfoResponse {
 	long pid;
 	String leader, type;
-	String pname, tname, process, content;
+	String pname, tname, process, content, description;
 	String startDate, endDate;
 	
 	public ProjectInfoResponse(Project p) {
