@@ -90,7 +90,7 @@ public class ProjectController {
 	}
 	
 	@GetMapping("/create/{userno}")
-	public void deleteProject(@PathVariable String userno) {
+	public void createProject(@PathVariable String userno) {
 	    User user = userService.getUserByNickname(userno);
 	    Date currentDate = new Date();
 	    
@@ -135,11 +135,6 @@ public class ProjectController {
 	    
 	    Project updatedProject = projectService.getProject(projectId);
 	    return ResponseEntity.ok(updatedProject);
-	}
-	
-	@PostMapping
-    public void insertProject(@RequestBody Project project) {
-		projectService.insert(project);
 	}
 	
 	class ProjectReq {
