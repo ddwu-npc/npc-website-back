@@ -3,6 +3,7 @@ package com.npcweb.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,20 +40,28 @@ public class ProjectController {
 	
 	// 팀원 추가 필요
 	
-	@RequestMapping
-	public List<ProjectResponse> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
-		int adjustedPage = pageable.getPageNumber() - 1;
-	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
-	    
-	    Page<ProjectResponse> projectPages = projectService.paging(pageRequest);
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
+        int adjustedPage = pageable.getPageNumber() - 1;
+        PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 
-	    int blockLimit = 5;
-	    int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
-	    int endPage = Math.min(startPage + blockLimit - 1, projectPages.getTotalPages());
+        Page<ProjectResponse> projectPages = projectService.paging(pageRequest);
+        List<Integer> pageInfo = new ArrayList<>();
 
-	    List<ProjectResponse> projectList = projectPages.getContent();
-	    return projectList;
-	}
+        int blockLimit = 5;
+        int startPage = (adjustedPage / blockLimit) * blockLimit + 1;
+        int endPage = Math.min(startPage + blockLimit - 1, projectPages.getTotalPages());
+        pageInfo.add(adjustedPage + 1);
+        pageInfo.add(endPage);
+        
+        List<ProjectResponse> projectList = projectPages.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("projects", projectList);
+        response.put("pageInfo", pageInfo);
+
+        return ResponseEntity.ok().body(response);
+    }
 	
 	@GetMapping("/{project_id}")
 	public ProjectReq getProjectInfo(@PathVariable long project_id) {
