@@ -11,7 +11,7 @@ public class PostResponse {
 	private long postId, boardId;
 	private String title, nickname;
 	private String createDate, updateDate;
-	private int important;
+	private int important, havePostfile;
 	private String rangePost;
 	
 	public PostResponse(Post p) {
@@ -23,6 +23,7 @@ public class PostResponse {
 		this.createDate = p.getFormattedCreateDate();
 		this.updateDate = p.getFormattedUpdateDate();
 		this.important = p.getImportant();
+		this.havePostfile = p.getHavePostfile();
 		this.rangePost = p.getRangePost();
 	}
 	
@@ -49,6 +50,9 @@ public class PostResponse {
 	}
 	public int getImportant() {
 		return important;
+	}
+	public int getHavePostfile() {
+		return havePostfile;
 	}
 	public String getRangePost() {
 		return rangePost;
