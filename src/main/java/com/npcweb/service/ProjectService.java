@@ -33,15 +33,17 @@ public class ProjectService {
 	@Autowired
 	JpaProjectDAO jpaProjectDao;
 	
-	public void insert(Project p) {
+	public long insert(Project p) {
 		// 리더(프로젝트 글쓴이)를 프로젝트 인원에 추가
 		User u = userRepo.findById(p.getLeader()).get();
 		p.getUser().add(u);
 		// 리더 유저에 프로젝트 추가
 		u.getProjects().add(p);
 		// 저장
-		projectRepo.save(p);
+		Project savedProject = projectRepo.save(p);
 		userRepo.save(u);
+		
+		return savedProject.getPid();
 	}
 	
 	public void delete(long project_id) {
