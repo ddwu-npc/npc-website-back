@@ -29,8 +29,8 @@ public class BoardService {
 	}
 	
 	//게시글 검색
-	public List<Post> getAllPostListByKeyword(long board_id, long rangeId, long searchRange, String text){
-		return boardDao.getAllPostListByKeyword(board_id, rangeId, searchRange, text);
+	public List<Post> getAllPostListByKeyword(long board_id, long rangeId, long searchRange, String text, long userRank){
+		return boardDao.getAllPostListByKeyword(board_id, rangeId, searchRange, text, userRank);
 	}
 	
 	/* 전체 페이징
