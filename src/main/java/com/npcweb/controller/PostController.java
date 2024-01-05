@@ -70,8 +70,6 @@ public class PostController {
 		    @RequestParam("important") String important,
 		    @RequestHeader("Authorization") String token) {
 		
-		//프론트에서 파일이 하나여야 들어옴....일단 한다
-		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
         
