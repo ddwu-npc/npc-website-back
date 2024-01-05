@@ -1,11 +1,7 @@
 package com.npcweb.controller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +34,6 @@ public class PostController {
 	@Autowired private JWTProvider jwtProvider;
 	@Autowired private ReadCountService readCountService;
 	@Autowired PostFileService pfService;
-	
-	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 
 	//read
 	@GetMapping("/{post_id}")
@@ -116,23 +110,52 @@ public class PostController {
 	}
 	//update
 	@PutMapping("/{post_id}")
-	public void updatePost(@RequestBody PostReq req, @PathVariable long post_id) {
+	public void updatePost(@PathVariable long post_id, 
+			@RequestParam(value = "attachment_0", required = false) MultipartFile file0,
+			@RequestParam(value = "attachment_1", required = false) MultipartFile file1,
+			@RequestParam(value = "attachment_2", required = false) MultipartFile file2,
+		    @RequestParam("title") String title,
+		    @RequestParam(value="content") String content,
+		    @RequestParam("rangePost") String rangePost,
+		    @RequestParam("important") String important) {
 		Post post = postService.readPost(post_id);
 		post.setPostId(post_id);
 		post.setBoardId(post.getBoardId());
-		if(req.getContent()==null)
+		if(content==null)
 			post.setContent("");
 		else
-			post.setContent(req.getContent());
+			post.setContent(content);
 		
-		if(req.getImportant()==null)
+		if(important==null)
 			post.setImportant(0);
 		else
 			post.setImportant(1);
 		post.setUpdateDate(new Date());
-		post.setRangePost(req.getRangePost());
-		post.setTitle(req.getTitle());
+		post.setRangePost(rangePost);
+		if(title==null || title.equals(""))
+			post.setTitle("제목이 없습니다.");
+		else
+			post.setTitle(title);
 		post.setUserNo(post.getUserNo());
+		
+		
+		if(post.getHavePostfile()==1) {
+			pfService.deleteFiles(post_id);
+		}
+		
+		if (file0 != null) {
+			post.setHavePostfile(1);
+			ArrayList<MultipartFile> files = new ArrayList<>();
+			files.add(file0);
+			if(file1 != null)
+				files.add(file1);
+			if(file2 != null)
+				files.add(file2);
+			
+			for(MultipartFile file : files)
+				pfService.submitFileUpload(file, post);
+	    }else
+	    	post.setHavePostfile(0);
 
 		postService.updatePost(post);
 	}
@@ -158,7 +181,7 @@ public class PostController {
 		return postService.findUserByPostId(id);
 	}
 }
-
+/*
 class PostReq {
 	private String title, content, rangePost, important;
 	private long userNo, boardId;
@@ -199,3 +222,4 @@ class PostReq {
 		return readCount;
 	}
 }
+*/
