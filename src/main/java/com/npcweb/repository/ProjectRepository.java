@@ -1,16 +1,12 @@
 package com.npcweb.repository;
 
-import org.springframework.dao.DataAccessException;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.npcweb.domain.Project;
 
 public interface ProjectRepository  extends JpaRepository<Project, Long>{
-//	public void insertProject(Project project) throws DataAccessException;
-//	
-//	public Project readProject(long project_id) throws DataAccessException;
-//	
-//	public void updateProject(Project project) throws DataAccessException;
-//
-//	public void deleteProject(Project project) throws DataAccessException;
+    List<Project> findAll(Specification<Project> specification);
 }

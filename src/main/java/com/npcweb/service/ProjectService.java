@@ -43,6 +43,7 @@ public class ProjectService {
 	
 	public void update(Project p) {
 		// 존재할 시 update, 하지 않으면 insert
+		changeLeader(p.getPid(), p.getLeader());
 		projectRepo.save(p);
 	}
 	

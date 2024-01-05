@@ -1,23 +1,29 @@
 package com.npcweb.domain.response;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.npcweb.domain.Post;
+import com.npcweb.service.UserService;
 
 public class PostResponse {
-	private long postId, boardId, userNo;
-	private String title;
+	@Autowired private UserService userSerivice;
+	
+	private long postId, boardId;
+	private String title, nickname;
 	private String createDate, updateDate;
-	private int important;
+	private int important, havePostfile;
 	private String rangePost;
 	
 	public PostResponse(Post p) {
 		super();
 		this.postId = p.getPostId();
 		this.boardId = p.getBoardId();
-		this.userNo = p.getUserNo();
+		this.nickname = String.valueOf(p.getUserNo());
 		this.title = p.getTitle();
 		this.createDate = p.getFormattedCreateDate();
 		this.updateDate = p.getFormattedUpdateDate();
 		this.important = p.getImportant();
+		this.havePostfile = p.getHavePostfile();
 		this.rangePost = p.getRangePost();
 	}
 	
@@ -27,8 +33,11 @@ public class PostResponse {
 	public long getBoardId() {
 		return boardId;
 	}
-	public long getUserNo() {
-		return userNo;
+	public String getNickname() {
+		return nickname;
+	}
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 	public String getTitle() {
 		return title;
@@ -41,6 +50,9 @@ public class PostResponse {
 	}
 	public int getImportant() {
 		return important;
+	}
+	public int getHavePostfile() {
+		return havePostfile;
 	}
 	public String getRangePost() {
 		return rangePost;

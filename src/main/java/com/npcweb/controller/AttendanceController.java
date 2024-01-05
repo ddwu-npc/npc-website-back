@@ -51,12 +51,13 @@ public class AttendanceController {
 			
 		// 프로젝트에 속한 인원만 출석할 수 있도록 추가 필요
 		// 여기서 jwttoken을 받아서 project의 users와 비교
+		// return -200
 		
 		for (Attendance a : attendances) {
 			if (!a.getType().equals("종료"))
 				return a.getAttendanceId();
 		}
-		return -1; // 현재 열린 출석 없음
+		return -100; // 현재 열린 출석 없음
 	}
 	
 	@GetMapping("/create/{project_id}")
