@@ -74,14 +74,17 @@ public class BoardController {
 	
 	//게시글 검색
 	@PostMapping("/{board_id}/search")
-	public ResponseEntity<Map<String, Object>> pageBySearch(@PathVariable long board_id, @RequestBody Map<String, String> requestBody, @PageableDefault(page = 1) Pageable pageable) {
+	public ResponseEntity<Map<String, Object>> pageBySearch(@PathVariable long board_id, @RequestHeader("Authorization") String token, @RequestBody Map<String, String> requestBody, @PageableDefault(page = 1) Pageable pageable) {
 		long rangePost = Long.parseLong(requestBody.get("rangePost"));		
 		long searchRange = Long.parseLong(requestBody.get("searchRange"));
 		String text = requestBody.get("text");
 		
-		// 검색 결과 리스트
-		List<Post> pList = boardService.getAllPostListByKeyword(board_id, rangePost, searchRange, text);
+	    String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+	    long userRank = userService.fineRankByuserNo(userNo);
 		
+		// 검색 결과 리스트
+		List<Post> pList = boardService.getAllPostListByKeyword(board_id, rangePost, searchRange, text, userRank);
 	    int adjustedPage = pageable.getPageNumber() - 1;
 	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 	    
