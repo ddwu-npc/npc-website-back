@@ -1,21 +1,28 @@
 package com.npcweb.service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.npcweb.dao.jpa.JpaProjectDAO;
+import com.npcweb.domain.Post;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.PostResponse;
 import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.repository.ProjectRepository;
 import com.npcweb.repository.UserRepository;
+import com.npcweb.specification.ProjectSearchSpecification;
 
 @Service
 public class ProjectService {
@@ -82,6 +89,52 @@ public class ProjectService {
 	    return projectResponseDtos;
 	}
 	
+	// 검색 결과 페이징
+	public Page<ProjectResponse> pagingBySearch(Pageable pageable, List<Project> searchResult) {
+	    int page = pageable.getPageNumber();
+	    int pageLimit = 11;
+
+	    int startIdx = page * pageLimit;
+	    int endIdx = Math.min(startIdx + pageLimit, searchResult.size());
+	    List<Project> paginatedResults = searchResult.subList(startIdx, endIdx);
+
+	    paginatedResults.sort(Comparator.comparing(Project::getPid).reversed());
+
+	    Page<ProjectResponse> pageResponse = new PageImpl<>(
+	            paginatedResults.stream().map(ProjectResponse::new).collect(Collectors.toList()),
+	            pageable,
+	            searchResult.size()
+	    );
+
+	    return pageResponse;
+	}
+	
+	// 검색
+    public List<Project> searchProjects(int _process, int _type, String pname) {
+        String process = "", type = "";
+        
+        switch (_process) {
+        case 1:
+            process = "개발 중";
+            break;
+        case 2:
+            process = "개발 완료";
+            break;
+        }
+        
+        switch (_type) {
+        case 1:
+        	type = "팀";
+        	break;
+        case 2:
+        	type = "개인";
+        	break;
+        }
+        
+    	Specification<Project> specification = ProjectSearchSpecification.findBySearch(process, type, pname);
+        return projectRepo.findAll(specification);
+    }
+    
 	// 리더 변경
 	public void changeLeader(long pid, long userno) {
 		Project p = projectRepo.findById(pid).get();
