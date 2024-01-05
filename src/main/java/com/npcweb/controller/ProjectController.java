@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
-import com.npcweb.domain.response.PostResponse;
 import com.npcweb.domain.response.ProjectInfoResponse;
 import com.npcweb.domain.response.ProjectResponse;
 import com.npcweb.service.ProjectService;
@@ -66,6 +65,35 @@ public class ProjectController {
         return ResponseEntity.ok().body(response);
     }
 	
+    // 프로젝트 검색
+  	@PostMapping("/search")
+  	public ResponseEntity<Map<String, Object>> pageBySearch(@RequestBody Map<String, String> requestBody, @PageableDefault(page = 1) Pageable pageable) {
+  		int _process = Integer.parseInt(requestBody.get("process"));	
+  		int _type = Integer.parseInt(requestBody.get("type"));
+  		String pname = requestBody.get("text");
+  		
+  		// 검색 결과 리스트
+  		List<Project> projectListBySearch = projectService.searchProjects(_process, _type, pname);
+  		
+  	    int adjustedPage = pageable.getPageNumber() - 1;
+  	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
+  	    
+  	    // 페이징
+  	    Page<ProjectResponse> projectPages = projectService.pagingBySearch(pageRequest, projectListBySearch);
+  	    int endPage = projectPages.getTotalPages();
+
+        Map<String, Object> response = new HashMap<>();
+
+  	    List<ProjectResponse> projectList = projectPages.getContent();
+  	    List<Integer> pageInfo = new ArrayList<Integer>();
+  	    pageInfo.add(adjustedPage); pageInfo.add(endPage);
+  	   
+        response.put("projects", projectList);
+        response.put("pageInfo", pageInfo);
+
+        return ResponseEntity.ok().body(response);
+  	}
+  	
 	@GetMapping("/{project_id}")
 	public ProjectReq getProjectInfo(@PathVariable long project_id) {
 		ProjectReq req = new ProjectReq();
