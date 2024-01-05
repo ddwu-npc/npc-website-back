@@ -117,23 +117,63 @@ public class ProjectController {
 	}
 	
 	@GetMapping("/create/{userno}")
-	public void createProject(@PathVariable String userno) {
-	    User user = userService.getUserByNickname(userno);
+	public ProjectReq getNewProjectInfo(@PathVariable long userno) {
 	    Date currentDate = new Date();
 	    
-	    Project project = null;
+	    // 새 프로젝트 생성
+	    Project project = new Project();
 		
-		project.setPname("");
-		project.setContent("");
+		project.setPname("temp");
+		project.setContent("temp");
 		project.setEndDate(currentDate);
 		project.setStartDate(currentDate);
-		project.setTname("");
+		project.setTname("temp");
 		project.setProcess("0");
-		project.setType("");
-		project.setLeader(user.getUserNo());
+		project.setType("0");
+		project.setContent("temp");
+		project.setLeader(userno);
 		
+		long newPid = projectService.insert(project);
 		
+		// projectRes로 전달
+		ProjectReq req = new ProjectReq();
+		
+		Project p = projectService.getProject(newPid);
+		ProjectInfoResponse projectRes = new ProjectInfoResponse(p);
+		long leader = Long.parseLong(projectRes.getLeader());
+		projectRes.setNickname(userService.getNickname(leader));
+		req.setProjectRes(projectRes);
+		
+		// userList
+		Set<User> userList = p.getUser();
+		HashMap<String, String> userListRes = new HashMap<String, String>();
+		
+		for (User u : userList) {
+			userListRes.put(u.getNickname(), u.getDept().getDname());
+		}
+		req.setUserList(userListRes);
+		return req;
+	}
+	
+	@PutMapping("/create/{project_id}")
+	public ResponseEntity<?> createProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReqRes projectRes) throws ParseException {
 
+	    Project project = projectService.getProject(projectId);
+	    User user = userService.getUserByNickname(projectRes.getLeader());
+	    // 날짜 변환
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    Date startDate = dateFormat.parse(projectRes.getStartDate());
+	    Date endDate = dateFormat.parse(projectRes.getEndDate());
+	    
+	    project.setStartDate(startDate);
+	    project.setEndDate(endDate);
+	    project.setContent(projectRes.getContent());
+	    project.setPname(projectRes.getPname());
+	    project.setProcess(projectRes.getProcess());
+	    
+	    projectService.update(project);
+	    Project createdProject = projectService.getProject(projectId);
+	    return ResponseEntity.ok(createdProject);
 	}
 	
 	@DeleteMapping("/{project_id}")
