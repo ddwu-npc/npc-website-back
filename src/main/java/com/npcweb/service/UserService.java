@@ -53,4 +53,8 @@ public class UserService {
 	public User getUserByNickname(String nickname) {
 		return userDao.getUserByNickname(nickname);
 	}
+
+	public int fineRankByuserNo(long userNo) {
+		return userDao.findRankByuserNo(userNo);
+	}
 }

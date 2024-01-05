@@ -95,4 +95,15 @@ public class JpaUserDAO {
 		}
 		return user;
 	}
+
+	public int findRankByuserNo(long userNo) {
+		TypedQuery<User> query = em.createQuery(
+				"select u from User u where u.userNo=:userNo",
+				User.class);
+		query.setParameter("userNo", userNo);
+		
+		User user = query.getSingleResult();
+		
+		return user.getRank();
+	}
 }

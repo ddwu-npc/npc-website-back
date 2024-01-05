@@ -48,12 +48,17 @@ public class BoardService {
     */
 	
 	// 게시판별 페이징
-	public Page<PostResponse> pagingByBoard(Pageable pageable, long boardId) {
+	public Page<PostResponse> pagingByBoard(Pageable pageable, long boardId, String rangePost) {
 	    int page = pageable.getPageNumber(); // page 위치에 있는 값은 0부터 시작한다.
 	    int pageLimit = 11; // 한 페이지에 보여줄 글 개수
 
 	    Pageable p = PageRequest.of(page, pageLimit, Sort.by(Direction.DESC, "postId"));
-	    Page<Post> postsPages = postPagingRepo.findAllByBoardIdWithImportantSorting(boardId, p);
+	    Page<Post> postsPages = null;
+	    
+	    if(rangePost.equals("임원"))
+	    	postsPages = postPagingRepo.findAllByBoardIdWithImportantSorting(boardId, p);
+	    else
+	    	postsPages = postPagingRepo.findAllByBoardIdWithImportantSorting(boardId, rangePost, p);
 
 	    Page<PostResponse> postsResponseDtos = postsPages.map(PostResponse::new);
 

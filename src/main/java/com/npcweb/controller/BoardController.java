@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Post;
 import com.npcweb.domain.User;
 import com.npcweb.domain.response.PostResponse;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.BoardService;
 import com.npcweb.service.UserService;
 
@@ -31,15 +33,25 @@ import com.npcweb.service.UserService;
 public class BoardController {
 	@Autowired BoardService boardService;
 	@Autowired UserService userService;
+	@Autowired private JWTProvider jwtProvider;
 	
 	// 게시글 목록
 	@GetMapping("/{board_id}")
-	public ResponseEntity<Map<String, Object>> page(@PathVariable long board_id, @PageableDefault(page = 1) Pageable pageable) {
+	public ResponseEntity<Map<String, Object>> page(@PathVariable long board_id, @RequestHeader("Authorization") String token, @PageableDefault(page = 1) Pageable pageable) {
 	    int adjustedPage = pageable.getPageNumber() - 1;
 	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
 	    
+	    String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+	    int rank = userService.fineRankByuserNo(userNo);
+	    
+	    String rangePost = "전체";
+	    if(rank==1)
+	    	rangePost = "임원";
+	    else if(rank==2)
+	    	rangePost = "팀장";
 	    // 페이징
-	    Page<PostResponse> postsPages = boardService.pagingByBoard(pageRequest, board_id);
+	    Page<PostResponse> postsPages = boardService.pagingByBoard(pageRequest, board_id, rangePost);
 	    
 	    int endPage = postsPages.getTotalPages();
 
