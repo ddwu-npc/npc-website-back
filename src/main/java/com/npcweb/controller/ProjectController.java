@@ -53,7 +53,7 @@ public class ProjectController {
 
         //int startPage = 1;
         int endPage = projectPages.getTotalPages();
-        pageInfo.add(adjustedPage + 1);
+        pageInfo.add(adjustedPage);
         pageInfo.add(endPage);
         
         List<ProjectResponse> projectList = projectPages.getContent();
@@ -68,9 +68,11 @@ public class ProjectController {
     // 프로젝트 검색
   	@PostMapping("/search")
   	public ResponseEntity<Map<String, Object>> pageBySearch(@RequestBody Map<String, String> requestBody, @PageableDefault(page = 1) Pageable pageable) {
-  		int _process = Integer.parseInt(requestBody.get("process"));	
-  		int _type = Integer.parseInt(requestBody.get("type"));
+		String _process = requestBody.get("process");	
+  		String _type = requestBody.get("type");
   		String pname = requestBody.get("text");
+  		int process = (_process != null) ? Integer.parseInt(_process) : 0;
+  		int type = (_type != null) ? Integer.parseInt(_type) : 0;
   		
   		// 검색 결과 리스트
   		List<Project> projectListBySearch = projectService.searchProjects(_process, _type, pname);
@@ -80,7 +82,7 @@ public class ProjectController {
   	    
   	    // 페이징
   	    Page<ProjectResponse> projectPages = projectService.pagingBySearch(pageRequest, projectListBySearch);
-  	    int endPage = projectPages.getTotalPages();
+  	    int endPage = projectListBySearch.size() / 11 + 1; // service 참고
 
         Map<String, Object> response = new HashMap<>();
 

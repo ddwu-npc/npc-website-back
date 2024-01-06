@@ -77,8 +77,6 @@ public class JpaBoardDAO implements BoardDAO {
 		}
     	
     	List<Post> postList = query.getResultList();
-    	
-    	System.out.println("length "+postList.size());
         
         return postList;
 	}

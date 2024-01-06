@@ -110,17 +110,17 @@ public class ProjectService {
 	public Page<ProjectResponse> pagingBySearch(Pageable pageable, List<Project> searchResult) {
 	    int page = pageable.getPageNumber();
 	    int pageLimit = 11;
-
 	    int startIdx = page * pageLimit;
 	    int endIdx = Math.min(startIdx + pageLimit, searchResult.size());
+
+	    searchResult.sort(Comparator.comparing(Project::getPid).reversed()); 
 	    List<Project> paginatedResults = searchResult.subList(startIdx, endIdx);
-
-	    paginatedResults.sort(Comparator.comparing(Project::getPid).reversed());
-
 	    Page<ProjectResponse> pageResponse = new PageImpl<>(
 	            paginatedResults.stream().map(ProjectResponse::new).collect(Collectors.toList()),
 	            pageable,
-	            searchResult.size()
+	            paginatedResults.size() 
+	            // 원래는 result.size()가 맞는데 이상하게 가끔 getTotalPages값이 1씩 크게 나옴
+	            // 원인을 모르겠어서.. 임시 방편
 	    );
 
 	    return pageResponse;
