@@ -8,6 +8,9 @@ public class ProjectInfoResponse {
 	String pname, tname, process, content, description;
 	String startDate, endDate;
 	
+	public ProjectInfoResponse() {
+    }
+	
 	public ProjectInfoResponse(Project p) {
 		this.pid = p.getPid();
 		this.leader = String.valueOf(p.getLeader());
