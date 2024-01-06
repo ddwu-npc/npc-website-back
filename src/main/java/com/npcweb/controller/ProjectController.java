@@ -157,20 +157,22 @@ public class ProjectController {
 	}
 	
 	@PutMapping("/create/{project_id}")
-	public ResponseEntity<?> createProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReqRes projectRes) throws ParseException {
+	public ResponseEntity<?> createProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReq projectRes) throws ParseException {
 
 	    Project project = projectService.getProject(projectId);
-	    User user = userService.getUserByNickname(projectRes.getLeader());
+	    User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    Date startDate = dateFormat.parse(projectRes.getStartDate());
-	    Date endDate = dateFormat.parse(projectRes.getEndDate());
+	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
+	    Date endDate = dateFormat.parse(projectRes.projectRes.getEndDate());
 	    
 	    project.setStartDate(startDate);
 	    project.setEndDate(endDate);
-	    project.setContent(projectRes.getContent());
-	    project.setPname(projectRes.getPname());
-	    project.setProcess(projectRes.getProcess());
+	    project.setContent(projectRes.projectRes.getContent());
+	    project.setPname(projectRes.projectRes.getPname());
+	    project.setTname(projectRes.projectRes.getTname());
+	    project.setProcess(projectRes.projectRes.getProcess());
+	    project.setType(projectRes.projectRes.getType());
 	    
 	    projectService.update(project);
 	    Project createdProject = projectService.getProject(projectId);
@@ -183,29 +185,31 @@ public class ProjectController {
 	}
 	
 	@PutMapping("/{project_id}")
-	public ResponseEntity<?> updateProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReqRes projectRes) throws ParseException {
+	public ResponseEntity<?> updateProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReq projectRes) throws ParseException {
 
 	    Project project = projectService.getProject(projectId);
-	    User user = userService.getUserByNickname(projectRes.getLeader());
+	    User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    Date startDate = dateFormat.parse(projectRes.getStartDate());
-	    Date endDate = dateFormat.parse(projectRes.getEndDate());
+	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
+	    Date endDate = dateFormat.parse(projectRes.projectRes.getEndDate());
 	    
 	    project.setStartDate(startDate);
 	    project.setEndDate(endDate);
-	    project.setContent(projectRes.getContent());
-	    project.setPname(projectRes.getPname());
-	    project.setProcess(projectRes.getProcess());
+	    project.setContent(projectRes.projectRes.getContent());
+	    project.setPname(projectRes.projectRes.getPname());
+	    project.setTname(projectRes.projectRes.getTname());
+	    project.setProcess(projectRes.projectRes.getProcess());
+	    project.setType(projectRes.projectRes.getType());
 	    
 	    projectService.update(project);
 	    Project updatedProject = projectService.getProject(projectId);
 	    return ResponseEntity.ok(updatedProject);
 	}
 	
-	class ProjectReq {
-		ProjectInfoResponse projectRes;
-		HashMap<String, String> userList = new HashMap<String, String>();
+	static class ProjectReq {
+		private ProjectInfoResponse projectRes;
+		private HashMap<String, String> userList = new HashMap<String, String>();
 		
 		public ProjectReq() {
 		}
