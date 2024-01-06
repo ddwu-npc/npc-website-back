@@ -75,7 +75,7 @@ public class ProjectController {
   		int type = (_type != null) ? Integer.parseInt(_type) : 0;
   		
   		// 검색 결과 리스트
-  		List<Project> projectListBySearch = projectService.searchProjects(_process, _type, pname);
+  		List<Project> projectListBySearch = projectService.searchProjects(process, type, pname);
   		
   	    int adjustedPage = pageable.getPageNumber() - 1;
   	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
