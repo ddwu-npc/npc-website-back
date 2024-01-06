@@ -41,6 +41,22 @@ public class UserController {
 	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
 		userService.UpdatePassword(userId, request.getPassword());
     }
+
+	// 프로젝트 팀원 추가를 위한 팀원명 찾기
+	@GetMapping("/find/{nickname}")
+	public ResponseEntity<UserResponse> addProjectUser(@PathVariable("nickname") String nickname) {
+	    User user = userService.getUserByNickname(nickname);
+	    
+	    if(user != null) {
+	        UserResponse resUser = new UserResponse(user);
+	        return ResponseEntity.ok(resUser);
+	    } else {
+	    	User u = new User();
+	    	u.setUserNo(-1);
+	        UserResponse failUser = new UserResponse(u);
+	        return ResponseEntity.ok(failUser); 
+	    }
+	}
 }
 
 class ChangePasswordRequest {
