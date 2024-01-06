@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -66,6 +68,7 @@ public class ProjectService {
 	}
 	
 	// 프로젝트 가입
+    @Transactional
 	public void signUpProject(long project_id, long user_no) {
 		// 프로젝트에 유저 추가
 		User u = userRepo.findById(user_no).get();
@@ -77,6 +80,18 @@ public class ProjectService {
 		userRepo.save(u);
 		projectRepo.save(p);
 	}
+	
+	// 프로젝트 탈퇴
+    @Transactional
+	public void leaveProject(long projectId, long userno) {
+        User u = userRepo.findByUserNo(userno);
+        Project p = projectRepo.findById(projectId).get();
+
+        if (p.getUser().contains(u)) {
+        	p.getUser().remove(u);
+        	projectRepo.save(p);
+        }
+    }
 	
 	// 페이징
 	public Page<ProjectResponse> paging(Pageable pageable) {
