@@ -124,6 +124,7 @@ public class ProjectController {
 	    Project project = new Project();
 		
 		project.setPname("temp");
+		project.setTname("temp");
 		project.setContent("temp");
 		project.setEndDate(currentDate);
 		project.setStartDate(currentDate);
