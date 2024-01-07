@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
@@ -158,6 +159,21 @@ public class ProjectController {
 		return req;
 	}
 	
+	// 프로젝트 팀원 추가
+	@PostMapping("/add/{pid}/{nickname}")
+	public void insertProjectUser(@PathVariable String nickname, @PathVariable long pid) {
+		User user = userService.getUserByNickname(nickname);
+		projectService.signUpProject(pid, user.getUserNo());
+	}
+	
+	// 프로젝트 팀원 삭제
+	@PostMapping("/remove/{pid}/{nickname}")
+	public void removeProjectUser(@PathVariable String nickname, @PathVariable long pid) {
+		User user = userService.getUserByNickname(nickname);
+		projectService.leaveProject(pid, user.getUserNo());
+		
+	}
+	
 	@PutMapping("/create/{project_id}")
 	public ResponseEntity<?> createProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReq projectRes) throws ParseException {
 
@@ -232,87 +248,5 @@ public class ProjectController {
 			this.userList = userList;
 		}
 
-	}
-	
-	static class ProjectReqRes {
-		long pid;
-		String leader;
-		String pname, tname, content, type, process;
-		String startDate, endDate;
-		
-		public ProjectReqRes() {
-		}
-		
-		public long getPid() {
-			return pid;
-		}
-
-		public void setPid(long pid) {
-			this.pid = pid;
-		}
-
-		public String getLeader() {
-			return leader;
-		}
-
-		public void setLeader(String leader) {
-			this.leader = leader;
-		}
-
-		public String getPname() {
-			return pname;
-		}
-
-		public void setPname(String pname) {
-			this.pname = pname;
-		}
-
-		public String getContent() {
-			return content;
-		}
-
-		public void setContent(String content) {
-			this.content = content;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
-		public String getTname() {
-			return tname;
-		}
-
-		public String getStartDate() {
-			return startDate;
-		}
-
-		public String getEndDate() {
-			return endDate;
-		}
-
-		public void setTname(String tname) {
-			this.tname = tname;
-		}
-
-		public void setStartDate(String startDate) {
-			this.startDate = startDate;
-		}
-
-		public void setEndDate(String endDate) {
-			this.endDate = endDate;
-		}
-
-		public String getProcess() {
-			return process;
-		}
-
-		public void setProcess(String process) {
-			this.process = process;
-		}
 	}
 }
