@@ -1,5 +1,7 @@
 package com.npcweb.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,6 +29,36 @@ public class UserController {
 		// request body에 있는 정보로 user 등록
 		userService.insert(user);
     }
+	
+	// 닉네임 체크
+	@PostMapping("/checkNickname")
+	public ResponseEntity<Boolean> checkNickname(@RequestBody Map<String, String> _nickname) {
+		String nickname = _nickname.get("nickname");
+		int result = userService.NicknameCheck(nickname);
+		if (result == 0)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
+	// 아이디 체크
+	@PostMapping("/checkUserId")
+	public ResponseEntity<Boolean> checkUserId(@RequestBody Map<String, String> _userId) {
+		String userId = _userId.get("userId");
+		int result = userService.UserIdCheck(userId);
+		if (result == 0)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
+	// 이메일 체크
+	@PostMapping("/checkEmail")
+	public ResponseEntity<Boolean> checkEmail(@RequestBody Map<String, String> _email) {
+		String email = _email.get("email");
+		int result = userService.EmailCheck(email);
+		if (result == 0)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
 	
 	// 타인의 정보기 때문에 제한적으로 전달
 	@GetMapping("/{userNo}")

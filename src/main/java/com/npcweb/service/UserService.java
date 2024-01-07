@@ -50,6 +50,10 @@ public class UserService {
 		return userDao.NicknameCheck(nickname);
 	}
 	
+	public int EmailCheck (String email) {
+		return userDao.EmailCheck(email);
+	}
+	
 	public User getUserByNickname(String nickname) {
 		return userDao.getUserByNickname(nickname);
 	}
