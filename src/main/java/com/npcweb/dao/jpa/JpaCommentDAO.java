@@ -56,13 +56,13 @@ public class JpaCommentDAO implements CommentDAO {
 	// 내가 쓴 댓글
 	@Override
 	public List<Comment> getUserComment (long userno) throws DataAccessException {
-		TypedQuery<Comment> query = em.createQuery(
-			    "select c from Comment c where c.userNo=:userno ORDER BY c.createDate DESC", Comment.class
-			);
-		query.setParameter("userno", userno);
-		List<Comment> userComments = query.getResultList();
+	    TypedQuery<Comment> query = em.createQuery(
+	            "SELECT c FROM Comment c JOIN FETCH c.post p WHERE c.userNo = :userno ORDER BY c.createDate DESC", Comment.class
+	        );
+	    query.setParameter("userno", userno);
+	    List<Comment> userComments = query.getResultList();
 
-		return userComments;
+	    return userComments;
 	}
 
 	public long findUserByCommentId(long commentId) {
