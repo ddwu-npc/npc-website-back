@@ -134,6 +134,14 @@ public class ProjectController {
 		
 	}
 	
+	// 프로젝트 리더(팀장) 변경
+	@PostMapping("/update/{pid}/{nickname}")
+	public void updateProjectLeader(@PathVariable String nickname, @PathVariable long pid) {
+		User user = userService.getUserByNickname(nickname);
+		projectService.changeLeader(pid, user.getUserNo());
+		
+	}
+	
 	@PutMapping("/create")
 	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes) throws ParseException {
 
@@ -141,7 +149,7 @@ public class ProjectController {
 		
 	    Project project = new Project();
 
-	    // 리더 설정 - 변경
+	    // 리더 설정
 	    project.setLeader(user.getUserNo());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -179,7 +187,6 @@ public class ProjectController {
 	public ResponseEntity<?> updateProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReq projectRes) throws ParseException {
 
 	    Project project = projectService.getProject(projectId);
-	    User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
