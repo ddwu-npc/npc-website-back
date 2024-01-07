@@ -91,14 +91,14 @@ public class AttendanceController {
 	}
 	
 	@GetMapping("/{attendance_id}/{authcode}")
-	public boolean attend(@PathVariable long attendance_id, @PathVariable String authcode, @RequestHeader("Authorization") String token) {
+	public int attend(@PathVariable long attendance_id, @PathVariable String authcode, @RequestHeader("Authorization") String token) {
 		Attendance attendance = attendanceService.getAttendance(attendance_id);
 		String _authcode = Integer.toString(attendance.getAuthCode());
-		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+        boolean isAttend = attendanceService.isAttend(userNo, attendance_id);
 		
-		if (_authcode.equals(authcode)) {
+		if (_authcode.equals(authcode) && !isAttend) {
 			// 10 포인트 적립
 	        userService.calcPoints(userNo, 10);
 	        
@@ -106,9 +106,14 @@ public class AttendanceController {
 	        Point p = new Point(userNo, attendance_id, 10, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
 			pointService.insert(p);
 			
-			return true;
+			return 1;
 		}
-		return false;
+		if (isAttend)
+			return -200;
+		if (!_authcode.equals(authcode))
+			return -100;
+		
+		return 0;
 	}
 }
 

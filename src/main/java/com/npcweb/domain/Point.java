@@ -28,6 +28,10 @@ public class Point {
 	@Column(name="point_date")
 	Date pointDate;
 
+	public Point() {
+		
+	}
+	
 	public Point(long userno, long attendanceId, int changePoint, String content, Date pointDate) {
 		this.attendanceId = attendanceId;
 		this.userno = userno;
