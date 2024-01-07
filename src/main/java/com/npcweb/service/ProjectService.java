@@ -89,6 +89,7 @@ public class ProjectService {
 
         if (p.getUser().contains(u)) {
         	p.getUser().remove(u);
+        	u.getProjects().remove(p);
         	projectRepo.save(p);
         }
     }
