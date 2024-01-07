@@ -89,7 +89,7 @@ public class AttendanceController {
         userService.update(u);
         
         // 내역 저장
-        Point p = new Point(userNo, 10, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
+        Point p = new Point(userNo, attendance_id, 10, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
 		pointService.insert(p);
 		
 		if (_authcode.equals(authcode))
