@@ -2,11 +2,13 @@ package com.npcweb.controller;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import com.npcweb.domain.Attendance;
 import com.npcweb.domain.Point;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
+import com.npcweb.domain.response.ProjectInfoResponse;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.AttendanceService;
 import com.npcweb.service.AttendanceTimerService;
@@ -62,16 +65,29 @@ public class AttendanceController {
 		attendance.setProject(project);
 		attendanceService.insert(attendance);
 		
+		// 팀장은 자동 출석 (10포인트 출석)
+		userService.calcPoints(project.getLeader(), 10);
+		
 		// 타이머
 		timerService.scheduleTimer(attendance);
 		return attendance.getAttendanceId();
 	}
 	
 	@GetMapping("/{attendance_id}")
-	public Attendance getAttendanceInfo(@PathVariable long attendance_id) {
-		Attendance attendance = attendanceService.getAttendance(attendance_id);
-
-		return attendance;
+	public AttendanceReq getAttendanceInfo(@PathVariable long attendance_id, @RequestHeader("Authorization") String token) {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);;
+        
+        AttendanceReq req = new AttendanceReq();
+        Attendance attendance = attendanceService.getAttendance(attendance_id);
+        Project project = attendance.getProject();
+        
+        req.setAttendance(attendance);
+        if (userNo == project.getLeader())
+        	req.setLeader(true);
+        else req.setLeader(false);
+        
+		return req;
 	}
 	
 	@GetMapping("/{attendance_id}/{authcode}")
@@ -81,19 +97,35 @@ public class AttendanceController {
 		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
-        
-		// 포인트 적립
-        User u = userService.getUserByUserNo(userNo);
-        int currPoint = u.getNpcPoint();
-        u.setNpcPoint(currPoint + 10);
-        userService.update(u);
-        
-        // 내역 저장
-        Point p = new Point(userNo, attendance_id, 10, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
-		pointService.insert(p);
 		
-		if (_authcode.equals(authcode))
+		if (_authcode.equals(authcode)) {
+			// 10 포인트 적립
+	        userService.calcPoints(userNo, 10);
+	        
+	        // 내역 저장
+	        Point p = new Point(userNo, attendance_id, 10, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
+			pointService.insert(p);
+			
 			return true;
+		}
 		return false;
+	}
+}
+
+class AttendanceReq {
+	private Attendance attendance;
+	private boolean isLeader;
+	
+	public Attendance getAttendance() {
+		return attendance;
+	}
+	public boolean isLeader() {
+		return isLeader;
+	}
+	public void setAttendance(Attendance attendance) {
+		this.attendance = attendance;
+	}
+	public void setLeader(boolean isLeader) {
+		this.isLeader = isLeader;
 	}
 }

@@ -61,4 +61,11 @@ public class UserService {
 	public int fineRankByuserNo(long userNo) {
 		return userDao.findRankByuserNo(userNo);
 	}
+	
+	public void calcPoints(long userNo, int point) {
+		User u = userRepo.findByUserNo(userNo);
+		int currPoint = u.getNpcPoint();
+		u.setNpcPoint(currPoint + point);
+		userRepo.save(u);
+	}
 }
