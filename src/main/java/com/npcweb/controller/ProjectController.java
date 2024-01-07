@@ -119,46 +119,6 @@ public class ProjectController {
 		return req;
 	}
 	
-	@GetMapping("/create/{userno}")
-	public ProjectReq getNewProjectInfo(@PathVariable long userno) {
-	    Date currentDate = new Date();
-	    
-	    // 새 프로젝트 생성
-	    Project project = new Project();
-		
-		project.setPname("temp");
-		project.setTname("temp");
-		project.setContent("temp");
-		project.setEndDate(currentDate);
-		project.setStartDate(currentDate);
-		project.setTname("temp");
-		project.setProcess("0");
-		project.setType("0");
-		project.setContent("temp");
-		project.setLeader(userno);
-		
-		long newPid = projectService.insert(project);
-		
-		// projectRes로 전달
-		ProjectReq req = new ProjectReq();
-		
-		Project p = projectService.getProject(newPid);
-		ProjectInfoResponse projectRes = new ProjectInfoResponse(p);
-		long leader = Long.parseLong(projectRes.getLeader());
-		projectRes.setNickname(userService.getNickname(leader));
-		req.setProjectRes(projectRes);
-		
-		// userList
-		Set<User> userList = p.getUser();
-		HashMap<String, String> userListRes = new HashMap<String, String>();
-		
-		for (User u : userList) {
-			userListRes.put(u.getNickname(), u.getDept().getDname());
-		}
-		req.setUserList(userListRes);
-		return req;
-	}
-	
 	// 프로젝트 팀원 추가
 	@PostMapping("/add/{pid}/{nickname}")
 	public void insertProjectUser(@PathVariable String nickname, @PathVariable long pid) {
@@ -174,11 +134,15 @@ public class ProjectController {
 		
 	}
 	
-	@PutMapping("/create/{project_id}")
-	public ResponseEntity<?> createProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReq projectRes) throws ParseException {
+	@PutMapping("/create")
+	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes) throws ParseException {
 
-	    Project project = projectService.getProject(projectId);
-	    User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
+		User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
+		
+	    Project project = new Project();
+
+	    // 리더 설정 - 변경
+	    project.setLeader(user.getUserNo());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
@@ -188,13 +152,22 @@ public class ProjectController {
 	    project.setEndDate(endDate);
 	    project.setContent(projectRes.projectRes.getContent());
 	    project.setPname(projectRes.projectRes.getPname());
-	    project.setTname(projectRes.projectRes.getTname());
+	    project.setTname(projectRes.projectRes.getTname()); 
 	    project.setProcess(projectRes.projectRes.getProcess());
 	    project.setType(projectRes.projectRes.getType());
+	    	    
+	    long newPid = projectService.insert(project);
+
+	    for (Map.Entry<String, String> entry : projectRes.userList.entrySet()) {
+	        String key = entry.getKey();
+	        
+	        if (!key.equals(projectRes.projectRes.getLeader())){
+	        	User u = userService.getUserByNickname(key);
+	        	projectService.signUpProject(newPid, u.getUserNo());
+	        }
+	    }
 	    
-	    projectService.update(project);
-	    Project createdProject = projectService.getProject(projectId);
-	    return ResponseEntity.ok(createdProject);
+	    return ResponseEntity.ok(true);
 	}
 	
 	@DeleteMapping("/{project_id}")
