@@ -4,19 +4,14 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Attendance;
@@ -41,17 +36,11 @@ public class AttendanceController {
     @Autowired private UserService userService;
     @Autowired private PointService pointService;
     
-    private Map<String, LocalDateTime> attendanceMap = new ConcurrentHashMap<>(); // 출석 정보를 저장할 Map (출석 번호, 생성 시간)
-
     // 프로젝트의 출석 중 현재 가능한 것만 반환
 	@GetMapping("quick/{project_id}")
 	public long getQuickAttendance(@PathVariable long project_id) {
 		Project project = projectService.getProject(project_id);
 		List<Attendance> attendances = project.getAttendances();
-			
-		// 프로젝트에 속한 인원만 출석할 수 있도록 추가 필요
-		// 여기서 jwttoken을 받아서 project의 users와 비교
-		// return -200
 		
 		for (Attendance a : attendances) {
 			if (!a.getType().equals("종료"))

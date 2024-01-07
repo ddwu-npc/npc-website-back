@@ -35,7 +35,7 @@ public class UserService {
 	} 
 	
 	public void update(User user) {
-		userDao.updateUser(user);
+		userRepo.save(user);
 	}
 	
 	public void UpdatePassword(String userId, String userPw) {

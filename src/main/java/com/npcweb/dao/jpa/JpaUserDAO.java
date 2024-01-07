@@ -17,22 +17,6 @@ import com.npcweb.domain.User;
 public class JpaUserDAO {
 	@PersistenceContext
     private EntityManager em;
-
-	public User getUser(String userId) throws DataAccessException {
-		TypedQuery<User> query = em.createQuery(
-				"select u from USER u where u.user_id=:user_id",
-				User.class);
-		query.setParameter("user_id", userId);
-		
-		User user = null;
-		
-		try {
-			user = query.getSingleResult();
-		} catch(NoResultException ex) {
-			return null;
-		}
-		return user;
-	}
 	
 	// 로그인
 	public User getUserByUserPw(String userId, String userPw) throws DataAccessException {

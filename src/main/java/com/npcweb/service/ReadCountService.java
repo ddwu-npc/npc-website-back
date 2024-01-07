@@ -83,9 +83,7 @@ public class ReadCountService {
     	}
     	else 
     		readCount = getData(readCountKey);
-    	    	
-    	System.out.println(readCount);
-    	int readCountFromRedis = Integer.parseInt(readCount);
+       	int readCountFromRedis = Integer.parseInt(readCount);
 
         // Redis: 조회수를 1 증가시켜 update
         int updatedCount = readCountFromRedis + 1;
