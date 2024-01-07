@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.npcweb.dao.jpa.JpaProjectDAO;
 import com.npcweb.domain.Post;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
@@ -32,8 +31,6 @@ public class ProjectService {
 	ProjectRepository projectRepo;
 	@Autowired
 	UserRepository userRepo;
-	@Autowired
-	JpaProjectDAO jpaProjectDao;
 	
 	public long insert(Project p) {
 		// 리더(프로젝트 글쓴이)를 프로젝트 인원에 추가

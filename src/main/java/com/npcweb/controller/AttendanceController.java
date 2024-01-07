@@ -39,6 +39,8 @@ public class AttendanceController {
     @Autowired private UserService userService;
     @Autowired private PointService pointService;
     
+    static int changePoint = 10;
+    
     // 프로젝트의 출석 중 현재 가능한 것만 반환
 	@GetMapping("quick/{project_id}")
 	public long getQuickAttendance(@PathVariable long project_id) {
@@ -66,11 +68,15 @@ public class AttendanceController {
 		attendanceService.insert(attendance);
 		
 		// 팀장은 자동 출석 (10포인트 출석)
-		userService.calcPoints(project.getLeader(), 10);
+		userService.calcPoints(project.getLeader(), changePoint);
+        // 내역 저장
+		long attendanceId = attendance.getAttendanceId();
+        Point p = new Point(project.getLeader(), attendanceId, changePoint, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
+		pointService.insert(p);
 		
 		// 타이머
-		timerService.scheduleTimer(attendance);
-		return attendance.getAttendanceId();
+		timerService.scheduleTimer(attendance, changePoint);
+		return attendanceId;
 	}
 	
 	@GetMapping("/{attendance_id}")
@@ -100,10 +106,10 @@ public class AttendanceController {
 		
 		if (_authcode.equals(authcode) && !isAttend) {
 			// 10 포인트 적립
-	        userService.calcPoints(userNo, 10);
+	        userService.calcPoints(userNo, changePoint);
 	        
 	        // 내역 저장
-	        Point p = new Point(userNo, attendance_id, 10, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
+	        Point p = new Point(userNo, attendance_id, changePoint, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
 			pointService.insert(p);
 			
 			return 1;

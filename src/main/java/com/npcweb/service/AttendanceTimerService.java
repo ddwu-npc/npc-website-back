@@ -13,11 +13,11 @@ public class AttendanceTimerService {
 	@Autowired AttendanceService attendanceService;
 	private Timer timer = new Timer();
 
-    public void scheduleTimer(Attendance attendance) {
+    public void scheduleTimer(Attendance attendance, int changePoint) {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-            	finishedAttendance(attendance);
+            	finishedAttendance(attendance, changePoint);
             }
         };
 
@@ -29,11 +29,10 @@ public class AttendanceTimerService {
         timer.cancel(); 
     }
 
-    private void finishedAttendance(Attendance attendance) {
-    	// 출석 안한 팀원 들은 점수 차감하는 로직 추가 필요
-    	
+    private void finishedAttendance(Attendance attendance, int changePoint) {
     	attendance.setType("종료");
     	attendanceService.insert(attendance);
+    	attendanceService.endAttend(attendance, changePoint);
     }
 
 }

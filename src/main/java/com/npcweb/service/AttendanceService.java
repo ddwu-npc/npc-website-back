@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.npcweb.domain.Attendance;
 import com.npcweb.domain.Point;
+import com.npcweb.domain.UserProject;
 import com.npcweb.repository.AttendanceRepository;
 import com.npcweb.repository.PointRepository;
+import com.npcweb.repository.UserProjectRepository;
 
 @Service
 public class AttendanceService {
 	@Autowired AttendanceRepository attendanceRepo;
 	@Autowired PointRepository pointRepo;
+	@Autowired UserProjectRepository userProjectRepo;
+	@Autowired UserService userService;
 	
 	public void insert(Attendance a) {
 		attendanceRepo.save(a);
@@ -36,4 +40,18 @@ public class AttendanceService {
     		return false;
     	return true;
     }
+
+	public void endAttend(Attendance attendance, int changePoint) {
+		long pid = attendance.getProject().getPid();
+		List<UserProject> list = userProjectRepo.findByid_Pid(pid);
+		
+		for (UserProject u : list) {
+			long userno = u.getId().getUserno();
+			if (isAttend(userno, attendance.getAttendanceId()) == false) {
+				userService.calcPoints(userno, -changePoint);
+		        Point p = new Point(userno, attendance.getAttendanceId(), -changePoint, attendance.getMeeting() + " 결석", attendance.getAttendanceDate());
+				pointRepo.save(p);
+			}
+		}
+	}
 }
