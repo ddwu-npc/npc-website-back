@@ -9,7 +9,6 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import com.npcweb.dao.BoardDAO;
@@ -57,7 +56,10 @@ public class JpaBoardDAO implements BoardDAO {
 	        	query.setParameter("text", keyText);
 	        }else {
 	        	User user = us.getUserByNickname(text);
-	        	query.setParameter("userno", user.getUserNo());
+	        	long userNo = -1;
+	        	if(user!=null)
+	        		userNo = user.getUserNo();
+	        	query.setParameter("userno", userNo);
 	        }
 	        
 	        String rangePost="";
