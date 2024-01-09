@@ -8,6 +8,6 @@ import com.npcweb.domain.Point;
 
 public interface PointRepository extends JpaRepository<Point, Long>{
 	List<Point> findByUserno(long userno);
-	List<Point> findByUsernoAndAttendanceId(long userNo, long attendanceId);
+	Point findByUsernoAndAttendanceId(long userNo, long attendanceId);
 
 }

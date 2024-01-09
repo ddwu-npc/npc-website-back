@@ -38,13 +38,13 @@ public class AttendanceService {
     }
     
     public boolean isAttend(long userNo, long attendanceId) {
-    	List<Point> p = pointRepo.findByUsernoAndAttendanceId(userNo, attendanceId);
-    	if (p.size() == 0)
-    		return false;
-    	return true;
+    	Point p = pointRepo.findByUsernoAndAttendanceId(userNo, attendanceId);
+    	if (p != null)
+    		return true;
+    	return false;
     }
 
-	public void endAttend(Attendance attendance, int changePoint) {
+	public Set<User> endAttend(Attendance attendance, int changePoint) {
 		long pid = attendance.getProject().getPid();
 		Project project = customProjectRepo.findProjectWithUsersAndAttendances(pid);
 		Set<User> userList = project.getUser();
@@ -57,5 +57,6 @@ public class AttendanceService {
 				pointRepo.save(p);
 			}
 		}
+		return userList;
 	}
 }

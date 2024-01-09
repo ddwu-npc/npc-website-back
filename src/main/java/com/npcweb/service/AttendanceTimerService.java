@@ -1,5 +1,6 @@
 package com.npcweb.service;
 
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.npcweb.domain.Attendance;
+import com.npcweb.domain.User;
 
 @Service
 public class AttendanceTimerService {
 	@Autowired AttendanceService attendanceService;
+	@Autowired PostService postService;
+	
 	private Timer timer = new Timer();
 
     public void scheduleTimer(Attendance attendance, int changePoint) {
@@ -32,7 +36,10 @@ public class AttendanceTimerService {
     private void finishedAttendance(Attendance attendance, int changePoint) {
     	attendance.setType("종료");
     	attendanceService.insert(attendance);
-    	attendanceService.endAttend(attendance, changePoint);
+    	Set<User> userList = attendanceService.endAttend(attendance, changePoint);
+    	// 정기회의 따로 빼기
+    	if (attendance.getProject().getPid() == 1000)
+    		postService.insertAttendPost(userList, attendance);
     }
 
 }
