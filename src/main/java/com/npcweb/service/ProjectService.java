@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,7 +16,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.npcweb.dao.jpa.JpaProjectDAO;
 import com.npcweb.domain.Post;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
@@ -30,8 +31,6 @@ public class ProjectService {
 	ProjectRepository projectRepo;
 	@Autowired
 	UserRepository userRepo;
-	@Autowired
-	JpaProjectDAO jpaProjectDao;
 	
 	public long insert(Project p) {
 		// 리더(프로젝트 글쓴이)를 프로젝트 인원에 추가
@@ -66,6 +65,7 @@ public class ProjectService {
 	}
 	
 	// 프로젝트 가입
+    @Transactional
 	public void signUpProject(long project_id, long user_no) {
 		// 프로젝트에 유저 추가
 		User u = userRepo.findById(user_no).get();
@@ -77,6 +77,19 @@ public class ProjectService {
 		userRepo.save(u);
 		projectRepo.save(p);
 	}
+	
+	// 프로젝트 탈퇴
+    @Transactional
+	public void leaveProject(long projectId, long userno) {
+        User u = userRepo.findByUserNo(userno);
+        Project p = projectRepo.findById(projectId).get();
+
+        if (p.getUser().contains(u)) {
+        	p.getUser().remove(u);
+        	u.getProjects().remove(p);
+        	projectRepo.save(p);
+        }
+    }
 	
 	// 페이징
 	public Page<ProjectResponse> paging(Pageable pageable) {
@@ -95,17 +108,17 @@ public class ProjectService {
 	public Page<ProjectResponse> pagingBySearch(Pageable pageable, List<Project> searchResult) {
 	    int page = pageable.getPageNumber();
 	    int pageLimit = 11;
-
 	    int startIdx = page * pageLimit;
 	    int endIdx = Math.min(startIdx + pageLimit, searchResult.size());
+
+	    searchResult.sort(Comparator.comparing(Project::getPid).reversed()); 
 	    List<Project> paginatedResults = searchResult.subList(startIdx, endIdx);
-
-	    paginatedResults.sort(Comparator.comparing(Project::getPid).reversed());
-
 	    Page<ProjectResponse> pageResponse = new PageImpl<>(
 	            paginatedResults.stream().map(ProjectResponse::new).collect(Collectors.toList()),
 	            pageable,
-	            searchResult.size()
+	            paginatedResults.size() 
+	            // 원래는 result.size()가 맞는데 이상하게 가끔 getTotalPages값이 1씩 크게 나옴
+	            // 원인을 모르겠어서.. 임시 방편
 	    );
 
 	    return pageResponse;

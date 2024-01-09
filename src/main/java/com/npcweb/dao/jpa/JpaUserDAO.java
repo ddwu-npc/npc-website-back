@@ -17,22 +17,6 @@ import com.npcweb.domain.User;
 public class JpaUserDAO {
 	@PersistenceContext
     private EntityManager em;
-
-	public User getUser(String userId) throws DataAccessException {
-		TypedQuery<User> query = em.createQuery(
-				"select u from USER u where u.user_id=:user_id",
-				User.class);
-		query.setParameter("user_id", userId);
-		
-		User user = null;
-		
-		try {
-			user = query.getSingleResult();
-		} catch(NoResultException ex) {
-			return null;
-		}
-		return user;
-	}
 	
 	// 로그인
 	public User getUserByUserPw(String userId, String userPw) throws DataAccessException {
@@ -62,24 +46,30 @@ public class JpaUserDAO {
 		u.setUserPw(userPw);
 	}
 	
-	// 아이디 중복 검사 (0:없음, 1:존재)
 	public int UserIdCheck(String userId) throws DataAccessException {
-    	Query query = em.createQuery("select u From User u WHERE userId = ?1");
+    	Query query = em.createQuery("select u From User u where userId = ?1");
     	query.setParameter(1, userId);
     		
-    	int count = query.getFirstResult();
+    	int count = query.getResultList().size();
     	return count;
 	}
         
-	// 닉네임 중복 검사 (0:없음, 1:존재)
 	public int NicknameCheck(String nickname) throws DataAccessException {
-    	Query query = em.createQuery("select u From User u WHERE nickname = ?1");
+    	Query query = em.createQuery("select u From User u where nickname = ?1");
     	query.setParameter(1, nickname);
     		
-    	int count = query.getFirstResult();
+    	int count = query.getResultList().size();
     	return count;
 	}
 
+	public int EmailCheck(String email) {
+    	Query query = em.createQuery("select u From User u where email = ?1");
+    	query.setParameter(1, email);
+    		
+    	int count = query.getResultList().size();
+    	return count;
+	}
+	
 	public User getUserByNickname(String nickname) {
 		TypedQuery<User> query = em.createQuery(
 				"select u from User u where u.nickname=:nickname",

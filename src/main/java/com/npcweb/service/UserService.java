@@ -35,7 +35,7 @@ public class UserService {
 	} 
 	
 	public void update(User user) {
-		userDao.updateUser(user);
+		userRepo.save(user);
 	}
 	
 	public void UpdatePassword(String userId, String userPw) {
@@ -50,11 +50,22 @@ public class UserService {
 		return userDao.NicknameCheck(nickname);
 	}
 	
+	public int EmailCheck (String email) {
+		return userDao.EmailCheck(email);
+	}
+	
 	public User getUserByNickname(String nickname) {
 		return userDao.getUserByNickname(nickname);
 	}
 
 	public int fineRankByuserNo(long userNo) {
 		return userDao.findRankByuserNo(userNo);
+	}
+	
+	public void calcPoints(long userNo, int point) {
+		User u = userRepo.findByUserNo(userNo);
+		int currPoint = u.getNpcPoint();
+		u.setNpcPoint(currPoint + point);
+		userRepo.save(u);
 	}
 }

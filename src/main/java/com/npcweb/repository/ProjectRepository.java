@@ -9,4 +9,5 @@ import com.npcweb.domain.Project;
 
 public interface ProjectRepository  extends JpaRepository<Project, Long>{
     List<Project> findAll(Specification<Project> specification);
+    
 }

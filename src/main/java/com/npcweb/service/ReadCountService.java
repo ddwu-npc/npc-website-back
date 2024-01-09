@@ -77,12 +77,13 @@ public class ReadCountService {
     public int getReadCountByPost(long post_id) {
     	String readCountKey = "read by post:" + String.valueOf(post_id);
     	String readCount = "0";
-    	if (getData(readCountKey) == null)
+    	if (getData(readCountKey) == null) {
+    		readCount = Integer.toString(postService.getReadCount(post_id));
     		setData(readCountKey, readCount);
+    	}
     	else 
     		readCount = getData(readCountKey);
-    	    	
-    	int readCountFromRedis = Integer.parseInt(readCount);
+       	int readCountFromRedis = Integer.parseInt(readCount);
 
         // Redis: 조회수를 1 증가시켜 update
         int updatedCount = readCountFromRedis + 1;
@@ -90,8 +91,8 @@ public class ReadCountService {
         return updatedCount;
     }
     
-    // 18초마다 Redis -> DB
- 	@Scheduled(fixedDelay = 1000L*18L)
+    // 15초마다 Redis -> DB
+ 	@Scheduled(fixedDelay = 1000L*15L)
     @Transactional
     public void deleteReadCount() {
     	 String readCountKey = "read by post:";

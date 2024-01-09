@@ -14,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -28,7 +27,7 @@ public class Project {
 	Date startDate, endDate;
 	
     @ManyToMany(mappedBy = "PROJECT")
-    private Set<User> USER = new HashSet<>();
+    private Set<User> users = new HashSet<>();
     
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Attendance> attendances = new ArrayList<>();
@@ -117,11 +116,11 @@ public class Project {
 	}
 
 	public Set<User> getUser() {
-		return USER;
+		return users;
 	}
 
-	public void setUser(Set<User> USER) {
-		this.USER = USER;
+	public void setUser(Set<User> users) {
+		this.users = users;
 	}
 
 	public List<Attendance> getAttendances() {

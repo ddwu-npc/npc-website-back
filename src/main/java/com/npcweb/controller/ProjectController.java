@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Project;
@@ -53,7 +54,7 @@ public class ProjectController {
 
         //int startPage = 1;
         int endPage = projectPages.getTotalPages();
-        pageInfo.add(adjustedPage + 1);
+        pageInfo.add(adjustedPage);
         pageInfo.add(endPage);
         
         List<ProjectResponse> projectList = projectPages.getContent();
@@ -68,19 +69,21 @@ public class ProjectController {
     // 프로젝트 검색
   	@PostMapping("/search")
   	public ResponseEntity<Map<String, Object>> pageBySearch(@RequestBody Map<String, String> requestBody, @PageableDefault(page = 1) Pageable pageable) {
-  		int _process = Integer.parseInt(requestBody.get("process"));	
-  		int _type = Integer.parseInt(requestBody.get("type"));
+		String _process = requestBody.get("process");	
+  		String _type = requestBody.get("type");
   		String pname = requestBody.get("text");
+  		int process = (_process != null) ? Integer.parseInt(_process) : 0;
+  		int type = (_type != null) ? Integer.parseInt(_type) : 0;
   		
   		// 검색 결과 리스트
-  		List<Project> projectListBySearch = projectService.searchProjects(_process, _type, pname);
+  		List<Project> projectListBySearch = projectService.searchProjects(process, type, pname);
   		
   	    int adjustedPage = pageable.getPageNumber() - 1;
   	    PageRequest pageRequest = PageRequest.of(adjustedPage, pageable.getPageSize(), pageable.getSort());
   	    
   	    // 페이징
   	    Page<ProjectResponse> projectPages = projectService.pagingBySearch(pageRequest, projectListBySearch);
-  	    int endPage = projectPages.getTotalPages();
+  	    int endPage = projectListBySearch.size() / 11 + 1; // service 참고
 
         Map<String, Object> response = new HashMap<>();
 
@@ -116,64 +119,63 @@ public class ProjectController {
 		return req;
 	}
 	
-	@GetMapping("/create/{userno}")
-	public ProjectReq getNewProjectInfo(@PathVariable long userno) {
-	    Date currentDate = new Date();
-	    
-	    // 새 프로젝트 생성
-	    Project project = new Project();
-		
-		project.setPname("temp");
-		project.setContent("temp");
-		project.setEndDate(currentDate);
-		project.setStartDate(currentDate);
-		project.setTname("temp");
-		project.setProcess("0");
-		project.setType("0");
-		project.setContent("temp");
-		project.setLeader(userno);
-		
-		long newPid = projectService.insert(project);
-		
-		// projectRes로 전달
-		ProjectReq req = new ProjectReq();
-		
-		Project p = projectService.getProject(newPid);
-		ProjectInfoResponse projectRes = new ProjectInfoResponse(p);
-		long leader = Long.parseLong(projectRes.getLeader());
-		projectRes.setNickname(userService.getNickname(leader));
-		req.setProjectRes(projectRes);
-		
-		// userList
-		Set<User> userList = p.getUser();
-		HashMap<String, String> userListRes = new HashMap<String, String>();
-		
-		for (User u : userList) {
-			userListRes.put(u.getNickname(), u.getDept().getDname());
-		}
-		req.setUserList(userListRes);
-		return req;
+	// 프로젝트 팀원 추가
+	@PostMapping("/add/{pid}/{nickname}")
+	public void insertProjectUser(@PathVariable String nickname, @PathVariable long pid) {
+		User user = userService.getUserByNickname(nickname);
+		projectService.signUpProject(pid, user.getUserNo());
 	}
 	
-	@PutMapping("/create/{project_id}")
-	public ResponseEntity<?> createProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReqRes projectRes) throws ParseException {
+	// 프로젝트 팀원 삭제
+	@PostMapping("/remove/{pid}/{nickname}")
+	public void removeProjectUser(@PathVariable String nickname, @PathVariable long pid) {
+		User user = userService.getUserByNickname(nickname);
+		projectService.leaveProject(pid, user.getUserNo());
+		
+	}
+	
+	// 프로젝트 리더(팀장) 변경
+	@PostMapping("/update/{pid}/{nickname}")
+	public void updateProjectLeader(@PathVariable String nickname, @PathVariable long pid) {
+		User user = userService.getUserByNickname(nickname);
+		projectService.changeLeader(pid, user.getUserNo());
+		
+	}
+	
+	@PutMapping("/create")
+	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes) throws ParseException {
 
-	    Project project = projectService.getProject(projectId);
-	    User user = userService.getUserByNickname(projectRes.getLeader());
+		User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
+		
+	    Project project = new Project();
+
+	    // 리더 설정
+	    project.setLeader(user.getUserNo());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    Date startDate = dateFormat.parse(projectRes.getStartDate());
-	    Date endDate = dateFormat.parse(projectRes.getEndDate());
+	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
+	    Date endDate = dateFormat.parse(projectRes.projectRes.getEndDate());
 	    
 	    project.setStartDate(startDate);
 	    project.setEndDate(endDate);
-	    project.setContent(projectRes.getContent());
-	    project.setPname(projectRes.getPname());
-	    project.setProcess(projectRes.getProcess());
+	    project.setContent(projectRes.projectRes.getContent());
+	    project.setPname(projectRes.projectRes.getPname());
+	    project.setTname(projectRes.projectRes.getTname()); 
+	    project.setProcess(projectRes.projectRes.getProcess());
+	    project.setType(projectRes.projectRes.getType());
+	    	    
+	    long newPid = projectService.insert(project);
+
+	    for (Map.Entry<String, String> entry : projectRes.userList.entrySet()) {
+	        String key = entry.getKey();
+	        
+	        if (!key.equals(projectRes.projectRes.getLeader())){
+	        	User u = userService.getUserByNickname(key);
+	        	projectService.signUpProject(newPid, u.getUserNo());
+	        }
+	    }
 	    
-	    projectService.update(project);
-	    Project createdProject = projectService.getProject(projectId);
-	    return ResponseEntity.ok(createdProject);
+	    return ResponseEntity.ok(true);
 	}
 	
 	@DeleteMapping("/{project_id}")
@@ -182,29 +184,30 @@ public class ProjectController {
 	}
 	
 	@PutMapping("/{project_id}")
-	public ResponseEntity<?> updateProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReqRes projectRes) throws ParseException {
+	public ResponseEntity<?> updateProject(@PathVariable("project_id") Long projectId, @RequestBody ProjectReq projectRes) throws ParseException {
 
 	    Project project = projectService.getProject(projectId);
-	    User user = userService.getUserByNickname(projectRes.getLeader());
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    Date startDate = dateFormat.parse(projectRes.getStartDate());
-	    Date endDate = dateFormat.parse(projectRes.getEndDate());
+	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
+	    Date endDate = dateFormat.parse(projectRes.projectRes.getEndDate());
 	    
 	    project.setStartDate(startDate);
 	    project.setEndDate(endDate);
-	    project.setContent(projectRes.getContent());
-	    project.setPname(projectRes.getPname());
-	    project.setProcess(projectRes.getProcess());
+	    project.setContent(projectRes.projectRes.getContent());
+	    project.setPname(projectRes.projectRes.getPname());
+	    project.setTname(projectRes.projectRes.getTname());
+	    project.setProcess(projectRes.projectRes.getProcess());
+	    project.setType(projectRes.projectRes.getType());
 	    
 	    projectService.update(project);
 	    Project updatedProject = projectService.getProject(projectId);
 	    return ResponseEntity.ok(updatedProject);
 	}
 	
-	class ProjectReq {
-		ProjectInfoResponse projectRes;
-		HashMap<String, String> userList = new HashMap<String, String>();
+	static class ProjectReq {
+		private ProjectInfoResponse projectRes;
+		private HashMap<String, String> userList = new HashMap<String, String>();
 		
 		public ProjectReq() {
 		}
@@ -225,87 +228,5 @@ public class ProjectController {
 			this.userList = userList;
 		}
 
-	}
-	
-	static class ProjectReqRes {
-		long pid;
-		String leader;
-		String pname, tname, content, type, process;
-		String startDate, endDate;
-		
-		public ProjectReqRes() {
-		}
-		
-		public long getPid() {
-			return pid;
-		}
-
-		public void setPid(long pid) {
-			this.pid = pid;
-		}
-
-		public String getLeader() {
-			return leader;
-		}
-
-		public void setLeader(String leader) {
-			this.leader = leader;
-		}
-
-		public String getPname() {
-			return pname;
-		}
-
-		public void setPname(String pname) {
-			this.pname = pname;
-		}
-
-		public String getContent() {
-			return content;
-		}
-
-		public void setContent(String content) {
-			this.content = content;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
-		public String getTname() {
-			return tname;
-		}
-
-		public String getStartDate() {
-			return startDate;
-		}
-
-		public String getEndDate() {
-			return endDate;
-		}
-
-		public void setTname(String tname) {
-			this.tname = tname;
-		}
-
-		public void setStartDate(String startDate) {
-			this.startDate = startDate;
-		}
-
-		public void setEndDate(String endDate) {
-			this.endDate = endDate;
-		}
-
-		public String getProcess() {
-			return process;
-		}
-
-		public void setProcess(String process) {
-			this.process = process;
-		}
 	}
 }

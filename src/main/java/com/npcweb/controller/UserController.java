@@ -1,5 +1,7 @@
 package com.npcweb.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,6 +30,36 @@ public class UserController {
 		userService.insert(user);
     }
 	
+	// 닉네임 체크
+	@PostMapping("/checkNickname")
+	public ResponseEntity<Boolean> checkNickname(@RequestBody Map<String, String> _nickname) {
+		String nickname = _nickname.get("nickname");
+		int result = userService.NicknameCheck(nickname);
+		if (result == 0)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
+	// 아이디 체크
+	@PostMapping("/checkUserId")
+	public ResponseEntity<Boolean> checkUserId(@RequestBody Map<String, String> _userId) {
+		String userId = _userId.get("userId");
+		int result = userService.UserIdCheck(userId);
+		if (result == 0)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
+	// 이메일 체크
+	@PostMapping("/checkEmail")
+	public ResponseEntity<Boolean> checkEmail(@RequestBody Map<String, String> _email) {
+		String email = _email.get("email");
+		int result = userService.EmailCheck(email);
+		if (result == 0)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
 	// 타인의 정보기 때문에 제한적으로 전달
 	@GetMapping("/{userNo}")
 	public ResponseEntity<UserResponse> getUser(@PathVariable("userNo") long userNo) {
@@ -41,6 +73,22 @@ public class UserController {
 	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
 		userService.UpdatePassword(userId, request.getPassword());
     }
+
+	// 프로젝트 팀원 추가를 위한 팀원명 찾기
+	@GetMapping("/find/{nickname}")
+	public ResponseEntity<UserResponse> addProjectUser(@PathVariable("nickname") String nickname) {
+	    User user = userService.getUserByNickname(nickname);
+	    
+	    if(user != null) {
+	        UserResponse resUser = new UserResponse(user);
+	        return ResponseEntity.ok(resUser);
+	    } else {
+	    	User u = new User();
+	    	u.setUserNo(-1);
+	        UserResponse failUser = new UserResponse(u);
+	        return ResponseEntity.ok(failUser); 
+	    }
+	}
 }
 
 class ChangePasswordRequest {
