@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
 import com.npcweb.domain.response.UserResponse;
+import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -22,12 +23,15 @@ import com.npcweb.service.UserService;
 @RequestMapping("/users")
 public class UserController {
 	@Autowired UserService userService;
+	@Autowired ProjectService projectService;
 	
 	// 회원 가입
 	@PostMapping
     public void signup(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
-		userService.insert(user);
+		User u = userService.insert(user);
+		// 나중에 정기회의 id로 바꿔야 함
+		projectService.signUpProject(1000, u.getUserNo());
     }
 	
 	// 닉네임 체크
@@ -60,6 +64,15 @@ public class UserController {
 		return ResponseEntity.ok(false);
 	}
 	
+	// 비밀번호 분실 시 이용
+	@GetMapping("/checkUser/{userId}/{email}")
+	public ResponseEntity<Boolean> checkUser(@PathVariable("userId") String userId, @PathVariable("email") String email) {
+		User u = userService.getUserByEmail(userId, email);
+		if (u != null)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
 	// 타인의 정보기 때문에 제한적으로 전달
 	@GetMapping("/{userNo}")
 	public ResponseEntity<UserResponse> getUser(@PathVariable("userNo") long userNo) {
@@ -68,10 +81,13 @@ public class UserController {
 		
 		return ResponseEntity.ok(resUser);
 	}
-
-	@PutMapping("/{userId}/password")
-	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
-		userService.UpdatePassword(userId, request.getPassword());
+	
+	// 비밀번호 변경
+	@PutMapping("/changePassword")
+	public void changePassword(@RequestBody Map<String, String> passwordReq) {
+		String userId = passwordReq.get("userId");
+		String password = passwordReq.get("password");
+		userService.UpdatePassword(userId, password);
     }
 
 	// 프로젝트 팀원 추가를 위한 팀원명 찾기
@@ -88,17 +104,5 @@ public class UserController {
 	        UserResponse failUser = new UserResponse(u);
 	        return ResponseEntity.ok(failUser); 
 	    }
-	}
-}
-
-class ChangePasswordRequest {
-	String password;
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 }

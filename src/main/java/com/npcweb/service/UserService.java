@@ -14,8 +14,8 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepo;
 	
-	public void insert(User user) {
-		userRepo.save(user);
+	public User insert(User user) {
+		return userRepo.save(user);
 	}	
 	
 	public String getNickname(long userNo) {
@@ -34,12 +34,16 @@ public class UserService {
 		return userRepo.findByUserIdAndUserPw(userId, userPw);
 	} 
 	
+	public User getUserByEmail(String userId, String email) {
+		return userRepo.findByUserIdAndEmail(userId, email);
+	}
+	
 	public void update(User user) {
 		userRepo.save(user);
 	}
 	
 	public void UpdatePassword(String userId, String userPw) {
-		userDao.updatePassword(userId, userPw);
+		userRepo.updatePassword(userId, userPw);
 	}
 	
 	public int UserIdCheck (String userId) {
