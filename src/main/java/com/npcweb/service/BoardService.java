@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.npcweb.dao.BoardDAO;
 import com.npcweb.domain.Post;
-import com.npcweb.domain.response.PostResponse;
+import com.npcweb.dto.PostResponse;
 import com.npcweb.repository.PostPagingRepository;
 
 @Service

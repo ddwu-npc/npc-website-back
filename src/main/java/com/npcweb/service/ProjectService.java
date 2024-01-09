@@ -16,11 +16,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.npcweb.domain.Post;
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
-import com.npcweb.domain.response.PostResponse;
-import com.npcweb.domain.response.ProjectResponse;
+import com.npcweb.dto.ProjectResponse;
 import com.npcweb.repository.ProjectRepository;
 import com.npcweb.repository.UserRepository;
 import com.npcweb.specification.ProjectSearchSpecification;

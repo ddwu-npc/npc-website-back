@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
-import com.npcweb.domain.response.UserResponse;
+import com.npcweb.dto.UserResponse;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
 

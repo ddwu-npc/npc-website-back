@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.Post;
 import com.npcweb.domain.User;
-import com.npcweb.domain.response.PostResponse;
+import com.npcweb.dto.PostResponse;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.BoardService;
 import com.npcweb.service.UserService;

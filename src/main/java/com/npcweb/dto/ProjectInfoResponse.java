@@ -1,23 +1,33 @@
-package com.npcweb.domain.response;
+package com.npcweb.dto;
 
 import com.npcweb.domain.Project;
 
-public class ProjectResponse {
+public class ProjectInfoResponse {
 	long pid;
-	String pname, tname, process;
+	String leader, type;
+	String pname, tname, process, content, description;
 	String startDate, endDate;
 	
-	public ProjectResponse(Project p) {
+	public ProjectInfoResponse() {
+    }
+	
+	public ProjectInfoResponse(Project p) {
 		this.pid = p.getPid();
+		this.leader = String.valueOf(p.getLeader());
 		this.pname = p.getPname();
 		this.tname = p.getTname();
 		this.process = p.getProcess();
+		this.content = p.getContent();
+		this.type = p.getType();
 		this.startDate = p.getFormattedStartDate();
 		this.endDate = p.getFormattedEndDate();
 	}
 	
 	public long getPid() {
 		return pid;
+	}
+	public String getLeader() {
+		return leader;
 	}
 	public String getPname() {
 		return pname;
@@ -33,5 +43,14 @@ public class ProjectResponse {
 	}
 	public String getEndDate() {
 		return endDate;
+	}
+	public String getType() {
+		return type;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setNickname(String leader) {
+		this.leader = leader;
 	}
 }

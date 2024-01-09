@@ -1,4 +1,4 @@
-package com.npcweb.domain.response;
+package com.npcweb.dto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
