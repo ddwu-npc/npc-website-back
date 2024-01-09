@@ -61,7 +61,7 @@ public class AttendanceController {
 		
 		int meetingCount = project.getAttendances().size() + 1;
 		attendance.setAttendanceDate(new Date());
-		attendance.setMeeting(project.getPname() + " " + meetingCount +"차시 회의");
+		attendance.setMeeting(project.getPname() + " " + meetingCount +"차시");
 		attendance.setAuthCode(attendanceService.generateRandomAttendanceCode());
 		attendance.setType("진행");
 		attendance.setProject(project);
