@@ -193,6 +193,17 @@ public class ProjectController {
 	    return ResponseEntity.ok(updatedProject);
 	}
 	
+	@PutMapping("/projectlist/{userno}")
+	public ResponseEntity<?> getProjectsByUser(@PathVariable("userno") Long userno) throws ParseException {
+		List<Project> pList = projectService.getProjectsByUser(userno);
+
+		if (pList != null && !pList.isEmpty()) {
+			return ResponseEntity.ok(pList);
+		}
+		else 
+			return ResponseEntity.ok(false);
+	}
+	
 	static class ProjectReq {
 		private ProjectInfoResponse projectRes;
 		private HashMap<String, String> userList = new HashMap<String, String>();
