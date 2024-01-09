@@ -1,7 +1,9 @@
 package com.npcweb.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -60,6 +62,17 @@ public class ProjectService {
 	
 	public List<Project> getAllProject() {
 		return (List<Project>) projectRepo.findAll();
+	}
+	
+	public List<Project> getProjectsByUser(long userNo) {
+	    User user = userRepo.findById(userNo).get();
+	    if (user != null) {
+	        Set<Project> projectSet = user.getProjects();
+	        List<Project> projectList = new ArrayList<>(projectSet.size());
+	        projectList.addAll(projectSet);
+	        return projectList;
+	    }
+	    return null;
 	}
 	
 	// 프로젝트 가입
