@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npcweb.domain.User;
 import com.npcweb.dto.UserResponse;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
 
@@ -24,6 +26,7 @@ import com.npcweb.service.UserService;
 public class UserController {
 	@Autowired UserService userService;
 	@Autowired ProjectService projectService;
+	@Autowired JWTProvider jwtProvider;
 	
 	// 회원 가입
 	@PostMapping
@@ -82,7 +85,7 @@ public class UserController {
 		return ResponseEntity.ok(resUser);
 	}
 	
-	// 비밀번호 변경
+	// 비밀번호 변경 - 비밀번호 분실
 	@PutMapping("/changePassword")
 	public void changePassword(@RequestBody Map<String, String> passwordReq) {
 		String userId = passwordReq.get("userId");
@@ -90,6 +93,17 @@ public class UserController {
 		userService.UpdatePassword(userId, password);
     }
 
+	// 비밀번호 변경 - 마이페이지
+	@PutMapping("/changePassword")
+	public void changePassword(@RequestBody String password, @RequestHeader("Authorization") String token) {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+        
+        User u = userService.getUserByUserNo(userNo);
+        u.setUserPw(password);
+		userService.update(u);
+    }
+	
 	// 프로젝트 팀원 추가를 위한 팀원명 찾기
 	@GetMapping("/find/{nickname}")
 	public ResponseEntity<UserResponse> addProjectUser(@PathVariable("nickname") String nickname) {

@@ -15,13 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.*;
 
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
 import com.npcweb.dto.ProjectInfoResponse;
 import com.npcweb.dto.ProjectResponse;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
 
@@ -33,6 +33,8 @@ public class ProjectController {
 	ProjectService projectService;
 	@Autowired
 	UserService userService;
+	@Autowired
+	JWTProvider jwtProvider;
 	
     @GetMapping
     public ResponseEntity<Map<String, Object>> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
@@ -131,14 +133,14 @@ public class ProjectController {
 	}
 	
 	@PutMapping("/create")
-	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes) throws ParseException {
-
-		User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
-		
+	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes, @RequestHeader("Authorization") String token) throws ParseException {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+        		
 	    Project project = new Project();
 
 	    // 리더 설정
-	    project.setLeader(user.getUserNo());
+	    project.setLeader(userNo);
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
