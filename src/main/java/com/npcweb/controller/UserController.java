@@ -86,7 +86,7 @@ public class UserController {
 	}
 	
 	// 비밀번호 변경 - 비밀번호 분실
-	@PutMapping("/changePassword")
+	@PutMapping("/forgetPassword")
 	public void changePassword(@RequestBody Map<String, String> passwordReq) {
 		String userId = passwordReq.get("userId");
 		String password = passwordReq.get("password");
