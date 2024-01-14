@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.npcweb.domain.User;
 import com.npcweb.dto.UserResponse;
@@ -95,13 +97,19 @@ public class UserController {
 
 	// 비밀번호 변경 - 마이페이지
 	@PutMapping("/changePassword")
-	public void changePassword(@RequestBody String password, @RequestHeader("Authorization") String token) {
+	public ResponseEntity<Boolean> changePassword(@RequestBody Map<String, String> passwordReq, @RequestHeader("Authorization") String token) {
+		String password = passwordReq.get("password");
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
         long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+        
+        if (password == null)
+        	return ResponseEntity.ok(false);
         
         User u = userService.getUserByUserNo(userNo);
         u.setUserPw(password);
 		userService.update(u);
+		
+		return ResponseEntity.ok(true);
     }
 	
 	// 프로젝트 팀원 추가를 위한 팀원명 찾기
