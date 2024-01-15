@@ -72,4 +72,18 @@ public class UserService {
 		u.setNpcPoint(currPoint + point);
 		userRepo.save(u);
 	}
+	
+	public void withdrawlAccount(long userNo) {
+		User u = userRepo.findByUserNo(userNo);
+		u.setNickname("탈퇴한 회원");
+		u.setNpcPoint(0);
+		u.setUserId("탈퇴한 회원");
+		userRepo.save(u);
+		
+		// 프로젝트 탈퇴 로직 추가 필요
+		// 1. 리더로 속한 프로젝트가 있을 시 탈퇴 불가
+		// 2. 속한 프로젝트 탈퇴 처리
+		
+		// userId나 nickname이 중복이 되는데 문제가 생길 지 한 번 더 생각
+	}
 }

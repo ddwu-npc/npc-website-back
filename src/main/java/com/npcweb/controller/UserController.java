@@ -112,6 +112,15 @@ public class UserController {
 		return ResponseEntity.ok(true);
     }
 	
+	@GetMapping("/deleteAccount")
+	public ResponseEntity<Boolean> deleteAccount(@RequestHeader("Authorization") String token) {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+
+        userService.withdrawlAccount(userNo);
+		return ResponseEntity.ok(true);
+	}
+	
 	// 프로젝트 팀원 추가를 위한 팀원명 찾기
 	@GetMapping("/find/{nickname}")
 	public ResponseEntity<UserResponse> addProjectUser(@PathVariable("nickname") String nickname) {
