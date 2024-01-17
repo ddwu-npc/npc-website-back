@@ -30,6 +30,7 @@ public class User {
 	@Column(name="user_name")
 	String name;
 	String nickname, email;
+	int generation;
 	int profile;
 	@Column(name="recent_date")
 	Date recentDate;
