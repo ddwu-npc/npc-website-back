@@ -27,6 +27,8 @@ public class User {
 	String userId;
 	@Column(name="user_pw")
 	String userPw; 
+	@Column(name="user_name")
+	String name;
 	String nickname, email;
 	int profile;
 	@Column(name="recent_date")
