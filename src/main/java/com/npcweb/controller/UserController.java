@@ -36,7 +36,7 @@ public class UserController {
 		// request body에 있는 정보로 user 등록
 		User u = userService.insert(user);
 		// 나중에 정기회의 id로 바꿔야 함
-		projectService.signUpProject(1000, u.getUserNo());
+		// projectService.signUpProject(1000, u.getUserNo());
     }
 	
 	// 닉네임 체크
