@@ -14,7 +14,7 @@ import javax.persistence.Table;
 public class Point {
 	@Id
 	@Column(name="point_id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long pointId;
 	long userno;
 	@Column(name="attendance_id")
