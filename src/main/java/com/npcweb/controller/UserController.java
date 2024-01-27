@@ -35,8 +35,8 @@ public class UserController {
     public void signup(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
 		User u = userService.insert(user);
-		// 나중에 정기회의 id로 바꿔야 함
-		// projectService.signUpProject(1000, u.getUserNo());
+		// 2024 정기회의 아이디 : 1
+		projectService.signUpProject(1, u.getUserNo());
     }
 	
 	// 닉네임 체크
