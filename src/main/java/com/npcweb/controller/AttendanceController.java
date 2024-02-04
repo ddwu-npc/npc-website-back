@@ -4,11 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.npcweb.domain.Attendance;
 import com.npcweb.domain.Point;
 import com.npcweb.domain.Project;
-import com.npcweb.domain.User;
-import com.npcweb.domain.response.ProjectInfoResponse;
 import com.npcweb.security.JWTProvider;
 import com.npcweb.service.AttendanceService;
 import com.npcweb.service.AttendanceTimerService;
@@ -39,7 +34,8 @@ public class AttendanceController {
     @Autowired private UserService userService;
     @Autowired private PointService pointService;
     
-    static int changePoint = 10;
+    static int attendPoint = 4; // 출석 포인트
+    static int absentPoint = -10; // 결석 포인트
     
     // 프로젝트의 출석 중 현재 가능한 것만 반환
 	@GetMapping("quick/{project_id}")
@@ -67,15 +63,15 @@ public class AttendanceController {
 		attendance.setProject(project);
 		attendanceService.insert(attendance);
 		
-		// 팀장은 자동 출석 (10포인트 출석)
-		userService.calcPoints(project.getLeader(), changePoint);
+		// 팀장 자동 출석 
+		userService.calcPoints(project.getLeader(), attendPoint);
         // 내역 저장
 		long attendanceId = attendance.getAttendanceId();
-        Point p = new Point(project.getLeader(), attendanceId, changePoint, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
+        Point p = new Point(project.getLeader(), attendanceId, attendPoint, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
 		pointService.insert(p);
 		
 		// 타이머
-		timerService.scheduleTimer(attendance, changePoint);
+		timerService.scheduleTimer(attendance, absentPoint);
 		return attendanceId;
 	}
 	
@@ -105,11 +101,11 @@ public class AttendanceController {
         boolean isAttend = attendanceService.isAttend(userNo, attendance_id);
 		
 		if (_authcode.equals(authcode) && !isAttend) {
-			// 10 포인트 적립
-	        userService.calcPoints(userNo, changePoint);
+			// 출석
+	        userService.calcPoints(userNo, attendPoint);
 	        
 	        // 내역 저장
-	        Point p = new Point(userNo, attendance_id, changePoint, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
+	        Point p = new Point(userNo, attendance_id, attendPoint, attendance.getMeeting() + " 출석", attendance.getAttendanceDate());
 			pointService.insert(p);
 			
 			return 1;

@@ -1,4 +1,4 @@
-package com.npcweb.domain.response;
+package com.npcweb.dto;
 
 import com.npcweb.domain.User;
 

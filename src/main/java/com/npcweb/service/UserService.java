@@ -14,8 +14,8 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepo;
 	
-	public void insert(User user) {
-		userRepo.save(user);
+	public User insert(User user) {
+		return userRepo.save(user);
 	}	
 	
 	public String getNickname(long userNo) {
@@ -34,12 +34,16 @@ public class UserService {
 		return userRepo.findByUserIdAndUserPw(userId, userPw);
 	} 
 	
+	public User getUserByEmail(String userId, String email) {
+		return userRepo.findByUserIdAndEmail(userId, email);
+	}
+	
 	public void update(User user) {
 		userRepo.save(user);
 	}
 	
 	public void UpdatePassword(String userId, String userPw) {
-		userDao.updatePassword(userId, userPw);
+		userRepo.updatePassword(userId, userPw);
 	}
 	
 	public int UserIdCheck (String userId) {
@@ -67,5 +71,19 @@ public class UserService {
 		int currPoint = u.getNpcPoint();
 		u.setNpcPoint(currPoint + point);
 		userRepo.save(u);
+	}
+	
+	public void withdrawlAccount(long userNo) {
+		User u = userRepo.findByUserNo(userNo);
+		u.setNickname("탈퇴한 회원");
+		u.setNpcPoint(0);
+		u.setUserId("탈퇴한 회원");
+		userRepo.save(u);
+		
+		// 프로젝트 탈퇴 로직 추가 필요
+		// 1. 리더로 속한 프로젝트가 있을 시 탈퇴 불가
+		// 2. 속한 프로젝트 탈퇴 처리
+		
+		// userId나 nickname이 중복이 되는데 문제가 생길 지 한 번 더 생각
 	}
 }

@@ -10,11 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.npcweb.domain.User;
-import com.npcweb.domain.response.UserResponse;
+import com.npcweb.dto.UserResponse;
+import com.npcweb.security.JWTProvider;
+import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
 
 @CrossOrigin(origins = "http://localhost:3000") 
@@ -22,12 +27,16 @@ import com.npcweb.service.UserService;
 @RequestMapping("/users")
 public class UserController {
 	@Autowired UserService userService;
+	@Autowired ProjectService projectService;
+	@Autowired JWTProvider jwtProvider;
 	
 	// 회원 가입
 	@PostMapping
     public void signup(@RequestBody User user) {
 		// request body에 있는 정보로 user 등록
-		userService.insert(user);
+		User u = userService.insert(user);
+		// 2024 정기회의 아이디 : 1
+		projectService.signUpProject(1, u.getUserNo());
     }
 	
 	// 닉네임 체크
@@ -60,6 +69,15 @@ public class UserController {
 		return ResponseEntity.ok(false);
 	}
 	
+	// 비밀번호 분실 시 이용
+	@GetMapping("/checkUser/{userId}/{email}")
+	public ResponseEntity<Boolean> checkUser(@PathVariable("userId") String userId, @PathVariable("email") String email) {
+		User u = userService.getUserByEmail(userId, email);
+		if (u != null)
+			return ResponseEntity.ok(true);
+		return ResponseEntity.ok(false);
+	}
+	
 	// 타인의 정보기 때문에 제한적으로 전달
 	@GetMapping("/{userNo}")
 	public ResponseEntity<UserResponse> getUser(@PathVariable("userNo") long userNo) {
@@ -68,12 +86,41 @@ public class UserController {
 		
 		return ResponseEntity.ok(resUser);
 	}
-
-	@PutMapping("/{userId}/password")
-	public void changePassword(@PathVariable String userId, @RequestBody ChangePasswordRequest request) {
-		userService.UpdatePassword(userId, request.getPassword());
+	
+	// 비밀번호 변경 - 비밀번호 분실
+	@PutMapping("/forgetPassword")
+	public void changePassword(@RequestBody Map<String, String> passwordReq) {
+		String userId = passwordReq.get("userId");
+		String password = passwordReq.get("password");
+		userService.UpdatePassword(userId, password);
     }
 
+	// 비밀번호 변경 - 마이페이지
+	@PutMapping("/changePassword")
+	public ResponseEntity<Boolean> changePassword(@RequestBody Map<String, String> passwordReq, @RequestHeader("Authorization") String token) {
+		String password = passwordReq.get("password");
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+        
+        if (password == null)
+        	return ResponseEntity.ok(false);
+        
+        User u = userService.getUserByUserNo(userNo);
+        u.setUserPw(password);
+		userService.update(u);
+		
+		return ResponseEntity.ok(true);
+    }
+	
+	@GetMapping("/deleteAccount")
+	public ResponseEntity<Boolean> deleteAccount(@RequestHeader("Authorization") String token) {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+
+        userService.withdrawlAccount(userNo);
+		return ResponseEntity.ok(true);
+	}
+	
 	// 프로젝트 팀원 추가를 위한 팀원명 찾기
 	@GetMapping("/find/{nickname}")
 	public ResponseEntity<UserResponse> addProjectUser(@PathVariable("nickname") String nickname) {
@@ -88,17 +135,5 @@ public class UserController {
 	        UserResponse failUser = new UserResponse(u);
 	        return ResponseEntity.ok(failUser); 
 	    }
-	}
-}
-
-class ChangePasswordRequest {
-	String password;
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 }

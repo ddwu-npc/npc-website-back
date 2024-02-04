@@ -15,21 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.npcweb.domain.Project;
 import com.npcweb.domain.User;
-import com.npcweb.domain.response.ProjectInfoResponse;
-import com.npcweb.domain.response.ProjectResponse;
+import com.npcweb.dto.ProjectInfoResponse;
+import com.npcweb.dto.ProjectResponse;
+import com.npcweb.security.JWTProvider;
 import com.npcweb.service.ProjectService;
 import com.npcweb.service.UserService;
 
@@ -41,8 +33,8 @@ public class ProjectController {
 	ProjectService projectService;
 	@Autowired
 	UserService userService;
-	
-	// 팀원 추가 필요
+	@Autowired
+	JWTProvider jwtProvider;
 	
     @GetMapping
     public ResponseEntity<Map<String, Object>> getProjectList(@PageableDefault(page = 1) Pageable pageable) {
@@ -52,7 +44,6 @@ public class ProjectController {
         Page<ProjectResponse> projectPages = projectService.paging(pageRequest);
         List<Integer> pageInfo = new ArrayList<>();
 
-        //int startPage = 1;
         int endPage = projectPages.getTotalPages();
         pageInfo.add(adjustedPage);
         pageInfo.add(endPage);
@@ -131,7 +122,6 @@ public class ProjectController {
 	public void removeProjectUser(@PathVariable String nickname, @PathVariable long pid) {
 		User user = userService.getUserByNickname(nickname);
 		projectService.leaveProject(pid, user.getUserNo());
-		
 	}
 	
 	// 프로젝트 리더(팀장) 변경
@@ -143,14 +133,14 @@ public class ProjectController {
 	}
 	
 	@PutMapping("/create")
-	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes) throws ParseException {
-
-		User user = userService.getUserByNickname(projectRes.projectRes.getLeader());
-		
+	public ResponseEntity<?> createProject(@RequestBody ProjectReq projectRes, @RequestHeader("Authorization") String token) throws ParseException {
+		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
+        long userNo = jwtProvider.getUsernoFromToken(jwtToken);
+        		
 	    Project project = new Project();
 
 	    // 리더 설정
-	    project.setLeader(user.getUserNo());
+	    project.setLeader(userNo);
 	    // 날짜 변환
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date startDate = dateFormat.parse(projectRes.projectRes.getStartDate());
@@ -203,6 +193,17 @@ public class ProjectController {
 	    projectService.update(project);
 	    Project updatedProject = projectService.getProject(projectId);
 	    return ResponseEntity.ok(updatedProject);
+	}
+	
+	@PutMapping("/projectlist/{userno}")
+	public ResponseEntity<?> getProjectsByUser(@PathVariable("userno") Long userno) throws ParseException {
+		List<Project> pList = projectService.getProjectsByUser(userno);
+
+		if (pList != null && !pList.isEmpty()) {
+			return ResponseEntity.ok(pList);
+		}
+		else 
+			return ResponseEntity.ok(false);
 	}
 	
 	static class ProjectReq {

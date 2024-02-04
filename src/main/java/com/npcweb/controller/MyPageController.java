@@ -61,7 +61,6 @@ public class MyPageController {
 			res.setEmail(u.getEmail());
 			res.setNickname(u.getNickname());
 			res.setNpcPoint(u.getNpcPoint());
-			res.setProfile("profile"); // 임시
 			res.setDname(u.getDept().getDname());
 			res.setUserId(u.getUserId());
 			

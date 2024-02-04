@@ -43,8 +43,6 @@ public class CommentController {
 	//insert
 	@PostMapping("/{postId}")
 	public void insertComment(@PathVariable long postId, @RequestBody CommentReq req, @RequestHeader("Authorization") String token) {
-		//System.out.println("insert comment "+req.toString());
-		
 		String jwtToken = token.replace("Bearer ", "").replace("\"", "");
 		long userNo = jwtProvider.getUsernoFromToken(jwtToken);
 
@@ -108,11 +106,5 @@ class CommentReq {
 	}
 	public void setUserno(long userno) {
 		this.userno = userno;
-	}
-	
-
-	@Override
-	public String toString() {
-		return "CommentReq [postId=" + postId + ", content=" + content + ", userno=" + userno + "]";
 	}
 }

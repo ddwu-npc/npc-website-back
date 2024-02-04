@@ -20,14 +20,17 @@ import javax.persistence.Table;
 @Table(name="USER")
 public class User {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	long userNo;
 	
 	@Column(name="user_id")
 	String userId;
 	@Column(name="user_pw")
 	String userPw; 
+	@Column(name="user_name")
+	String name;
 	String nickname, email;
+	int generation;
 	int profile;
 	@Column(name="recent_date")
 	Date recentDate;

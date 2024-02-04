@@ -17,28 +17,29 @@ public class AttendanceTimerService {
 	
 	private Timer timer = new Timer();
 
-    public void scheduleTimer(Attendance attendance, int changePoint) {
+    public void scheduleTimer(Attendance attendance, int absentPoint) {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-            	finishedAttendance(attendance, changePoint);
+            	finishedAttendance(attendance, absentPoint);
             }
         };
 
-        // 60초 후에 타이머 작업 실행(나중에 시간 늘리기)
-        timer.schedule(task, 60000);
+        // 출석은 10분(600초) 동안 가능
+        timer.schedule(task, 600000);
     }
 
     public void cancelTimer() {
         timer.cancel(); 
     }
 
-    private void finishedAttendance(Attendance attendance, int changePoint) {
+    private void finishedAttendance(Attendance attendance, int absentPoint) {
     	attendance.setType("종료");
     	attendanceService.insert(attendance);
-    	Set<User> userList = attendanceService.endAttend(attendance, changePoint);
-    	// 정기회의 따로 빼기
-    	if (attendance.getProject().getPid() == 1000)
+    	Set<User> userList = attendanceService.endAttend(attendance, absentPoint);
+    	
+    	// 정기회의 출석 결과를 공지 게시판에 등록
+    	if (attendance.getProject().getPid() == 1)
     		postService.insertAttendPost(userList, attendance);
     }
 
