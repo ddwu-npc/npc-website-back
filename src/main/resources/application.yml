@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: ${NPC_DB_SOURCE}
+    url: ${NPC_DB_URL}
+    username: ${NPC_DB_USERNAME}
+    password: ${NPC_DB_PASSWORD}
+
+  jpa:
+    show-sql: false
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  profiles:
+    include: redis
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+      enabled: true
+
+jwt:
+  secretKey: ${JWT_KEY}
+
+file:
+  upload:
+    path: uploads
